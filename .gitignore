@@ -1,0 +1,7 @@
+*.pyc
+penv
+activate
+pulleffect/config/*
+
+# Keepers
+!.gitkeep
