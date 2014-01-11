@@ -1,34 +1,19 @@
-{% extends "layout.html" %} 
-{% block body %} 
-    {% if not session.signed_in %}
-    <div id="signin" class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Please Sign In</h3>
-                </div>
-                <div class="panel-body">
-                    <form onsubmit="return false;" accept-charset="UTF-8" role="form">
-                        <fieldset>
-                            <div class="form-group">
-                                <input class="form-control" autocomplete="off" autofocus placeholder="username" name="username" type="text">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" autocomplete="off" placeholder="password" name="password" type="password" value="">
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
-                                </label>
-                            </div>
-                            <button onclick="signIn()" type="submit" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" title data-original-title="Sign In">
-                                <span class="fa fa-sign-in" />
-                            </button>
-                        </fieldset>
+{% extends "layout.html" %} {% block body %} {% if not session.signed_in %}
+<div id="signin" class="row">
+    <div class="col-md-3 col-md-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please Sign In</h3>
+            </div>
+            <div class="panel-body">
+                <div id="google_signin">
+                    <form action="{{ url_for('gplus.signin') }}" method="get" role="form">
+                        <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar">
+                            <span class="fa fa-google-plus" /> Signin</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    {% endif %}
-{% endblock %}
+</div>
+{% endif %} {% endblock %}

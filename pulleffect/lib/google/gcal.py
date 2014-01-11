@@ -29,7 +29,6 @@ storage = Storage('./pulleffect/config/credentials_file')
 @signin_required
 def authenticate():
     if (request.args.get('code')):
-        print request.args.get('code')
         credentials = flow.step2_exchange(request.args.get('code'))
         session['gcal_access_token'] = credentials.access_token
         storage.put(credentials)
@@ -70,7 +69,6 @@ def refresh_calendar_list():
 
     # Get Google calendar API
     service = build('calendar', 'v3', http=http)
-    print service
     calendar_list = []
     page_token = None
 
