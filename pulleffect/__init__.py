@@ -12,7 +12,7 @@
 from flask import Flask, render_template
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.user.user import user
-from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import signin_required, mongo_connection
 
 app = Flask(__name__)
 app.register_blueprint(gcal, url_prefix='/gcal')
@@ -37,7 +37,10 @@ def show_entries():
     # cur = db.execute('select title, text from entries order by id desc')
     # entries = cur.fetchall()
     # return render_template('show_entries.html', entries=entries)
-    return render_template('signin.html')
+    dashboards = mongo_connection.dashboards
+    dashboard = dashboards.find_one({}, { "_id": 0 });
+
+    return render_template('signin.html', dashboard=dashboard)
 
 
 if __name__ == '__main__':
