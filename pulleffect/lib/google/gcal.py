@@ -54,7 +54,7 @@ def get_calendar_list():
 
     # Query Google for calendars if no calendars in mongo db
     if not calendar_list:
-        return google_refresh_calendar_list()
+        return refresh_calendar_list()
 
     # Return user's calendars
     return jsonify({'calendars':calendar_list})

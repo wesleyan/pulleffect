@@ -10,7 +10,6 @@ from flask import flash
 import httplib2
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import AccessTokenRefreshError
-from oauth2client.file import Storage
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
 
@@ -22,7 +21,7 @@ flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json',
                                scope='https://www.googleapis.com/auth/plus.login',
                                redirect_uri='http://localhost:5000/gplus/signin')
 auth_uri = flow.step1_get_authorize_url()
-storage = Storage('./pulleffect/config/gplus_creds')
+
 
 # Sign in user
 @gplus.route('/signin')
@@ -30,10 +29,20 @@ def signin():
     if (request.args.get('code')):
         credentials = flow.step2_exchange(request.args.get('code'))
         session['gplus_access_token'] = credentials.access_token
-        storage.put(credentials)
+
+        gplus_access_token = credentials.access_token
+        gplus_refresh_token = credentials.refresh_token
+        gplus_id = credentials.id_token["sub"]
+
+        users = mongo_connection.users
+        refresh_token = users.find_one({"id":gplus_id}, {"gplus_refresh_token":1})
+        if gplus_refresh_token == None:
+        	gplus_refresh_token = refresh_token
+
+       	users.update({"gplus_id":credentials.id_token["sub"]}, {"$set": {"gplus_access_token":gplus_access_token, "gplus_refresh_token":gplus_refresh_token, "gplus_id":gplus_id}}, True)
+
         session['signed_in'] = True 
         flash('Successfully signed in', 'success')
-	    # return jsonify({'redirect':url_for('index')})
         return redirect(url_for('index'))
     if (request.args.get('error')):
     	flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
