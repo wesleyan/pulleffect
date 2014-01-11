@@ -92,3 +92,17 @@
 [title] {
 	top:10px;
 }
+
+#calendar {
+    margin-top: 10px;
+    height:300px;
+    overflow: auto;
+    padding-left:0px;
+    padding-right:0px;
+}
+
+.event{
+    height: 10px;
+    font-size: 12px;
+}
+

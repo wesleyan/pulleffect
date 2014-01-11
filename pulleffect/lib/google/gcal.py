@@ -14,6 +14,8 @@ from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
 import moment
 from datetime import datetime
+from math import floor
+import strict_rfc3339 
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
@@ -105,9 +107,13 @@ def get_calendar_events():
     service = build('calendar', 'v3', http=http)
 
     page_token = None
-    calID = 'wesleyan.edu_iq47a44fno2qb4jgio7plob91c@group.calendar.google.com'
+    calID = 'jlashner@gmail.com'
     
+    min_time = strict_rfc3339.now_to_rfc3339_localoffset()
 
-    events = service.events().list(calendarId=calID, pageToken=page_token, orderBy="startTime", singleEvents=True).execute()
+    print min_time
+
+    events = service.events().list(calendarId=calID, pageToken=page_token, orderBy="startTime", singleEvents=True, timeMin=min_time).execute()
     return jsonify({'calendar_events':events})
     
+

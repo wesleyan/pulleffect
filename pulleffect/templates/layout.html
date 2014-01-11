@@ -13,9 +13,10 @@
     
   
 </head>
-{#{% from 'macros/layout.js' import layout with context %}#}
 
 <body>
+    
+
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
             <a class="navbar-brand" href="#">Pull&#8728;Effect</a>
@@ -47,10 +48,10 @@
     </a>
     {% endif %}
     <div id="alerts"></div>
-
+<!-- 
    <div class="panel panel-default">
     <table class="table table-striped" id="eventsTable">
-    </table>
+    </table> -->
 
 
     <div class="container">
@@ -90,12 +91,6 @@
                             <div class="tab-pane fade" id="profile">
                                 <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
                             </div>
-                            <div class="tab-pane fade" id="dropdown1">
-                                <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth chambray yr.</p>
-                            </div>
-                            <div class="tab-pane fade" id="dropdown2">
-                                <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR, banh mi before they sold out farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral, mustache readymade thundercats keffiyeh craft beer marfa ethical. Wolf salvia freegan, sartorial keffiyeh echo park vegan.</p>
-                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -109,223 +104,25 @@
         </div>
         {% endif %}
         <div>
-            {% block maincontent %} {% endblock %}
+            {% block maincontent %}
+            <div class="panel panel-default col-md-4" id="calendar">
+            <table class="table table-striped" id="eventsTable">
+            </table>
+            {% endblock %}
         </div>
     </div>
-  <script>
 
 
+  {# Import javascript macros #}
 
-    {# Alert stuff #}
-    // A helper function for displayAlerts function
-    var getAlertType = function(alert) {
-        switch (alert[0]) {
-            case 'success':
-                return 'success';
-            case 'error':
-                return 'danger';
-            case 'warning':
-                return 'warning';
-            default:
-                return 'info';
-        }
-    }
-    // Display alerts after events
-    var displayAlerts = function(alerts) {
-        if (alerts.length == 0)
-            return;
+  {% from "macros/preferences.html" import preferences %}
+  {{preferences(dashboard | tojson) }}
 
-        var alert;
+  {% from "macros/calendarEvents.html" import eventScripts %}
+  {{eventScripts()}}
 
-        for (var i = 0; alerts.length > i; i++) {
-            alert = $('<div class="alert alert-' + getAlertType(alerts[i]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alerts[i][1] + '</div>')
-                .hide()
-                .delay(500 * (i))
-                .slideDown(500)
-                .delay(10000 * (i + 1))
-                .slideUp(500, function() {
-                    $(this).remove();
-                });
-            $('#alerts').append(alert);
-        }
-    }
-    {# End alert stuff #}
-
-    {# Configuration stuff #}
-    {% if session.signed_in %}
-    var getGoogleCalendarList = function() {
-        $.ajax({
-            type: "GET",
-            url: "{{ url_for('gcal.get_calendar_list') }}",
-            success: displayCalendarList,
-            error: function(err) {
-                console.log(err);
-            }
-        });
-    }
-
-    var refreshGoogleCalendarList = function() {
-        $.ajax({
-            type: "GET",
-            url: "{{ url_for('gcal.refresh_calendar_list') }}",
-            success: displayCalendarList,
-            error: function(err) {
-                console.log(err);
-            }
-        });
-    }
-
-
-    var getGoogleCalendarEvents = function(){
-
-        $.ajax({
-            type: "GET",
-            url: "{{ url_for('gcal.get_calendar_events') }}",
-            success: displayEvents,
-            error: function(err) {
-                console.log(err);
-            }
-        });
-        }
-
-    var displayEvents = function(response){
-       
-        var events = response.calendar_events.items;
-
-        $("#eventsTable").empty();
-
-        for (i=0; i < 10 && i < events.length; i++){
-            var summary = events[i].summary;
-            var start = events[i].start.dateTime;
-            var end = events[i].end.dateTime;
-
-          //  console.log(summary + ", " + moment(start).format("h:mm A") + ", " + moment(end).format("h:mm A"));
-
-            htmlStr = "<tr>";
-            htmlStr += "<td>" + summary + "</td>";
-            htmlStr += "<td>" + moment(start).format("MM/DD  h:mm A") + "</td>";
-            htmlStr += "<td>" + moment(end).format("MM/DD  h:mm A") + "</td>";
-            htmlStr += "</tr>";
-
-            $("#eventsTable").append(htmlStr);
-
-        }
-
-    }
-
-    var displayCalendarList = function(response) {
-        if (response.error === 'AccessTokenRefreshError') {
-            return displayAlerts([
-                    ['error', 'Sorry! We need you to authenticate your account with Google Calendar again!']
-                ]);
-        }
-        if (response.calendars) {        
-            var calendars = response.calendars;
-            var btn_group_vertical = $('<div/>', {'class': 'btn-group-vertical', 'data-toggle':'buttons'});
-
-            for (var i = 0; i < calendars.length; i++) {
-                btn_group_vertical.append('<div class="checkbox btn btn-info ><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
-            }
-            $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
-            return;
-        } 
-        return displayAlerts([
-            ['error', 'Sorry! We seem to have encountered an unknown error!']
-        ]);
-    }
-    {% endif %}
-
-    $(function() {
-        displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
-        {% if session.signed_in %}
-        getGoogleCalendarList();
-        {% endif %}
-    });
-
-
-    {#config_panel#}
-    var updateCookies = function(){
-        document.cookie = "dashboard=" + JSON.stringify(dash);
-    }
-
-    var getCookie = function(){
-            return $.parseJSON(document.cookie.substring(10, document.cookie.length));
-    }
-
-    dash = {{dashboard | tojson}}
-    $("#configure").on('hide.bs.modal', function (e) {
-        
-        dash.gen_prefs.config_panel = false;
-        console.log(dash.gen_prefs.config_panel);
-
-        updateCookies()
-   });
-    $("#configure").on('show.bs.modal', function (e) {
-    
-        dash.gen_prefs.config_panel = true;
-        console.log(dash.gen_prefs.config_panel);
-
-        updateCookies();
-    });
-
-    
-
-
-
-    var loadPrefs = function(){
-      console.log(document.cookie);
-      if (document.cookie){
-        dash = getCookie();
-      }
-      else
-        dash = {{dashboard | tojson}};
-
-      if (dash.gen_prefs.config_panel==true){
-         $("#configure").modal('show');
-
-      }
-
-    }
-    loadPrefs();
-
-
-    {# Drawer stuff #}
-    // Navbar drawer function
-    $('.flap>span').click(function() {
-
-        // Close drawer
-        if ($('.flap>span').hasClass('close-drawer')) {
-            $('nav:first').css({
-                'min-height': '0px'
-            }).slideUp(250, function() {
-                $('.flap>span')
-                    .removeClass('close-drawer')
-                    .addClass('open-drawer')
-                    .tooltip('hide')
-                    .attr('data-original-title', 'Open Drawer')
-                    .tooltip('fixTitle')
-                    .tooltip('show');
-            });
-        }
-
-        // Open drawer
-        else {
-            $('nav:first').slideDown(250, function() {
-                $(this).css({
-                    'min-height': '50px'
-                });
-                $('.flap>span')
-                    .removeClass('open-drawer')
-                    .addClass('close-drawer')
-                    .tooltip('hide')
-                    .attr('data-original-title', 'Close Drawer')
-                    .tooltip('fixTitle')
-                    .tooltip('show');
-            });
-        }
-    });
-    {# End drawer stuff #}      
-    </script>
+  {% from "macros/calendarList.html" import calendarListScripts %}
+  {{calendarListScripts()}}
 
 
 </body>
