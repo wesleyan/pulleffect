@@ -9,6 +9,8 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
+    
 
     
 </head>
@@ -44,7 +46,14 @@
         <span class="fa fa-bars close-drawer" data-placement="bottom" title data-original-title="Close Drawer" />
     </a>
     {% endif %}
+
     <div id="alerts"></div>
+
+   <div class="panel panel-default">
+    <table class="table table-striped" id="eventsTable">
+    </table>
+
+
     <div class="container">
         {% block body %}{% endblock %}
         {% if session.signed_in %}
@@ -98,7 +107,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Close</button>
-                        <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
+                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -202,6 +211,44 @@
         });
     }
 
+
+    var getGoogleCalendarEvents = function(){
+
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('gcal.get_calendar_events') }}",
+            success: displayEvents,
+            error: function(err) {
+                console.log(err);
+            }
+        });
+        }
+
+    var displayEvents = function(response){
+       
+        var events = response.calendar_events.items;
+
+        $("#eventsTable").empty();
+
+        for (i=0; i < 5 && i < events.length; i++){
+            var summary = events[i].summary;
+            var start = events[i].start.dateTime;
+            var end = events[i].end.dateTime;
+
+          //  console.log(summary + ", " + moment(start).format("h:mm A") + ", " + moment(end).format("h:mm A"));
+
+            htmlStr = "<tr>";
+            htmlStr += "<td>" + summary + "</td>";
+            htmlStr += "<td>" + moment(start).format("ddd  h:mm A") + "</td>";
+            htmlStr += "<td>" + moment(end).format("ddd  h:mm A") + "</td>";
+            htmlStr += "</tr>";
+
+            $("#eventsTable").append(htmlStr);
+
+        }
+
+    }
+
     var displayCalendarList = function(response) {
         if (response.error === 'AccessTokenRefreshError') {
             return displayAlerts([
@@ -213,7 +260,7 @@
             var btn_group_vertical = $('<div/>', {'class': 'btn-group-vertical', 'data-toggle':'buttons'});
 
             for (var i = 0; i < calendars.length; i++) {
-                btn_group_vertical.append('<div class="checkbox btn btn-info"><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
+                btn_group_vertical.append('<div class="checkbox btn btn-info ><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
             }
             $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
             return;

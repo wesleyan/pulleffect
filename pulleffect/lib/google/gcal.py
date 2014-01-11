@@ -93,3 +93,18 @@ def refresh_calendar_list():
 
     # Return Google calendar list
     return jsonify({'calendars':calendar_list})
+
+# Get Google Calendar events
+@gcal.route('/get_calendar_events')
+@signin_required
+def get_calendar_events():
+
+    credentials = storage.get()
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = build('calendar', 'v3', http=http)
+
+    page_token = None
+    events = service.events().list(calendarId='wesleyan.edu_iq47a44fno2qb4jgio7plob91c@group.calendar.google.com', pageToken=page_token).execute()
+    return jsonify({'calendar_events':events})
+    
