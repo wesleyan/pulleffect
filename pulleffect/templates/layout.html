@@ -195,7 +195,7 @@
 
         $("#eventsTable").empty();
 
-        for (i=0; i < 5 && i < events.length; i++){
+        for (i=0; i < 10 && i < events.length; i++){
             var summary = events[i].summary;
             var start = events[i].start.dateTime;
             var end = events[i].end.dateTime;
@@ -204,8 +204,8 @@
 
             htmlStr = "<tr>";
             htmlStr += "<td>" + summary + "</td>";
-            htmlStr += "<td>" + moment(start).format("ddd  h:mm A") + "</td>";
-            htmlStr += "<td>" + moment(end).format("ddd  h:mm A") + "</td>";
+            htmlStr += "<td>" + moment(start).format("MM/DD  h:mm A") + "</td>";
+            htmlStr += "<td>" + moment(end).format("MM/DD  h:mm A") + "</td>";
             htmlStr += "</tr>";
 
             $("#eventsTable").append(htmlStr);
