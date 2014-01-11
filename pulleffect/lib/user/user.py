@@ -10,7 +10,7 @@ def signin():
         return jsonify({'alert':[['error', 'Invalid username or password.']]})
     session['signed_in'] = True 
     flash('Successfully signed in', 'success')
-    return jsonify({'redirect':url_for('show_entries')})
+    return jsonify({'redirect':url_for('index')})
 
 # Sign out user
 @user.route('/signout', methods=['POST'])
@@ -18,4 +18,4 @@ def signin():
 def signout():
     session.pop('signed_in', None)
     flash('You are signed out.', 'success')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('index'))

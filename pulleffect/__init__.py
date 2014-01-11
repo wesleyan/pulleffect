@@ -32,15 +32,17 @@ app.config.from_envvar('PULLEFFECT_SETTINGS', silent=True)
 
 
 @app.route('/')
-def show_entries():
+def index():
     # db = get_db()
     # cur = db.execute('select title, text from entries order by id desc')
     # entries = cur.fetchall()
     # return render_template('show_entries.html', entries=entries)
+
     dashboards = mongo_connection.dashboards
     dashboard = dashboards.find_one({}, { "_id": 0 });
 
-    return render_template('signin.html', dashboard=dashboard)
+    return render_template('index.html', dashboard=dashboard)
+
 
 
 if __name__ == '__main__':
