@@ -120,6 +120,11 @@
     padding-right:0px;
 }
 
+#tictac{
+    margin-top: 10px;
+    height:250px;
+}
+
 .event{
     height: 10px;
     font-size: 12px;
@@ -134,3 +139,15 @@
     
 }
 
+.tic{
+    height: 60px;
+}
+
+.reset{
+    height: 30px;
+    width: 70px;
+    position:relative;
+    left: 40%;
+    
+
+}

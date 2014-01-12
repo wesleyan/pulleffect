@@ -22,6 +22,7 @@ var getGoogleCalendarEvents = function() {
 
 
 var displayEvents = function(response) {
+    console.log(response);
     loadWidget();
 
     var events = response.calendar_events.items;
@@ -50,11 +51,12 @@ var displayEvents = function(response) {
 }
 
 var loadWidget = function(){
-
+    console.log("HERE");
     $('.Widgets').append('\
             <div class="panel panel-default col-md-4" id="calendar"> \
             <table class="table table-striped" id="eventsTable"> \
-            </table>'
+            </table>\
+            </div>'
     )
 }
 
