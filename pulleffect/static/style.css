@@ -100,8 +100,8 @@
 
 #calendar {
     margin-top: 10px;
-    height:300px;
-    overflow: auto;
+    height:250px;
+    overflow: none;
     padding-left:0px;
     padding-right:0px;
 }
@@ -109,5 +109,14 @@
 .event{
     height: 10px;
     font-size: 12px;
+}
+
+.centered{
+
+    text-align:center;
+    vertical-align:middle;
+    line-height:300px; 
+    transform:transformY(-50%);
+    
 }
 

@@ -1,23 +1,36 @@
 {% macro eventScripts() -%}
 <script>
+
+
 var getGoogleCalendarEvents = function() {
+
+    console.log(dash)
+    newCal = {calID: $('label.active input').val()};
 
     $.ajax({
         type: "GET",
-        url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + $('label.active input').val(),
+        url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + newCal.calID,
         success: displayEvents,
         error: function(err) {
             console.log(err);
         }
     });
+
+    // dash.widgets.gcals.push(newCal);
+    // updateCookies();
 }
 
+
 var displayEvents = function(response) {
+    loadWidget();
 
     var events = response.calendar_events.items;
 
     $("#eventsTable").empty();
 
+    if (events.length == 0){
+        $('#eventsTable').replaceWith('<span><h3 class="centered">YOU DONE FUCKED UP</h3></span>');
+    }
     for (i = 0; i < 10 && i < events.length; i++) {
         var summary = events[i].summary;
         var start = events[i].start.dateTime;
@@ -32,9 +45,18 @@ var displayEvents = function(response) {
         htmlStr += "</tr>";
 
         $("#eventsTable").append(htmlStr);
-
     }
 
 }
+
+var loadWidget = function(){
+
+    $('.Widgets').append('\
+            <div class="panel panel-default col-md-4" id="calendar"> \
+            <table class="table table-striped" id="eventsTable"> \
+            </table>'
+    )
+}
+
 </script>
 {%- endmacro %}

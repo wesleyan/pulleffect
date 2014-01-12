@@ -111,7 +111,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Cancel</button>
-                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
+                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Load Calendar</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -122,9 +122,13 @@
         <div>
             {% block maincontent %}
             {% if session.signed_in %}
-            <div class="panel panel-default col-md-4" id="calendar">
+
+            <div class="Widgets"></div>
+           
+
+     <!--        <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
-            </table>
+            </table> -->
             {% endif %}
             {% endblock %}
         </div>
@@ -132,7 +136,9 @@
 
 
     {# Import javascript macros #}
-    
+    <script>
+        var dash = {{dashboard | tojson}}
+    </script>
 
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
@@ -143,6 +149,9 @@
 
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
+
+    <script>
+
     {% endif %}
 
 </body>
