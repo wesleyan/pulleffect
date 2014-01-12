@@ -60,6 +60,170 @@
     </table> -->
 
 
+<script>
+
+
+
+    
+
+    var board = ["","","","","","","","",""];
+
+    var turn=0;
+
+    function buttonClick(clicked_id) {
+
+        p1success = ["success","Congratulations player 1!"];
+        p2success = ["success", "Congratulations player 2!"];
+        position = parseInt(clicked_id); 
+
+        if(turn == 0) {
+            if(board[(position)] == ""){
+                board[(position)] = 1;
+                $('#'+clicked_id).text('X');
+                if (board[0] == 1 && board[1] == 1 && board[2] == 1) {
+                    
+                    return displayAlerts([p1success]);
+                }
+                else if(board[3] == 1 && board[4] == 1 && board[5] == 1) {
+                     
+                      return displayAlerts([p1success]);
+                }
+                else if(board[6] == 1 && board[7] == 1 && board[8] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[0] == 1 && board[3] == 1 && board[6] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[1] == 1 && board[4] == 1 && board[7] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[2] == 1 && board[5] == 1 && board[8] == 1) {
+                     return displayAlerts([p1success]);
+                 }
+                else if(board[0] == 1 && board[4] == 1 && board[8] == 1) {
+                    return displayAlerts([p1success]);
+                }
+                else if(board[2] == 1 && board[4] == 1 && board[6] == 1) {
+                     return displayAlerts([p1success]);
+                }
+
+            
+                                   
+
+
+
+
+                    turn = 1;
+                    clicked_id = 0;
+                    position = 0;
+                    
+        }
+    }
+        
+        
+        else if (turn == 1) {
+            if(board[(position)] == ""){
+                board[(position)] = 2;
+                $('#'+clicked_id).text('O');
+               
+                if (board[0] == 2 && board[1] == 2 && board[2] == 2) {
+                    return displayAlerts([p2success]);
+                }
+                else if(board[3] == 2 && board[4] == 2 && board[5] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[6] == 2 && board[7] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[0] == 2 && board[3] == 2 && board[6] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[1] == 2 && board[4] == 2 && board[7] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[2] == 2 && board[5] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[0] == 2 && board[4] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[2] == 2 && board[4] == 2 && board[6] == 2) {
+                     return displayAlerts([p2success]);
+                }
+            
+                    
+
+
+
+
+                    turn = 0;
+                    clicked_id=0;
+                    position = 0;
+                }       
+            }
+    }
+    function resetClick(reset_clicked) {
+            for (var i = 0; i<board.length; i++){
+                if (board[i] != "") {
+                    board[i] = "";
+                }
+
+                for(var j=0; j< board.length; j++) {
+                     $('#'+j).text('');
+                }                
+            
+                turn = 0;
+                position = 0;
+                clicked_id = 0;
+            }
+
+
+}    
+
+
+    </script>
+
+<video width="320" height="240" controls>
+  <source src="testVideo.mp4" type="video/mp4">
+  <source src="testVideo.ogg" type="video/ogg">
+  Your browser does not support the video tag.
+</video>
+
+
+
+<div class="col-md-5 col-md-offset-9 tictactoe" style="height:200px;">
+    <div class="row">
+        <button id="0" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="1" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="2" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+    <div class="row">
+        <button id="3" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="4" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="5" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+    <div class="row">
+        <button id="6" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="7" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="8" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+
+
+</div>
+
+<div class="col-md-7 col-md-offset-9 reset" style="height:60px;">
+    <div class="row">
+        <button id="9" class="col-md-4" onClick="resetClick(true)"/>Reset
+    </div>
+</div>
+
+
+
+
+
+
+   
+
     <div class="container">
         {% block body %}{% endblock %}
         {% if session.signed_in %}
