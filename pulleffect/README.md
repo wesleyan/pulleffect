@@ -5,10 +5,7 @@
 
     ~ How do I use it?
 
-      1. edit the configuration in the __init__.py file or
-         export a PULLEFFECT_SETTINGS environment variable
-         pointing to a configuration file.
-      2. now you can run the runserver.py file with your
+      1. now you can run the runserver.py file with your
          python interpreter and the application will
          greet you on http://localhost:5000/
 	
@@ -24,6 +21,7 @@
       4. ln -s penv/bin/activate
       5. source activate
       6. pip install -r requirements.txt
+      7. install and launch mongodb
       7. python runserver.py
       8. Direct your web browser to http://localhost:5000
       9. Signin credentials can be found in config file of __init__.py

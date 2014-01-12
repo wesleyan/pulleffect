@@ -115,5 +115,5 @@ def get_calendar_events():
 
     req = requests.get('https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token, 'maxResults': 5, 'orderBy': 'startTime', 'singleEvents':True, 'timeMin': min_time, 'fields': 'items(end,start,summary,description),summary'})  )
     # events = service.events().list(calendarId=cal_id, maxResults=5).execute()
-    print events
+    # print events
     return jsonify({'calendar_events':req.json()})
