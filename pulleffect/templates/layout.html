@@ -112,9 +112,11 @@
         {% endif %}
         <div>
             {% block maincontent %}
+            {% if session.signed_in %}
             <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
             </table>
+            {% endif %}
             {% endblock %}
         </div>
     </div>
