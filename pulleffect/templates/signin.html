@@ -1,6 +1,11 @@
 {% extends "layout.html" %} {% block body %} {% if not session.signed_in %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <img id="ims" src="{{ url_for('static', filename = 'imslogo.png') }}" alt="Instructional Media Services" title="IMS" border="0">
+    </div>
+</div>
 <div id="signin" class="row">
-    <div class="col-md-3 col-md-offset-4">
+    <div class="col-md-4 col-md-offset-4">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Please Sign In</h3>
@@ -8,7 +13,7 @@
             <div class="panel-body">
                 <div id="google_signin">
                     <form action="{{ url_for('gplus.signin') }}" method="get" role="form">
-                        <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar">
+                        <button type="submit" class="btn btn-info center-block" title="Google+" alt="Sign in Through Google+">
                             <span class="fa fa-google-plus" /> Sign in</button>
                     </form>
                 </div>
