@@ -31,9 +31,6 @@
 .flap>span:hover {
     color:gray;
 }
-#gbutton {
-    font-size: 40px;
-}
 #ims {
     display: block;
     margin-right: auto;
