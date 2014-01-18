@@ -17,6 +17,7 @@ from datetime import datetime
 from math import floor
 import strict_rfc3339 
 import requests
+from urllib import urlencode
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
@@ -26,23 +27,31 @@ flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json',
                                scope='https://www.googleapis.com/auth/calendar',
                                redirect_uri='http://localhost:5000/gcal/authenticate')
 auth_uri = flow.step1_get_authorize_url()
-storage = Storage('./pulleffect/config/credentials_file')
 
+# Get users mongo collection
+users = mongo_connection.users
 
 # Get access token for Google Calendar
 @gcal.route('/authenticate')
 @signin_required
 def authenticate():
+    # Exchange code if exists
     if (request.args.get('code')):
         credentials = flow.step2_exchange(request.args.get('code'))
-        session['gcal_access_token'] = credentials.access_token
-        storage.put(credentials)
+        session['google_access_token'] = credentials.access_token
+
+        # Get access token and google id
+        google_access_token = session['google_access_token']
+        google_email = session['google_email']
+
         return redirect(url_for('index'))
+
+    # Handle error if exists
     if (request.args.get('error')):
-        print request.args.get('error')
-        session['gcal_access_token'] = None
+        flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
+        session['google_access_token'] = None
         return redirect(url_for('index'))
-    print auth_uri
+
     return redirect(auth_uri)
 
 
@@ -50,52 +59,46 @@ def authenticate():
 @gcal.route('/get_calendar_list')
 @signin_required
 def get_calendar_list():
-    # Get user
-    users = mongo_connection.users
-    user = users.find_one({"name":"Arthur"}, { "calendars": 1 });
-    calendar_list = user.get('calendars')
+    # Get google id for user
+    google_id = session.get('google_id')
+
+    # Fetch user's calendars by google_id
+    calendars = users.find_one({"google_id": google_id}, {"calendars":1, "_id":0})
 
     # Query Google for calendars if no calendars in mongo db
-    if not calendar_list:
+    if not calendars:
         return refresh_calendar_list()
 
     # Return user's calendars
-    return jsonify({'calendars':calendar_list})
+    return jsonify({'calendars':calendars})
 
 
 # Refresh Google Calendar list
 @gcal.route('/refresh_calendar_list')
 @signin_required
 def refresh_calendar_list():
-    # Get credentials
-    credentials = storage.get()
-    http = httplib2.Http()
-    http = credentials.authorize(http)
+    google_access_token = session.get('google_access_token')      
 
-    # Get Google calendar API
-    service = build('calendar', 'v3', http=http)
+    # Get calendar list
+    req = requests.get('https://www.googleapis.com/calendar/v3/users/me/calendarList?' + urlencode({"access_token": google_access_token}))
+    req = req.json()
+
+    # Initialize return variables
+    error = False
     calendar_list = []
-    page_token = None
 
-    # Get Google calendar list
-    while True:
-        try:
-            calendars = service.calendarList().list(pageToken=page_token).execute()
-            for calendar in calendars['items']:
-                calendar_list.append({'calendar_name':calendar['summary'], 'calendar_id':calendar['id'], 'selected':False})
-            page_token = calendars.get('nextPageToken')
-            if not page_token:
-                break
-        except AccessTokenRefreshError:
-            session['gcal_access_token'] = None
-            return jsonify({'error':'AccessTokenRefreshError'})
+    # Get error and calendar list
+    if (req.get('error')):
+        error = True
+    else:
+        calendars = req.get('items')
+        for calendar_item in calendars:
+            calendar_list.append({'calendar_name':calendar_item.get('summary'), 
+                'calendar_id':calendar_item.get('id'), 
+                'selected':False})
 
-    # Update user in mongo db
-    users = mongo_connection.users
-    users.update({"name":"Arthur"}, {"$set": {"calendars":calendar_list}})
-
-    # Return Google calendar list
-    return jsonify({'calendars':calendar_list})
+    # Return Google calendar list and error
+    return jsonify({'error':error, 'calendars':calendar_list})
 
 # Get Google Calendar events
 @gcal.route('/get_calendar_events')

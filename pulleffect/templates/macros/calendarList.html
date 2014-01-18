@@ -4,8 +4,8 @@
     {% if session.signed_in %}
     var getGoogleCalendarList = function() {
         $.ajax({
-            type: "GET",
-            url: "{{ url_for('gcal.get_calendar_list') }}",
+            type: 'GET',
+            url: '{{ url_for("gcal.get_calendar_list") }}' ,
             success: displayCalendarList,
             error: function(err) {
                 console.log(err);
@@ -25,10 +25,9 @@
     }
 
     var displayCalendarList = function(response) {
-        if (response.error === 'AccessTokenRefreshError') {
-            return displayAlerts([
-                    ['error', 'Sorry! We need you to authenticate your account with Google Calendar again!']
-                ]);
+        if (response.error) {
+            $('#calendars').hide()
+            $('#google_authenticate').show()
         }
         if (response.calendars) {        
             var calendars = response.calendars;

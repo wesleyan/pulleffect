@@ -15,6 +15,8 @@ from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
+from markupsafe import Markup
+import urllib
 
 
 app = Flask(__name__)
@@ -46,6 +48,13 @@ def index():
 
     return render_template('index.html', dashboard=dashboard)
 
+@app.template_filter('urlencode')
+def urlencode_filter(s):
+    if type(s) == 'Markup':
+        s = s.unescape()
+    s = s.encode('utf8')
+    s = urllib.quote_plus(s)
+    return Markup(s)
 
 
 if __name__ == '__main__':

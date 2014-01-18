@@ -19,6 +19,7 @@ flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json',
     redirect_uri='http://localhost:5000/gplus/signin')
 auth_uri = flow.step1_get_authorize_url()
 
+users = mongo_connection.users
 
 # Sign in user
 @gplus.route('/signin')
@@ -32,35 +33,40 @@ def signin():
         google_refresh_token = credentials.refresh_token
         google_id = credentials.id_token["sub"]
 
-        # Get users collection
-        users = mongo_connection.users
-
         # Fetch user from mongodb
         user = users.find_one({"google_id":google_id})
 
-        # Sign in case
-        if user != None:
-            google_email = user["google_email"]
-            google_name = user["google_name"]
-            # Make sure we don't overwrite refresh_token with None object
-            if google_refresh_token == None:
-            	google_refresh_token = user["google_refresh_token"]
-                users.update({"google_id":google_id}, {"$set": {"google_access_token":google_access_token, "google_refresh_token":google_refresh_token}})
-
         # Sign up case
-        else: 
+        if user is None:
             # Get user's email and user name 
             req = requests.get('https://www.googleapis.com/plus/v1/people/' + str(google_id) + '?' + urlencode({"access_token": google_access_token}))
             req = req.json()
+
+            # TODO: address edge case when people have more than one email?
             google_email = req["emails"].pop()["value"]
             google_name = req["displayName"]
-            users.insert({"google_id":google_id, "google_access_token":google_access_token, "google_refresh_token":google_refresh_token, "google_email":google_email, "google_name":google_name})
+            users.insert({"google_id":google_id, "google_refresh_token":google_refresh_token, "google_email":google_email, "google_name":google_name})
+
+        # Sign in case
+        else: 
+            google_email = user.get("google_email")
+            google_name = user.get("google_name")
+            # Make sure we don't overwrite refresh_token with None object
+            if google_refresh_token == None:
+                google_refresh_token = user.get("google_refresh_token")
+            users.update({"google_id":google_id}, {"$set": {"google_refresh_token":google_refresh_token}})
+
 
         session['signed_in'] = True 
+
         session['google_email'] = google_email
-        session["google_name"] = google_name
+        session['google_name'] = google_name
+        session['gcal_access_token'] = google_access_token
+        session['google_id'] = google_id
         flash('Greetings, ' + google_name, 'success')
         return redirect(url_for('index'))
+
+    # Handle error
     if (request.args.get('error')):
     	flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gplus_access_token'] = None

@@ -1,4 +1,4 @@
-{% macro preferences(dash) -%}
+{% macro preferences(dashboard) -%}
 <script>
 
  {# Alert stuff #}
@@ -73,6 +73,9 @@
     
       if (document.cookie){
         dash = getCookie();
+      }
+      else{
+        dash = {{dashboard | tojson }}
       }
       
 

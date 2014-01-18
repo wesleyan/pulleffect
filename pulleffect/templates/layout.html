@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pull&#9744;Effect</title>
+    <title>Pull&#9900;Effect</title>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 <body>
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
-            <a class="navbar-brand" href="#">Pull&#9744;Effect</a>
+            <a class="navbar-brand" href="#">Pull&#9900;Effect</a>
             {% if session.signed_in %}
             <!-- Configure button -->
             <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
@@ -79,11 +79,13 @@
                             <div class="tab-pane fade active in" id="google_config">
                                 {% if session.gcal_access_token %}
                                 <!-- Refresh Google calendar list -->
+                                <div id="calendars">
                                 <button onclick="refreshGoogleCalendarList()" type="submit" class="btn btn-success pull-right" title="Refresh List" alt="Refresh List"><span class="fa fa-refresh"/></button>
                                 <div class="alert alert-info alert-dismissable">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     If you have new calendars that don't appear, click the refresh button.</div>
                                 <div id="google_calendar_list"></div>
+                                </div>
                                 {% else %}
                                 <!-- Fetch Google Calendar list -->
                                 <div id="google_authenticate">
@@ -122,17 +124,19 @@
     </div>
 
 
-  {# Import javascript macros #}
+    {# Import javascript macros #}
+    
 
-  {% from "macros/preferences.html" import preferences %}
-  {{preferences(dashboard | tojson) }}
+    {% from "macros/preferences.html" import preferences %}
+    {{ preferences(dashboard) }}
 
-  {% from "macros/calendarEvents.html" import eventScripts %}
-  {{eventScripts()}}
+    {% if session.signed_in %}
+    {% from "macros/calendarEvents.html" import eventScripts %}
+    {{eventScripts()}}
 
-  {% from "macros/calendarList.html" import calendarListScripts %}
-  {{calendarListScripts()}}
-
+    {% from "macros/calendarList.html" import calendarListScripts %}
+    {{calendarListScripts()}}
+    {% endif %}
 
 </body>
 
