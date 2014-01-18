@@ -29,7 +29,7 @@
                 <span class="fa fa-repeat" />
             </button> -->
             <!-- Form for signing out -->
-            <form id="signout" action="{{ url_for('user.signout') }}" method=post class="navbar-form pull-right" role="form">
+            <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
                 <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
                     <span class="fa fa-sign-out" />
                 </button>
@@ -67,11 +67,6 @@
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     If you have new calendars that don't appear, click the refresh button.</div>
                                 <div id="google_calendar_list"></div>
-{#
-<!--                                     <form action="{{ url_for('gcal', task='authenticate') }}" method=get role="form">
-                                        <button type="submit" class="btn btn-success" data-toggle="tooltip" title="Update List" alt="Update List"><span class="fa fa-refresh" > Update List</span></button>
-                                    </form> -->
-                                    #}
                                 {% else %}
                                 <!-- Fetch Google Calendar list -->
                                 <div id="google_authenticate">
@@ -79,7 +74,6 @@
                                     <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
                                         <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button>
                                     </form>
-<!--                                     <button onclick="getGoogleCalendarList()" type="submit" class="btn btn-info center-block" title="Google Calendars" alt="Google Calendars"><span class="fa fa-calendar" /> Google Calendars</button> -->
                                 </div>
                                 {% endif %}
                             </div>
@@ -145,35 +139,6 @@
     }
     {# End alert stuff #}
 
-    {# User authentication stuff #}
-    // Sign in Pull Effect user
-    var signIn = function() {
-        var username = $("input[name='username']").val();
-        var password = $("input[name='password']").val();
-        $.ajax({
-            type: "POST",
-            url: "{{ url_for('user.signin') }}",
-            data: JSON.stringify({
-                u: username,
-                p: password
-            }),
-            contentType: 'application/json;charset=UTF-8',
-            success: function(result) {
-                if (result.alert)
-                    return displayAlerts(result.alert);
-                if (result.redirect)
-                    return window.location.replace(result.redirect);
-                return;
-            },
-            error: function(err) {
-                return displayAlerts([
-                    ['error', 'We seem to have encountered an unexpected error! Please try again or contact the management.']
-                ]);
-            }
-        });
-    }
-    {# End user authentication stuff #}
-
     {# Configuration stuff #}
     {% if session.signed_in %}
     var getGoogleCalendarList = function() {
@@ -222,7 +187,9 @@
 
     $(function() {
         displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
+        {% if session.signed_in %}
         getGoogleCalendarList();
+        {% endif %}
     });
     {# End configuration stuff #}
 

@@ -8,15 +8,18 @@
 
 # from sqlite3 import dbapi2 as sqlite3
 # from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, json, jsonify, make_response
-
-from flask import Flask, render_template
+from flask import Flask
+from flask import render_template
+from flask import session
 from pulleffect.lib.google.gcal import gcal
-from pulleffect.lib.user.user import user
+from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
+import random
+import string
 
 app = Flask(__name__)
 app.register_blueprint(gcal, url_prefix='/gcal')
-app.register_blueprint(user, url_prefix='/user')
+app.register_blueprint(gplus, url_prefix='/gplus')
 
 # print app.url_map
 
@@ -41,5 +44,5 @@ def index():
 
 
 if __name__ == '__main__':
-    init_db()
+    # init_db()
     app.run()
