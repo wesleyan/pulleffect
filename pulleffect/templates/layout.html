@@ -21,13 +21,13 @@
                 <span class="fa fa-gears" />
             </button>
             <!-- Undo button -->
-            <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
+<!--             <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
                 <span class="fa fa-rotate-left" />
-            </button>
+            </button> -->
             <!-- Redo button-->
-            <button type="button" class="btn btn-success navbar-btn" title="Redo" alt="Redo">
+<!--             <button type="button" class="btn btn-success navbar-btn" title="Redo" alt="Redo">
                 <span class="fa fa-repeat" />
-            </button>
+            </button> -->
             <!-- Form for signing out -->
             <form id="signout" action="{{ url_for('user.signout') }}" method=post class="navbar-form pull-right" role="form">
                 <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
@@ -76,7 +76,7 @@
                                 <!-- Fetch Google Calendar list -->
                                 <div id="google_authenticate">
                                     <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
-                                    <form action="{{ url_for('gcal', task='authenticate') }}" method="get" role="form">
+                                    <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
                                         <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button>
                                     </form>
 <!--                                     <button onclick="getGoogleCalendarList()" type="submit" class="btn btn-info center-block" title="Google Calendars" alt="Google Calendars"><span class="fa fa-calendar" /> Google Calendars</button> -->

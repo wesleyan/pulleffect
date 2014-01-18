@@ -32,12 +32,12 @@ app.config.from_envvar('PULLEFFECT_SETTINGS', silent=True)
 
 
 @app.route('/')
-def show_entries():
+def index():
     # db = get_db()
     # cur = db.execute('select title, text from entries order by id desc')
     # entries = cur.fetchall()
     # return render_template('show_entries.html', entries=entries)
-    return render_template('signin.html')
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

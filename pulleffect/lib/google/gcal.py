@@ -1,9 +1,17 @@
 from apiclient.discovery import build
-from flask import Blueprint, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint
+from flask import jsonify
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import session
+from flask import url_for
 import httplib2
-from oauth2client.client import flow_from_clientsecrets, AccessTokenRefreshError
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import AccessTokenRefreshError
 from oauth2client.file import Storage
-from pulleffect.lib.utilities import mongo_connection, signin_required
+from pulleffect.lib.utilities import mongo_connection
+from pulleffect.lib.utilities import signin_required
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
@@ -19,15 +27,18 @@ storage = Storage('./pulleffect/config/credentials_file')
 # Get access token for Google Calendar
 @gcal.route('/authenticate')
 @signin_required
-def calendar_authenticate():
+def authenticate():
     if (request.args.get('code')):
+        print request.args.get('code')
         credentials = flow.step2_exchange(request.args.get('code'))
         session['gcal_access_token'] = credentials.access_token
         storage.put(credentials)
-        return redirect(url_for('show_entries'))
+        return redirect(url_for('index'))
     if (request.args.get('error')):
+        print request.args.get('error')
         session['gcal_access_token'] = None
-        return redirect(url_for('show_entries'))
+        return redirect(url_for('index'))
+    print auth_uri
     return redirect(auth_uri)
 
 
@@ -59,6 +70,7 @@ def refresh_calendar_list():
 
     # Get Google calendar API
     service = build('calendar', 'v3', http=http)
+    print service
     calendar_list = []
     page_token = None
 
