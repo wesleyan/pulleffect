@@ -31,6 +31,14 @@
 .flap>span:hover {
     color:gray;
 }
+#gbutton {
+    font-size: 40px;
+}
+#ims {
+    display: block;
+    margin-right: auto;
+    margin-left:auto;
+}
 .modal-body {
     padding-top:10px;
     height:350px;
@@ -59,6 +67,7 @@
 #signout {
     display:inline;
     padding:0px;
+    margin-left:5px;
 }
 #signin {
     margin-top:30px;
