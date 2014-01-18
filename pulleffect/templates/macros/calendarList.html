@@ -25,7 +25,9 @@
     }
 
     var displayCalendarList = function(response) {
-        if (response.error) {
+        console.log(response.error)
+        console.log("response.error")
+        if (response.error == true) {
             $('#calendars').hide()
             $('#google_authenticate').show()
         }

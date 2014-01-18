@@ -38,18 +38,13 @@ def authenticate():
     # Exchange code if exists
     if (request.args.get('code')):
         credentials = flow.step2_exchange(request.args.get('code'))
-        session['google_access_token'] = credentials.access_token
-
-        # Get access token and google id
-        google_access_token = session['google_access_token']
-        google_email = session['google_email']
-
+        session['gcal_access_token'] = credentials.access_token
         return redirect(url_for('index'))
 
     # Handle error if exists
     if (request.args.get('error')):
         flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
-        session['google_access_token'] = None
+        session['gcal_access_token'] = None
         return redirect(url_for('index'))
 
     return redirect(auth_uri)
@@ -77,10 +72,10 @@ def get_calendar_list():
 @gcal.route('/refresh_calendar_list')
 @signin_required
 def refresh_calendar_list():
-    google_access_token = session.get('google_access_token')      
+    gcal_access_token = session.get('gcal_access_token')      
 
     # Get calendar list
-    req = requests.get('https://www.googleapis.com/calendar/v3/users/me/calendarList?' + urlencode({"access_token": google_access_token}))
+    req = requests.get('https://www.googleapis.com/calendar/v3/users/me/calendarList?' + urlencode({"access_token": gcal_access_token}))
     req = req.json()
 
     # Initialize return variables

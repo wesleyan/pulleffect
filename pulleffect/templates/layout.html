@@ -86,9 +86,16 @@
                                     If you have new calendars that don't appear, click the refresh button.</div>
                                 <div id="google_calendar_list"></div>
                                 </div>
-                                {% else %}
                                 <!-- Fetch Google Calendar list -->
-                                <div id="google_authenticate">
+                                <div id="google_authenticate" style="display:none">
+                                    <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
+                                    <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
+                                        <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                                                <!-- Fetch Google Calendar list -->
+                                <div id="google_authenticate" style="display:none">
                                     <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                     <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
                                         <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button>
