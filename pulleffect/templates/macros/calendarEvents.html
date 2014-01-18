@@ -4,7 +4,7 @@ var getGoogleCalendarEvents = function() {
 
     $.ajax({
         type: "GET",
-        url: "{{ url_for('gcal.get_calendar_events') }}",
+        url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + $('label.active input').val(),
         success: displayEvents,
         error: function(err) {
             console.log(err);

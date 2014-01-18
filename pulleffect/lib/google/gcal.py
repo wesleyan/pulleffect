@@ -99,20 +99,21 @@ def refresh_calendar_list():
 @gcal.route('/get_calendar_events')
 @signin_required
 def get_calendar_events():
+    # Get calender id
+    cal_id = request.args.get('cal_id')
+    cal_name = request.args.get('cal_name')
 
-    credentials = storage.get()
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-    service = build('calendar', 'v3', http=http)
+    # Stupid hack to get url encoding
+    cal_id = urlencode({'cal':cal_id})[4:];    
 
-    page_token = None
-    calID = 'jlashner@gmail.com'
-    
+    # Get gcal access_token
+    gcal_access_token = session.get('gcal_access_token')
+
     min_time = strict_rfc3339.now_to_rfc3339_localoffset()
 
-    print min_time
+    # service = build('calendar', 'v3', 'https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token}))
 
-    events = service.events().list(calendarId=calID, pageToken=page_token, orderBy="startTime", singleEvents=True, timeMin=min_time).execute()
-    return jsonify({'calendar_events':events})
-    
-
+    req = requests.get('https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token, 'maxResults': 5, 'orderBy': 'startTime', 'singleEvents':True, 'timeMin': min_time, 'fields': 'items(end,start,summary,description),summary'})  )
+    # events = service.events().list(calendarId=cal_id, maxResults=5).execute()
+    print events
+    return jsonify({'calendar_events':req.json()})

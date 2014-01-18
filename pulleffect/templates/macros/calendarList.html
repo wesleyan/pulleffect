@@ -37,7 +37,7 @@
             var btn_group_vertical = $('<div/>', {'class': 'btn-group-vertical', 'data-toggle':'buttons'});
 
             for (var i = 0; i < calendars.length; i++) {
-                btn_group_vertical.append('<div class="checkbox btn btn-info ><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
+                btn_group_vertical.append('<label class="btn btn-primary"><input type="radio" name="options" id="option1" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '</label>')
             }
             $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
             return;
