@@ -19,7 +19,7 @@ storage = Storage('./pulleffect/config/credentials_file')
 # Get access token for Google Calendar
 @gcal.route('/authenticate')
 @signin_required
-def calendar_authenticate():
+def authenticate():
     if (request.args.get('code')):
         credentials = flow.step2_exchange(request.args.get('code'))
         session['gcal_access_token'] = credentials.access_token
