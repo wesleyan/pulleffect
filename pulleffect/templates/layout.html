@@ -9,10 +9,11 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-
-
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
+    
+  
 </head>
-{% from 'macros/layout.js' import layout with context %}
+{#{% from 'macros/layout.js' import layout with context %}#}
 
 <body>
     <nav class="navbar navbar-default" role="navigation">
@@ -24,11 +25,11 @@
                 <span class="fa fa-gears" />
             </button>
             <!-- Undo button -->
-            <!--             <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
+<!--             <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
                 <span class="fa fa-rotate-left" />
             </button> -->
             <!-- Redo button-->
-            <!--             <button type="button" class="btn btn-success navbar-btn" title="Redo" alt="Redo">
+<!--             <button type="button" class="btn btn-success navbar-btn" title="Redo" alt="Redo">
                 <span class="fa fa-repeat" />
             </button> -->
             <!-- Form for signing out -->
@@ -46,8 +47,15 @@
     </a>
     {% endif %}
     <div id="alerts"></div>
+
+   <div class="panel panel-default">
+    <table class="table table-striped" id="eventsTable">
+    </table>
+
+
     <div class="container">
-        {% block body %}{% endblock %} {% if session.signed_in %}
+        {% block body %}{% endblock %}
+        {% if session.signed_in %}
         <div class="modal fade" id="configure" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -57,18 +65,14 @@
                     </div>
                     <div class="modal-body">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#google_config" data-toggle="tab">Google</a>
-                            </li>
-                            <li class=""><a href="#profile" data-toggle="tab">Profile</a>
-                            </li>
+                            <li class="active"><a href="#google_config" data-toggle="tab">Google</a></li>
+                            <li class=""><a href="#profile" data-toggle="tab">Profile</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="google_config">
                                 {% if session.gcal_access_token %}
                                 <!-- Refresh Google calendar list -->
-                                <button onclick="refreshGoogleCalendarList()" type="submit" class="btn btn-success pull-right" title="Refresh List" alt="Refresh List">
-                                    <span class="fa fa-refresh" />
-                                </button>
+                                <button onclick="refreshGoogleCalendarList()" type="submit" class="btn btn-success pull-right" title="Refresh List" alt="Refresh List"><span class="fa fa-refresh"/></button>
                                 <div class="alert alert-info alert-dismissable">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     If you have new calendars that don't appear, click the refresh button.</div>
@@ -78,8 +82,7 @@
                                 <div id="google_authenticate">
                                     <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                     <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
-                                        <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar">
-                                            <span class="fa fa-calendar" />Google Calendar</button>
+                                        <button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button>
                                     </form>
                                 </div>
                                 {% endif %}
@@ -97,7 +100,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Close</button>
-                        <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
+                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -109,10 +112,11 @@
             {% block maincontent %} {% endblock %}
         </div>
     </div>
-    <script>
-    {#
-        Alert stuff#
-    }
+  <script>
+
+
+
+    {# Alert stuff #}
     // A helper function for displayAlerts function
     var getAlertType = function(alert) {
         switch (alert[0]) {
@@ -125,191 +129,202 @@
             default:
                 return 'info';
         }
+    }
+    // Display alerts after events
+    var displayAlerts = function(alerts) {
+        if (alerts.length == 0)
+            return;
 
-        // Display alerts after events
-        var displayAlerts = function(alerts) {
-            if (alerts.length == 0)
-                return;
+        var alert;
 
-            var alert;
+        for (var i = 0; alerts.length > i; i++) {
+            alert = $('<div class="alert alert-' + getAlertType(alerts[i]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alerts[i][1] + '</div>')
+                .hide()
+                .delay(500 * (i))
+                .slideDown(500)
+                .delay(10000 * (i + 1))
+                .slideUp(500, function() {
+                    $(this).remove();
+                });
+            $('#alerts').append(alert);
+        }
+    }
+    {# End alert stuff #}
 
-            for (var i = 0; alerts.length > i; i++) {
-                alert = $('<div class="alert alert-' + getAlertType(alerts[i]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alerts[i][1] + '</div>')
-                    .hide()
-                    .delay(500 * (i))
-                    .slideDown(500)
-                    .delay(10000 * (i + 1))
-                    .slideUp(500, function() {
-                        $(this).remove();
-                    });
-                $('#alerts').append(alert);
+    {# Configuration stuff #}
+    {% if session.signed_in %}
+    var getGoogleCalendarList = function() {
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('gcal.get_calendar_list') }}",
+            success: displayCalendarList,
+            error: function(err) {
+                console.log(err);
             }
-        } {#
-            End alert stuff#
+        });
+    }
+
+    var refreshGoogleCalendarList = function() {
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('gcal.refresh_calendar_list') }}",
+            success: displayCalendarList,
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+
+    var getGoogleCalendarEvents = function(){
+
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('gcal.get_calendar_events') }}",
+            success: displayEvents,
+            error: function(err) {
+                console.log(err);
+            }
+        });
         }
 
-        {#
-            Configuration stuff#
-        } { %
-            if session.signed_in %
-        }
-        var getGoogleCalendarList = function() {
-            $.ajax({
-                type: "GET",
-                url: "{{ url_for('gcal.get_calendar_list') }}",
-                success: displayCalendarList,
-                error: function(err) {
-                    console.log(err);
-                }
-            });
-        }
+    var displayEvents = function(response){
+       
+        var events = response.calendar_events.items;
 
-        var refreshGoogleCalendarList = function() {
-            $.ajax({
-                type: "GET",
-                url: "{{ url_for('gcal.refresh_calendar_list') }}",
-                success: displayCalendarList,
-                error: function(err) {
-                    console.log(err);
-                }
-            });
+        $("#eventsTable").empty();
+
+        for (i=0; i < 5 && i < events.length; i++){
+            var summary = events[i].summary;
+            var start = events[i].start.dateTime;
+            var end = events[i].end.dateTime;
+
+          //  console.log(summary + ", " + moment(start).format("h:mm A") + ", " + moment(end).format("h:mm A"));
+
+            htmlStr = "<tr>";
+            htmlStr += "<td>" + summary + "</td>";
+            htmlStr += "<td>" + moment(start).format("ddd  h:mm A") + "</td>";
+            htmlStr += "<td>" + moment(end).format("ddd  h:mm A") + "</td>";
+            htmlStr += "</tr>";
+
+            $("#eventsTable").append(htmlStr);
+
         }
 
-        var displayCalendarList = function(response) {
-            if (response.error === 'AccessTokenRefreshError') {
-                $('#google_calendar_list').empty();
+    }
 
-                return displayAlerts([
+    var displayCalendarList = function(response) {
+        if (response.error === 'AccessTokenRefreshError') {
+            return displayAlerts([
                     ['error', 'Sorry! We need you to authenticate your account with Google Calendar again!']
                 ]);
-            }
-            if (response.calendars) {
-                var calendars = response.calendars;
-                var btn_group_vertical = $('<div/>', {
-                    'class': 'btn-group-vertical',
-                    'data-toggle': 'buttons'
-                });
-
-                for (var i = 0; i < calendars.length; i++) {
-                    btn_group_vertical.append('<div class="checkbox btn btn-info"><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
-                }
-                $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
-                return;
-            }
-            return displayAlerts([
-                ['error', 'Sorry! We seem to have encountered an unknown error!']
-            ]);
-        } { % endif %
         }
+        if (response.calendars) {        
+            var calendars = response.calendars;
+            var btn_group_vertical = $('<div/>', {'class': 'btn-group-vertical', 'data-toggle':'buttons'});
 
-        $(function() {
-            displayAlerts({
-                {
-                    get_flashed_messages(with_categories = true) | tojson
-                }
-            }); { %
-                if session.signed_in %
+            for (var i = 0; i < calendars.length; i++) {
+                btn_group_vertical.append('<div class="checkbox btn btn-info ><label><input class="hidden" type="checkbox" value="' + calendars[i].calendar_id + '">' + calendars[i].calendar_name + '<label></div>');
             }
-            getGoogleCalendarList(); { % endif %
-            }
-        });
+            $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
+            return;
+        } 
+        return displayAlerts([
+            ['error', 'Sorry! We seem to have encountered an unknown error!']
+        ]);
+    }
+    {% endif %}
+
+    $(function() {
+        displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
+        {% if session.signed_in %}
+        getGoogleCalendarList();
+        {% endif %}
+    });
 
 
-        {#
-            config_panel#
-        }
-        var updateCookies = function() {
-            document.cookie = "dashboard=" + JSON.stringify(dash);
-        }
+    {#config_panel#}
+    var updateCookies = function(){
+        document.cookie = "dashboard=" + JSON.stringify(dash);
+    }
 
-        var getCookie = function() {
+    var getCookie = function(){
             return $.parseJSON(document.cookie.substring(10, document.cookie.length));
+    }
+
+    dash = {{dashboard | tojson}}
+    $("#configure").on('hide.bs.modal', function (e) {
+        
+        dash.gen_prefs.config_panel = false;
+        console.log(dash.gen_prefs.config_panel);
+
+        updateCookies()
+   });
+    $("#configure").on('show.bs.modal', function (e) {
+    
+        dash.gen_prefs.config_panel = true;
+        console.log(dash.gen_prefs.config_panel);
+
+        updateCookies();
+    });
+
+    
+
+
+
+    var loadPrefs = function(){
+      console.log(document.cookie);
+      if (document.cookie){
+        dash = getCookie();
+      }
+      else
+        dash = {{dashboard | tojson}};
+
+      if (dash.gen_prefs.config_panel==true){
+         $("#configure").modal('show');
+
+      }
+
+    }
+    loadPrefs();
+
+
+    {# Drawer stuff #}
+    // Navbar drawer function
+    $('.flap>span').click(function() {
+
+        // Close drawer
+        if ($('.flap>span').hasClass('close-drawer')) {
+            $('nav:first').css({
+                'min-height': '0px'
+            }).slideUp(250, function() {
+                $('.flap>span')
+                    .removeClass('close-drawer')
+                    .addClass('open-drawer')
+                    .tooltip('hide')
+                    .attr('data-original-title', 'Open Drawer')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+            });
         }
 
-        dash = {
-            {
-                dashboard | tojson
-            }
-        }
-        $("#configure").on('hide.bs.modal', function(e) {
-
-            dash.gen_prefs.config_panel = false;
-            console.log(dash.gen_prefs.config_panel);
-
-            updateCookies()
-        });
-        $("#configure").on('show.bs.modal', function(e) {
-
-            dash.gen_prefs.config_panel = true;
-            console.log(dash.gen_prefs.config_panel);
-
-            updateCookies();
-        });
-
-
-
-
-
-        var loadPrefs = function() {
-            console.log(document.cookie);
-            if (document.cookie) {
-                dash = getCookie();
-            } else
-                dash = {
-                    {
-                        dashboard | tojson
-                    }
-                };
-
-            if (dash.gen_prefs.config_panel == true) {
-                $("#configure").modal('show');
-
-            }
-
-        }
-        loadPrefs();
-
-
-
-        {#
-            Drawer stuff#
-        }
-        // Navbar drawer function
-        $('.flap>span').click(function() {
-
-            // Close drawer
-            if ($('.flap>span').hasClass('close-drawer')) {
-                $('nav:first').css({
-                    'min-height': '0px'
-                }).slideUp(250, function() {
-                    $('.flap>span')
-                        .removeClass('close-drawer')
-                        .addClass('open-drawer')
-                        .tooltip('hide')
-                        .attr('data-original-title', 'Open Drawer')
-                        .tooltip('fixTitle')
-                        .tooltip('show');
+        // Open drawer
+        else {
+            $('nav:first').slideDown(250, function() {
+                $(this).css({
+                    'min-height': '50px'
                 });
-            }
-
-            // Open drawer
-            else {
-                $('nav:first').slideDown(250, function() {
-                    $(this).css({
-                        'min-height': '50px'
-                    });
-                    $('.flap>span')
-                        .removeClass('open-drawer')
-                        .addClass('close-drawer')
-                        .tooltip('hide')
-                        .attr('data-original-title', 'Close Drawer')
-                        .tooltip('fixTitle')
-                        .tooltip('show');
-                });
-            }
-        }); {#
-            End drawer stuff#
+                $('.flap>span')
+                    .removeClass('open-drawer')
+                    .addClass('close-drawer')
+                    .tooltip('hide')
+                    .attr('data-original-title', 'Close Drawer')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+            });
         }
+    });
+    {# End drawer stuff #}      
     </script>
 
 

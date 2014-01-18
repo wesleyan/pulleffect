@@ -66,7 +66,6 @@ def refresh_calendar_list():
     credentials = storage.get()
     http = httplib2.Http()
     http = credentials.authorize(http)
-    print http
 
     # Get Google calendar API
     service = build('calendar', 'v3', http=http)
@@ -84,11 +83,11 @@ def refresh_calendar_list():
                 break
         except AccessTokenRefreshError:
             session['gcal_access_token'] = None
-            return jsonify({'gcal_access':False, error':'AccessTokenRefreshError'})
+            return jsonify({'error':'AccessTokenRefreshError'})
 
     # Update user in mongo db
     users = mongo_connection.users
     users.update({"name":"Arthur"}, {"$set": {"calendars":calendar_list}})
 
     # Return Google calendar list
-    return jsonify({'gcal_access':True, calendars':calendar_list})
+    return jsonify({'calendars':calendar_list})
