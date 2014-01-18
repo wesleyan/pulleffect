@@ -9,6 +9,8 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    
 </head>
 
 <body>
@@ -102,7 +104,9 @@
             {% block maincontent %} {% endblock %}
         </div>
     </div>
-    <script>
+  <script>
+
+
 
     {# Alert stuff #}
     // A helper function for displayAlerts function
@@ -191,7 +195,53 @@
         getGoogleCalendarList();
         {% endif %}
     });
-    {# End configuration stuff #}
+
+
+    {#config_panel#}
+    var updateCookies = function(){
+        document.cookie = "dashboard=" + JSON.stringify(dash);
+    }
+
+    var getCookie = function(){
+            return $.parseJSON(document.cookie.substring(10, document.cookie.length));
+    }
+
+    dash = {{dashboard | tojson}}
+    $("#configure").on('hide.bs.modal', function (e) {
+        
+        dash.gen_prefs.config_panel = false;
+        console.log(dash.gen_prefs.config_panel);
+
+        updateCookies()
+   });
+    $("#configure").on('show.bs.modal', function (e) {
+    
+        dash.gen_prefs.config_panel = true;
+        console.log(dash.gen_prefs.config_panel);
+
+        updateCookies();
+    });
+
+    
+
+
+
+    var loadPrefs = function(){
+      console.log(document.cookie);
+      if (document.cookie){
+        dash = getCookie();
+      }
+      else
+        dash = {{dashboard | tojson}};
+
+      if (dash.gen_prefs.config_panel==true){
+         $("#configure").modal('show');
+
+      }
+
+    }
+    loadPrefs();
+
 
 
     {# Drawer stuff #}
@@ -229,8 +279,10 @@
             });
         }
     });
-    {# End drawer stuff #}
+    {# End drawer stuff #}      
     </script>
+
+
 </body>
 
 </html>

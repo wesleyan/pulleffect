@@ -14,8 +14,7 @@ from flask import session
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
-import random
-import string
+
 
 app = Flask(__name__)
 app.register_blueprint(gcal, url_prefix='/gcal')
@@ -40,7 +39,12 @@ def index():
     # cur = db.execute('select title, text from entries order by id desc')
     # entries = cur.fetchall()
     # return render_template('show_entries.html', entries=entries)
-    return render_template('index.html')
+
+    dashboards = mongo_connection.dashboards
+    dashboard = dashboards.find_one({}, { "_id": 0 });
+
+    return render_template('index.html', dashboard=dashboard)
+
 
 
 if __name__ == '__main__':
