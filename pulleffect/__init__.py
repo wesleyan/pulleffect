@@ -11,6 +11,7 @@
 from flask import Flask
 from flask import render_template
 from flask import session
+from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
