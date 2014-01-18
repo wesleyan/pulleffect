@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pull&#8728;Effect</title>
+    <title>Pull&#9744;Effect</title>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 <body>
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
-            <a class="navbar-brand" href="#">Pull&#8728;Effect</a>
+            <a class="navbar-brand" href="#">Pull&#9744;Effect</a>
             {% if session.signed_in %}
             <!-- Configure button -->
             <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
@@ -33,11 +33,18 @@
                 <span class="fa fa-repeat" />
             </button> -->
             <!-- Form for signing out -->
-            <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
-                <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
-                    <span class="fa fa-sign-out" />
-                </button>
-            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <span class="navbar-text">{{ session.google_email }}</span>
+                </li>
+                <li>
+                    <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
+                        <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
+                            <span class="fa fa-sign-out" />
+                        </button>
+                    </form>
+                </li>
+            </ul>
             {% endif %}
         </div>
     </nav>
@@ -99,7 +106,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Cancel</button>
                         <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
                     </div>
                 </div>

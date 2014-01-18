@@ -14,6 +14,7 @@ from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
 import moment
 from datetime import datetime
+import requests
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
