@@ -48,10 +48,177 @@
     {% endif %}
     <div id="alerts"></div>
 
-   <div class="panel panel-default">
-    <table class="table table-striped" id="eventsTable">
-    </table>
+   <div class="col-md-6">
+    <table class="table table-hover table-striped table-bordered" id="eventsTable"></table>
+    <b>click me</b> to change the <span id ="tag"> html</span>
 
+
+<script>
+
+
+
+    
+
+    var board = ["","","","","","","","",""];
+
+    var turn=0;
+    console.log(turn);
+
+    function buttonClick(clicked_id) {
+
+        p1success = ["success","Congratulations player 1!"];
+        p2success = ["success", "Congratulations player 2!"];
+        position = parseInt(clicked_id); 
+
+        if(turn == 0) {
+            if(board[(position)] == ""){
+                board[(position)] = 1;
+                $('#'+clicked_id).text('X');
+                if (board[0] == 1 && board[1] == 1 && board[2] == 1) {
+                    console.log('woooo')
+                    return displayAlerts([p1success]);
+                }
+                else if(board[3] == 1 && board[4] == 1 && board[5] == 1) {
+                     
+                      return displayAlerts([p1success]);
+                }
+                else if(board[6] == 1 && board[7] == 1 && board[8] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[0] == 1 && board[3] == 1 && board[6] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[1] == 1 && board[4] == 1 && board[7] == 1) {
+                     return displayAlerts([p1success]);
+                }
+                else if(board[2] == 1 && board[5] == 1 && board[8] == 1) {
+                     return displayAlerts([p1success]);
+                 }
+                else if(board[0] == 1 && board[4] == 1 && board[8] == 1) {
+                    return displayAlerts([p1success]);
+                }
+                else if(board[2] == 1 && board[4] == 1 && board[6] == 1) {
+                     return displayAlerts([p1success]);
+                }
+
+            
+                                   
+
+
+
+
+                    turn = 1;
+                    clicked_id = 0;
+                    position = 0;
+                    
+        }
+    }
+        
+        
+        else if (turn == 1) {
+            if(board[(position)] == ""){
+                board[(position)] = 2;
+                $('#'+clicked_id).text('O');
+               
+                if (board[0] == 2 && board[1] == 2 && board[2] == 2) {
+                    return displayAlerts([p2success]);
+                }
+                else if(board[3] == 2 && board[4] == 2 && board[5] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[6] == 2 && board[7] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[0] == 2 && board[3] == 2 && board[6] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[1] == 2 && board[4] == 2 && board[7] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[2] == 2 && board[5] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[0] == 2 && board[4] == 2 && board[8] == 2) {
+                     return displayAlerts([p2success]);
+                }
+                else if(board[2] == 2 && board[4] == 2 && board[6] == 2) {
+                     return displayAlerts([p2success]);
+                }
+            
+                    
+
+
+
+
+                    turn = 0;
+                    clicked_id=0;
+                    position = 0;
+                }       
+            }
+    }
+
+
+
+    
+
+
+    </script>
+
+
+
+
+
+<div class="col-md-5 col-md-offset-9 tictactoe" style="height:200px;">
+    <div class="row">
+        <button id="0" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="1" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="2" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+    <div class="row">
+        <button id="3" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="4" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="5" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+    <div class="row">
+        <button id="6" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="7" class="col-md-4" onClick="buttonClick(this.id)"/>
+        <button id="8" class="col-md-4" onClick="buttonClick(this.id)"/>
+    </div>
+
+</div>
+
+                    <!-- <div class="row" style="height:33%">
+
+                        <button id="0" class="col-md-4 active" style="" onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="1" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="2" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                    </div>
+                    <div class="row" style="height:33%">
+                        <button id="3" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="4" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="5" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                    </div>
+                    <div class="row" style="height:34%">
+                        <button id="6" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="7" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                        <button id="8" class="col-md-4 active" style="border:solid color; height:100%"onClick="buttonClick(this.id)">
+                        </button>
+                    </div>
+                </div> -->
+    
+
+
+
+
+   
 
     <div class="container">
         {% block body %}{% endblock %}
