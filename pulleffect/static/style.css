@@ -37,6 +37,8 @@
 }
 .navbar {
     margin-bottom:0px;
+    background-color: silver;
+
 }
 .nav-tabs {
     margin-bottom:10px;
@@ -64,6 +66,15 @@
 #signin {
     margin-top:30px;
 }
+.col-md-5 button {
+    width: 80px;
+    height: 60px;
+    color: blue;
+    background-color: silver;
+
+
+}
+
 #alerts {
     z-index:9998;
     width:200px;
@@ -85,9 +96,12 @@
     margin-right:auto;
     margin-left:auto;
     text-align:center;
+
 }
 #google_config .alert .close {
     right:2px;
+}
+
 }
 [title] {
 	top:10px;
