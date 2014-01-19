@@ -1,0 +1,130 @@
+{% macro preferences(dashboard) -%}
+<script>
+
+ {# Alert stuff #}
+    // A helper function for displayAlerts function
+    var getAlertType = function(alert) {
+        switch (alert[0]) {
+            case 'success':
+                return 'success';
+            case 'error':
+                return 'danger';
+            case 'warning':
+                return 'warning';
+            default:
+                return 'info';
+        }
+    }
+    // Display alerts after events
+    var displayAlerts = function(alerts) {
+        if (alerts.length == 0)
+            return;
+
+        var alert;
+
+        for (var i = 0; alerts.length > i; i++) {
+            alert = $('<div class="alert alert-' + getAlertType(alerts[i]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alerts[i][1] + '</div>')
+                .hide()
+                .delay(500 * (i))
+                .slideDown(500)
+                .delay(10000 * (i + 1))
+                .slideUp(500, function() {
+                    $(this).remove();
+                });
+            $('#alerts').append(alert);
+        }
+    }
+    {# End alert stuff #}
+
+     $(function() {
+        displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
+        {% if session.signed_in %}
+        getGoogleCalendarList();
+        {% endif %}
+    });
+
+
+    {#config_panel#}
+    var updateCookies = function(){
+        document.cookie = "dashboard=" + JSON.stringify(dash);
+    }
+
+    var getCookie = function(){
+            return $.parseJSON(document.cookie.substring(10, document.cookie.length));
+    }
+
+    $("#configure").on('hide.bs.modal', function (e) {
+        
+        dash.gen_prefs.config_panel = false;
+        
+
+        updateCookies()
+   });
+    $("#configure").on('show.bs.modal', function (e) {
+    
+        dash.gen_prefs.config_panel = true;
+        
+
+        updateCookies();
+    });
+
+    
+    var loadPrefs = function(){
+    
+      if (document.cookie){
+        dash = getCookie();
+      }
+      else{
+        dash = {{dashboard | tojson }}
+      }
+      
+
+      if (dash.gen_prefs.config_panel==true){
+         $("#configure").modal('show');
+
+      }
+
+    }
+    loadPrefs();
+
+
+    {# Drawer stuff #}
+    // Navbar drawer function
+    $('.flap>span').click(function() {
+
+        // Close drawer
+        if ($('.flap>span').hasClass('close-drawer')) {
+            $('nav:first').css({
+                'min-height': '0px'
+            }).slideUp(250, function() {
+                $('.flap>span')
+                    .removeClass('close-drawer')
+                    .addClass('open-drawer')
+                    .tooltip('hide')
+                    .attr('data-original-title', 'Open Drawer')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+            });
+        }
+
+        // Open drawer
+        else {
+            $('nav:first').slideDown(250, function() {
+                $(this).css({
+                    'min-height': '50px'
+                });
+                $('.flap>span')
+                    .removeClass('open-drawer')
+                    .addClass('close-drawer')
+                    .tooltip('hide')
+                    .attr('data-original-title', 'Close Drawer')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+            });
+        }
+    });
+    {# End drawer stuff #}      
+
+
+</script>
+{%- endmacro %}
