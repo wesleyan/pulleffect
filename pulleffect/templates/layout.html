@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pull&#9900;Effect</title>
+    <title>Pull&bull;Effect</title>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -16,12 +16,8 @@
 <body>
     <nav class="navbar navbar-default" role="navigation">
         <div class="container">
-            <a class="navbar-brand" href="#">Pull&#9900;Effect</a>
+            <a class="navbar-brand" href="#">Pull <span class="fa fa-chevron-circle-down"  /> Effect</a>
             {% if session.signed_in %}
-            <!-- Configure button -->
-            <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
-                <span class="fa fa-gears" />
-            </button>
             <!-- Undo button -->
 <!--             <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
                 <span class="fa fa-rotate-left" />
@@ -34,6 +30,12 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <span class="navbar-text">{{ session.google_email }}</span>
+                </li>
+                <li>
+                    <!-- Configure button -->
+                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
+                        <span class="fa fa-gears" />
+                    </button>
                 </li>
                 <li>
                     <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
