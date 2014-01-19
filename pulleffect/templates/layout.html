@@ -38,6 +38,11 @@
                     </button>
                 </li>
                 <li>
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="loadTicTacToe()">
+                        <span class="fa fa-gears" />
+                    </button>
+                </li>
+                <li>
                     <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
                         <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
                             <span class="fa fa-sign-out" />
@@ -54,174 +59,6 @@
     </a>
     {% endif %}
     <div id="alerts"></div>
-<!-- 
-   <div class="panel panel-default">
-    <table class="table table-striped" id="eventsTable">
-    </table> -->
-
-
-<script>
-
-
-
-    
-
-    var board = ["","","","","","","","",""];
-
-    var turn=0;
-
-    function buttonClick(clicked_id) {
-
-        p1success = ["success","Congratulations player 1!"];
-        p2success = ["success", "Congratulations player 2!"];
-        position = parseInt(clicked_id); 
-
-        if(turn == 0) {
-            if(board[(position)] == ""){
-                board[(position)] = 1;
-                $('#'+clicked_id).text('X');
-                if (board[0] == 1 && board[1] == 1 && board[2] == 1) {
-                    
-                    return displayAlerts([p1success]);
-                }
-                else if(board[3] == 1 && board[4] == 1 && board[5] == 1) {
-                     
-                      return displayAlerts([p1success]);
-                }
-                else if(board[6] == 1 && board[7] == 1 && board[8] == 1) {
-                     return displayAlerts([p1success]);
-                }
-                else if(board[0] == 1 && board[3] == 1 && board[6] == 1) {
-                     return displayAlerts([p1success]);
-                }
-                else if(board[1] == 1 && board[4] == 1 && board[7] == 1) {
-                     return displayAlerts([p1success]);
-                }
-                else if(board[2] == 1 && board[5] == 1 && board[8] == 1) {
-                     return displayAlerts([p1success]);
-                 }
-                else if(board[0] == 1 && board[4] == 1 && board[8] == 1) {
-                    return displayAlerts([p1success]);
-                }
-                else if(board[2] == 1 && board[4] == 1 && board[6] == 1) {
-                     return displayAlerts([p1success]);
-                }
-
-            
-                                   
-
-
-
-
-                    turn = 1;
-                    clicked_id = 0;
-                    position = 0;
-                    
-        }
-    }
-        
-        
-        else if (turn == 1) {
-            if(board[(position)] == ""){
-                board[(position)] = 2;
-                $('#'+clicked_id).text('O');
-               
-                if (board[0] == 2 && board[1] == 2 && board[2] == 2) {
-                    return displayAlerts([p2success]);
-                }
-                else if(board[3] == 2 && board[4] == 2 && board[5] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[6] == 2 && board[7] == 2 && board[8] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[0] == 2 && board[3] == 2 && board[6] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[1] == 2 && board[4] == 2 && board[7] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[2] == 2 && board[5] == 2 && board[8] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[0] == 2 && board[4] == 2 && board[8] == 2) {
-                     return displayAlerts([p2success]);
-                }
-                else if(board[2] == 2 && board[4] == 2 && board[6] == 2) {
-                     return displayAlerts([p2success]);
-                }
-            
-                    
-
-
-
-
-                    turn = 0;
-                    clicked_id=0;
-                    position = 0;
-                }       
-            }
-    }
-    function resetClick(reset_clicked) {
-            for (var i = 0; i<board.length; i++){
-                if (board[i] != "") {
-                    board[i] = "";
-                }
-
-                for(var j=0; j< board.length; j++) {
-                     $('#'+j).text('');
-                }                
-            
-                turn = 0;
-                position = 0;
-                clicked_id = 0;
-            }
-
-
-}    
-
-
-    </script>
-
-<video width="320" height="240" controls>
-  <source src="testVideo.mp4" type="video/mp4">
-  <source src="testVideo.ogg" type="video/ogg">
-  Your browser does not support the video tag.
-</video>
-
-
-
-<div class="col-md-5 col-md-offset-9 tictactoe" style="height:200px;">
-    <div class="row">
-        <button id="0" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="1" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="2" class="col-md-4" onClick="buttonClick(this.id)"/>
-    </div>
-    <div class="row">
-        <button id="3" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="4" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="5" class="col-md-4" onClick="buttonClick(this.id)"/>
-    </div>
-    <div class="row">
-        <button id="6" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="7" class="col-md-4" onClick="buttonClick(this.id)"/>
-        <button id="8" class="col-md-4" onClick="buttonClick(this.id)"/>
-    </div>
-
-
-</div>
-
-<div class="col-md-7 col-md-offset-9 reset" style="height:60px;">
-    <div class="row">
-        <button id="9" class="col-md-4" onClick="resetClick(true)"/>Reset
-    </div>
-</div>
-
-
-
-
-
-
    
 
     <div class="container">
@@ -275,7 +112,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Close">Cancel</button>
-                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Save changes</button>
+                        <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Load Calendar</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -286,9 +123,13 @@
         <div>
             {% block maincontent %}
             {% if session.signed_in %}
-            <div class="panel panel-default col-md-4" id="calendar">
+
+            <div class="Widgets"></div>
+           
+
+     <!--        <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
-            </table>
+            </table> -->
             {% endif %}
             {% endblock %}
         </div>
@@ -296,7 +137,9 @@
 
 
     {# Import javascript macros #}
-    
+    <script>
+        var dash = {{dashboard | tojson}}
+    </script>
 
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
@@ -305,9 +148,17 @@
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
+    {% from "macros/tictactoe.html" import tictactoe %}
+    {{tictactoe()}}
+
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
+
+ 
+
+    
     {% endif %}
+
 
 </body>
 

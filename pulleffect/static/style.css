@@ -114,10 +114,15 @@
 
 #calendar {
     margin-top: 10px;
-    height:300px;
-    overflow: auto;
+    height:250px;
+    overflow: none;
     padding-left:0px;
     padding-right:0px;
+}
+
+#tictac{
+    margin-top: 10px;
+    height:250px;
 }
 
 .event{
@@ -125,3 +130,24 @@
     font-size: 12px;
 }
 
+.centered{
+
+    text-align:center;
+    vertical-align:middle;
+    line-height:300px; 
+    transform:transformY(-50%);
+    
+}
+
+.tic{
+    height: 60px;
+}
+
+.reset{
+    height: 30px;
+    width: 70px;
+    position:relative;
+    left: 40%;
+    
+
+}
