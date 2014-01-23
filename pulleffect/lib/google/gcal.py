@@ -2,19 +2,13 @@ from apiclient.discovery import build
 from flask import Blueprint
 from flask import jsonify
 from flask import redirect
-from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
 import httplib2
 from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import AccessTokenRefreshError
-from oauth2client.file import Storage
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
-import moment
-from datetime import datetime
-from math import floor
 import strict_rfc3339 
 import requests
 from urllib import urlencode
@@ -67,7 +61,6 @@ def get_calendar_list():
     # Return user's calendars
     return jsonify({'calendars':calendars})
 
-
 # Refresh Google Calendar list
 @gcal.route('/refresh_calendar_list')
 @signin_required
@@ -111,9 +104,6 @@ def get_calendar_events():
 
     min_time = strict_rfc3339.now_to_rfc3339_localoffset()
 
-    # service = build('calendar', 'v3', 'https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token}))
-
     req = requests.get('https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token, 'maxResults': 5, 'orderBy': 'startTime', 'singleEvents':True, 'timeMin': min_time, 'fields': 'items(end,start,summary,description),summary'})  )
-    # events = service.events().list(calendarId=cal_id, maxResults=5).execute()
     # print events
     return jsonify({'calendar_events':req.json()})

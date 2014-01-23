@@ -18,14 +18,6 @@
         <div class="container">
             <a class="navbar-brand" href="#">Pull <span class="fa fa-tint"  /> Effect</a>
             {% if session.signed_in %}
-            <!-- Undo button -->
-<!--             <button type="button" class="btn btn-info navbar-btn" title="Undo" alt="Undo">
-                <span class="fa fa-rotate-left" />
-            </button> -->
-            <!-- Redo button-->
-<!--             <button type="button" class="btn btn-success navbar-btn" title="Redo" alt="Redo">
-                <span class="fa fa-repeat" />
-            </button> -->
             <!-- Form for signing out -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -154,11 +146,7 @@
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
 
- 
-
-    
     {% endif %}
-
 
 </body>
 

@@ -1,4 +1,4 @@
-{% macro calendarListScripts() -%}
+{% macro calendarListScripts() %}
 <script>
     {# Configuration stuff #}
     {% if session.signed_in %}
@@ -44,9 +44,8 @@
         } 
         return displayAlerts([
             ['error', 'Sorry! We seem to have encountered an unknown error!']
-        ]);
+            ]);
     }
-    // var getGoo
+    {% endif %}
 </script>
-{% endif %}
 {%- endmacro %}
