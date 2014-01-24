@@ -18,6 +18,8 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='messageQueue.js') }}"></script>
+
 </head>
 
 
@@ -34,12 +36,17 @@
                 <li>
                     <!-- Configure button -->
                     <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
-                        <span class="fa fa-gears" />
+                        <span class="fa fa-calendar" />
                     </button>
                 </li>
                 <li>
                     <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="loadTicTacToe()">
                         <span class="fa fa-gears" />
+                    </button>
+                </li>
+                                <li>
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="displayMessages()">
+                        <span class="fa fa-exclamation" />
                     </button>
                 </li>
                 <li>
