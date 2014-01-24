@@ -1,55 +1,60 @@
 {% macro eventScripts() -%}
 <script>
 
-var getGoogleCalendarEvents = function() {
+    var getGoogleCalendarEvents = function() {
 
-    console.log(dash)
-    newCal = {calID: $('label.active input').val()};
+        console.log(dash)
+        newCal = {calID: $('label.active input').val()};
 
-    $.ajax({
-        type: "GET",
-        url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + newCal.calID,
-        success: displayEvents,
-        error: function(err) {
-            console.log(err);
-        }
-    });
-}
-
-var displayEvents = function(response) {
-    console.log(response);
-    loadWidget();
-
-    var events = response.calendar_events.items;
-
-    $("#eventsTable").empty();
-
-    if (events.length == 0){
-        $('#eventsTable').replaceWith('<span><h3 class="centered">YOU DONE FUCKED UP</h3></span>');
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + newCal.calID,
+            success: displayEvents,
+            error: function(err) {
+                console.log(err);
+            }
+        });
     }
-    for (i = 0; i < 10 && i < events.length; i++) {
-        var summary = events[i].summary;
-        var start = events[i].start.dateTime;
-        var end = events[i].end.dateTime;
 
-        htmlStr = "<tr class='event'>";
-        htmlStr += "<td>" + summary + "</td>";
-        htmlStr += "<td>" + moment(start).format("MM/DD  h:mm A") + "</td>";
-        htmlStr += "<td>" + moment(end).format("MM/DD  h:mm A") + "</td>";
-        htmlStr += "</tr>";
+    var displayEvents = function(response) {
+        console.log(response);
+        loadWidget();
 
-        $("#eventsTable").append(htmlStr);
+        var events = response.calendar_events.items;
+
+        $("#eventsTable").empty();
+
+        if (events.length == 0){
+            $('#eventsTable').replaceWith($('<span/>').append($('<h3/>', {"class":"centered"}).text("YOU DONE FUCKED UP")));
+        }
+
+        var timeFormat = "MM/DD  h:mm A";
+
+        for (i = 0; i < 10 && i < events.length; i++) {
+            var tableRow = $('<tr/>', {"class": "event"});
+            var summaryCell = $('<td/>');
+            var beginCell = $('<td/>');
+            var endCell = $('<td/>');
+
+            var summary = events[i].summary;
+            var start = events[i].start.dateTime;
+            var end = events[i].end.dateTime;
+
+            tableRow
+                .append(summaryCell.text(summary))
+                .append(beginCell.text(moment(start).format(timeFormat)))
+                .append(endCell.text(moment(end).format(timeFormat)));
+
+        $("#eventsTable").append(tableRow);
     }
 
 }
 
 var loadWidget = function(){
-    $('.Widgets').append('\
-            <div class="panel panel-default col-md-4" id="calendar"> \
-            <table class="table table-striped" id="eventsTable"> \
-            </table>\
-            </div>'
-    )
+    var calendar = $('<div/>', {"class": "panel panel-default col-md-4", "id":"calendar"});
+    var table = $('<table/>', {"class":"table table-striped", "id":"eventsTable"});
+    calendar.append(table);
+    $('.Widgets').append(calendar);
 }
 
 </script>
