@@ -1,7 +1,6 @@
 {% macro eventScripts() -%}
 <script>
 
-
 var getGoogleCalendarEvents = function() {
 
     console.log(dash)
@@ -15,11 +14,7 @@ var getGoogleCalendarEvents = function() {
             console.log(err);
         }
     });
-
-    // dash.widgets.gcals.push(newCal);
-    // updateCookies();
 }
-
 
 var displayEvents = function(response) {
     console.log(response);
@@ -36,8 +31,6 @@ var displayEvents = function(response) {
         var summary = events[i].summary;
         var start = events[i].start.dateTime;
         var end = events[i].end.dateTime;
-
-        //  console.log(summary + ", " + moment(start).format("h:mm A") + ", " + moment(end).format("h:mm A"));
 
         htmlStr = "<tr class='event'>";
         htmlStr += "<td>" + summary + "</td>";

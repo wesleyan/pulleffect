@@ -1,18 +1,18 @@
 {% macro preferences(dashboard) -%}
 <script>
 
- {# Alert stuff #}
+   {# Alert stuff #}
     // A helper function for displayAlerts function
     var getAlertType = function(alert) {
         switch (alert[0]) {
             case 'success':
-                return 'success';
+            return 'success';
             case 'error':
-                return 'danger';
+            return 'danger';
             case 'warning':
-                return 'warning';
+            return 'warning';
             default:
-                return 'info';
+            return 'info';
         }
     }
     // Display alerts after events
@@ -24,66 +24,65 @@
 
         for (var i = 0; alerts.length > i; i++) {
             alert = $('<div class="alert alert-' + getAlertType(alerts[i]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alerts[i][1] + '</div>')
-                .hide()
-                .delay(500 * (i))
-                .slideDown(500)
-                .delay(10000 * (i + 1))
-                .slideUp(500, function() {
-                    $(this).remove();
-                });
+            .hide()
+            .delay(500 * (i))
+            .slideDown(500)
+            .delay(10000 * (i + 1))
+            .slideUp(500, function() {
+                $(this).remove();
+            });
             $('#alerts').append(alert);
         }
     }
+
+    var displayAlerts = function(alertType, alertMessage) {
+        if (!alertMessage)
+            return;
+        var alert = $('<div class="alert alert-' + getAlertType([alertType]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alertMessage + '</div>')
+        .hide()
+        .delay(500)
+        .slideDown(500)
+        .delay(10000)
+        .slideUp(500, function() {
+            $(this).remove();
+        });
+        $('#alerts').append(alert);
+    }
+
     {# End alert stuff #}
 
-     $(function() {
+    {# Stuff to do when page loads #}
+    // TODO: This will probably need to be moved into a general page load function so 
+    // we don't need to keep adding stuff here
+    $(function() {
+        // Display alerts
         displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
+
         {% if session.signed_in %}
-        getGoogleCalendarList();
-        {% endif %}
-    });
+            // Refresh google calendar list
+            refreshGoogleCalendarList();
+            {% endif %}
+        });
+    {# End stuff to do when page loads #}
 
-
-    {#config_panel#}
-    var updateCookies = function(){
-        document.cookie = "dashboard=" + JSON.stringify(dash);
-    }
-
-    var getCookie = function(){
-            return $.parseJSON(document.cookie.substring(10, document.cookie.length));
-    }
+    {# config_panel #}
 
     $("#configure").on('hide.bs.modal', function (e) {
-        
-        dash.gen_prefs.config_panel = false;
-        updateCookies()
-   });
-    $("#configure").on('show.bs.modal', function (e) {
-    
-        dash.gen_prefs.config_panel = true;
-        
-
-        updateCookies();
+        localStorage.setItem("drawer_open", false);
     });
 
-    
-    var loadPrefs = function(){
-    
-      if (document.cookie){
-        dash = getCookie();
-      }
-      else{
-        dash = {{dashboard | tojson }}
-      }
-      
+    $("#configure").on('show.bs.modal', function (e) {
+        localStorage.setItem("drawer_open", true);
+    });
 
-      if (dash.gen_prefs.config_panel==true){
-         $("#configure").modal('show');
-
-      }
-
+    var loadDrawerPrefs = function() {
+        if (localStorage.getItem("drawer_open")) {
+            $('#configure').modal('show');
+        }
     }
-    loadPrefs();
+    loadDrawerPrefs();
+
+    {# End config_panel #}
 
 
     {# Drawer stuff #}
@@ -96,12 +95,12 @@
                 'min-height': '0px'
             }).slideUp(250, function() {
                 $('.flap>span')
-                    .removeClass('close-drawer')
-                    .addClass('open-drawer')
-                    .tooltip('hide')
-                    .attr('data-original-title', 'Open Drawer')
-                    .tooltip('fixTitle')
-                    .tooltip('show');
+                .removeClass('close-drawer')
+                .addClass('open-drawer')
+                .tooltip('hide')
+                .attr('data-original-title', 'Open Drawer')
+                .tooltip('fixTitle')
+                .tooltip('show');
             });
         }
 
@@ -112,16 +111,16 @@
                     'min-height': '50px'
                 });
                 $('.flap>span')
-                    .removeClass('open-drawer')
-                    .addClass('close-drawer')
-                    .tooltip('hide')
-                    .attr('data-original-title', 'Close Drawer')
-                    .tooltip('fixTitle')
-                    .tooltip('show');
+                .removeClass('open-drawer')
+                .addClass('close-drawer')
+                .tooltip('hide')
+                .attr('data-original-title', 'Close Drawer')
+                .tooltip('fixTitle')
+                .tooltip('show');
             });
         }
     });
-    {# End drawer stuff #}      
+{# End drawer stuff #}      
 
 
 </script>

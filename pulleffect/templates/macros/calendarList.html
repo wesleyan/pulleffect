@@ -1,6 +1,5 @@
 {% macro calendarListScripts() %}
 <script>
-    {# Configuration stuff #}
     {% if session.signed_in %}
     var getGoogleCalendarList = function() {
         $.ajax({
@@ -22,13 +21,11 @@
                 console.log(err);
             }
         });
-        getGoogleCalendarList()
     }
 
     var displayCalendarList = function(response) {
-        console.log(response.error)
-        console.log("response.error")
         if (response.error == true) {
+            displayAlerts('error', 'There\'s an error displaying calendars. Try authenticating again?');
             $('#calendars').hide()
             $('#google_authenticate').show()
         }
@@ -42,9 +39,7 @@
             $('#google_calendar_list').empty().attr('id', '#google_calendars').append(btn_group_vertical);
             return;
         } 
-        return displayAlerts([
-            ['error', 'Sorry! We seem to have encountered an unknown error!']
-            ]);
+        return displayAlerts('error', 'Sorry! We seem to have encountered an unknown error!');
     }
     {% endif %}
 </script>

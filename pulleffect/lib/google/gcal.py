@@ -75,6 +75,8 @@ def refresh_calendar_list():
     error = False
     calendar_list = []
 
+    print req
+
     # Get error and calendar list
     if (req.get('error')):
         error = True
