@@ -14,7 +14,6 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
@@ -25,19 +24,38 @@
 
 <body>
     <div>
-        <ul id="menu" class="col-md-1 nav nav-stacked nav-pills" style="padding-right:0px; border-right:solid;">
-            <li><a href="#">Pull <span class="fa fa-tint" ></span> Effect</a></li>
+        <ul id="menu" class="col-md-1 nav nav-stacked nav-pills" style="padding-right:0px; border-right:solid 1px; white-space:nowrap;">
+            <li style="margin-left:.5em;"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Messages</a></li>
         </ul>
-        <button onclick="pushMenu()" class="btn btn-default"><span class="fa fa-bars"></span>
-        </button>
+        <a href="#" class="flap fa fa-bars" onclick="pushMenu()"></a>
     </div>
     <script>
-        var pushMenu = function() {
+        function pushMenu() {
             $('#menu').animate({width: 'toggle'});
         }
+        window.onhashchange = function () { 
+            removeHash();
+        }
+
+        function removeHash () { 
+            var scrollV, scrollH, loc = window.location;
+            if ("pushState" in history)
+                history.pushState("", document.title, loc.pathname + loc.search);
+            else {
+                // Prevent scrolling by storing the page's current scroll offset
+                scrollV = document.body.scrollTop;
+                scrollH = document.body.scrollLeft;
+
+                loc.hash = "";
+
+                // Restore the scroll offset, should be flicker free
+                document.body.scrollTop = scrollV;
+                document.body.scrollLeft = scrollH;
+            }
+}
     </script>
 
 <!--     <nav class="navbar navbar-default" role="navigation">
