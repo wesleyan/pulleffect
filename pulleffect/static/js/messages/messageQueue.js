@@ -34,13 +34,13 @@ var displayMessages = function(messages){
 
 		row.append($('<td />').text(messages[i].device))
 
-
+		var icon;
 		switch (messages[i].device_type){
-			case "mac": var icon = "fa fa-apple"; break;
-			case "pc": var icon = "fa fa-windows"; break;
-			case "printer": var icon = "fa fa-print"; break;
-			case "roomtrol": var icon = "fa fa-flash"; break;
-			default: var icon = "";
+			case "mac": icon = "fa fa-apple"; break;
+			case "pc": icon = "fa fa-windows"; break;
+			case "printer": icon = "fa fa-print"; break;
+			case "roomtrol": icon = "fa fa-flash"; break;
+			default: icon = "";
 		}
 		
 		row.append($('<td />').append($('<span />').addClass(icon)));

@@ -79,12 +79,12 @@
         }
     });
 
-    var loadDrawerPrefs = function() {
+    var loadConfigPrefs = function() {
         if (localStorage.getItem("config_open") == 'true') {
             $('#configure').modal('show');
         }
     }
-    loadDrawerPrefs();
+    loadConfigPrefs();
 
     {# End config_panel #}
 
