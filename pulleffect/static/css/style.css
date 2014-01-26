@@ -121,9 +121,17 @@ html, body {
     left: 40%;
 }
 
-.flap:link {color:black;} 
-.flap:visited {color:black} 
-.flap:hover {
-  color:grey;
-  cursor:pointer;}
-.flap:active {color:darkgrey;}
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    width:95%;
+    background-color: Silver;
+    flex-wrap:wrap;
+}
+
+.flex-item {
+    background-color: DeepSkyBlue;
+    width: 300px;
+    height: 300px;
+    margin: 5px;
+}
