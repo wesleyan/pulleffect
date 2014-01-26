@@ -148,6 +148,113 @@
     width: 70px;
     position:relative;
     left: 40%;
-    
+}
+.viewport {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+ 
+.viewport .frame {
+  position: absolute;
+  width: 200%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
 
+
+02
+03
+04
+05
+06
+07
+08
+09
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+.menu {
+  height:100%;
+}
+ 
+.menu.collapse {
+  float:left;
+  height: 100% !important;
+  width: auto;
+}
+ 
+menu.collapse.height {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: height 0.35s ease;
+  -moz-transition: height 0.35s ease;
+  -o-transition: height 0.35s ease;
+  transition: height 0.35s ease;
+}
+ 
+menu.collapse.width {
+  position: relative;
+  width: 0;
+  overflow: hidden;
+  -webkit-transition: width 0.35s ease;
+  -moz-transition: width 0.35s ease;
+  -o-transition: width 0.35s ease;
+  transition: width 0.35s ease;
+}
+ 
+menu.collapse.in.width {
+  width: auto;
+}
+ 
+menu.collapse.in.height {
+  height: auto;
+}
+ 
+menu.collapse-inner {
+  position: relative;
+  width: 250px;
+  height: 100%;
+}
+
+.view {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
 }
