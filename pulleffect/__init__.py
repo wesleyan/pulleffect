@@ -15,6 +15,7 @@ from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.messages.messages import messages
 from markupsafe import Markup
 import urllib
 
@@ -22,6 +23,7 @@ import urllib
 app = Flask(__name__)
 app.register_blueprint(gcal, url_prefix='/gcal')
 app.register_blueprint(gplus, url_prefix='/gplus')
+app.register_blueprint(messages, url_prefix='/messages')
 
 # print app.url_map
 
