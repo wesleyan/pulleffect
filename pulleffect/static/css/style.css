@@ -1,3 +1,7 @@
+html, body {
+  height:100%;
+  min-height:100%;
+}
 .btn-group-vertical {
     width:100%;
     max-height:100%;
@@ -47,8 +51,6 @@
     height: 60px;
     color: blue;
     background-color: silver;
-
-
 }
 #alerts {
     z-index:9998;
@@ -105,8 +107,7 @@
     text-align:center;
     vertical-align:middle;
     line-height:300px; 
-    transform:transformY(-50%);
-    
+    transform:transformY(-50%);  
 }
 
 .tic{
@@ -120,26 +121,9 @@
     left: 40%;
 }
 
-html, body {
-  min-height:100%;
-}
-
-.flap {
-  background:lightgrey;
-  border-bottom:solid;
-  border-right:solid;
-  border-width:1px;
-  padding:1em;
-  padding-top:.75em;
-  padding-bottom:.75em;
-  border-bottom-right-radius:1em;
-  border-color:grey;
-  text-decoration:none;
-}
-
 .flap:link {color:black;} 
 .flap:visited {color:black} 
 .flap:hover {
   color:grey;
-  text-decoration:none;}
+  cursor:pointer;}
 .flap:active {color:darkgrey;}

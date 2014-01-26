@@ -14,6 +14,7 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
@@ -23,19 +24,72 @@
 </head>
 
 <body>
-    <div>
-        <ul id="menu" class="col-md-1 nav nav-stacked nav-pills" style="padding-right:0px; border-right:solid 1px; white-space:nowrap;">
-            <li style="margin-left:.5em;"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Messages</a></li>
+<!--     <nav id="menu" style="width:150px; float:left;">
+        <ul  class="nav nav-stacked" style="">
+            <li><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-calendar"></a>
+            </li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-windows"></a>
+            </li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-apple"></a>
+            </li>
         </ul>
-        <a href="#" class="flap fa fa-bars" onclick="pushMenu()"></a>
+    </nav>
+    <a href="#" class="flap fa fa-bars" onclick="pushMenu()" style=""></a>
+    <div id="content">
+        <div class="well">
+        Anything I stick in here should be okay then...fj;alkdjfl;adjfmoa;ciueropdhacdvukcjsdfga;jdml;fajmdi;jxfa;dh fxaidhga idghckadgjkgaxdck;axhmdoacfo axhdkjahc fdch ad ughcaucifnhxauhdcf HPH Dcahofg afchva xkhfmasdhfkahgvkla.JBVK;BDKAVBDHFUIHfihfkjeetk;JB
+        </div>
+    </div> -->
+    <!-- I am collapsed by default -->
+    <input type="checkbox" class="main-nav-check" id="main-nav-check" />
+    <nav class="main-nav" id="main-nav">
+        <ul class="nav nav-stacked">
+            <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-calendar"></a>
+            </li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-windows"></a>
+            </li>
+            <li class="thumbnail">
+                <a href="#" class="fa fa-apple"></a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="page-wrap">
+        <label for="main-nav-check" class="toggle-menu flap">☰</label>
+
+        <div class="content">
+
+            <p>It’s all about playing four quarters. I think we played well but the other team played well too. They took advantage of certain circumstances that arose. It’s a physical game.</p>
+
+            <p>We tried to capitalize on some mistakes they made. In the third quarter they ran some plays. They are very good at throwing the football. They have a good quarterback who is a real leader. There are no statistics for that.</p>
+
+            <p>We just need to show up, take things day by day, and prepare for the future. We’re looking at next week. We’re very optimistic. We’ll need to tighten up our game, make less mistakes, and stay focused.</p>
+
+            <p>There are 22 players out there. We’re 11 of them. This is a game played on grass. It’s full of intangibles. There are ups and downs. If we look at today’s champions, they are proven winners. They play football.</p>
+
+            <p>The groundwork has been laid so, now let’s look the future, make some good decisions, and take things to the next level.</p>
+
+            <p>It’s all about playing four quarters. I think we played well but the other team played well too. They took advantage of certain circumstances that arose. It’s a physical game.</p>
+
+            <p>We tried to capitalize on some mistakes they made. In the third quarter they ran some plays. They are very good at throwing the football. They have a good quarterback who is a real leader. There are no statistics for that.</p>
+
+            <p>We just need to show up, take things day by day, and prepare for the future. We’re looking at next week. We’re very optimistic. We’ll need to tighten up our game, make less mistakes, and stay focused.</p>
+
+            <p>There are 22 players out there. We’re 11 of them. This is a game played on grass. It’s full of intangibles. There are ups and downs. If we look at today’s champions, they are proven winners. They play football.</p>
+
+            <p>The groundwork has been laid so, now let’s look the future, make some good decisions, and take things to the next level.</p>
+
+        </div>
+
     </div>
     <script>
-        function pushMenu() {
-            $('#menu').animate({width: 'toggle'});
-        }
         window.onhashchange = function () { 
             removeHash();
         }
