@@ -12,7 +12,7 @@ messages = Blueprint('messages', __name__, template_folder='templates')
 # Get users mongo collection
 messagesCollection = mongo_connection.messages
 
-# Get access token for Google Calendar
+# Process message from device (ie cmdr), or return messages in queue
 @messages.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET': # return all messages
