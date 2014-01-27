@@ -89,8 +89,9 @@ a:hover {text-decoration:none:;}
   border-color:grey;
   width:3em;
   text-align:center;
-  position:absolute;
   top:0;
+  position:fixed; 
+  z-index:1030;
 }
 .flap:link {color:black;} 
 .flap:visited {color:black} 
