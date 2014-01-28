@@ -20,6 +20,10 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <!-- TODO THIS IS NOT RIGHT -->
+    <script>$(function(){
+        $("#includeContent").load("templates/macros/tictactoe.html");
+    });</script>
 
 </head>
 
@@ -30,10 +34,13 @@
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
                 <button onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation" style="font-size:2em;"></button>
-            </li> 
+            </li>
             <li>
-                <button onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
-            </li> 
+                <button onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar" style="font-size:2em;"></button>
+            </li>
             <li>
                 <button onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
             </li> 
@@ -47,13 +54,14 @@
             <div class="flex-item"></div>
             <div class="flex-item" style="height:400px; width:500px;"></div>
             <div class="flex-item"></div>
+<!--             <div class="flex-item"></div>
             <div class="flex-item"></div>
             <div class="flex-item"></div>
-            <div class="flex-item"></div>
-        </div>
+ -->        </div>
 
     </div>
     <script>
+
 //         window.onhashchange = function () { 
 //             removeHash();
 //         }
@@ -90,7 +98,7 @@
                     </button>
                 </li>
                 <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="loadTicTacToe()">
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="\()">
                         <span class="fa fa-gears" />
                     </button>
                 </li>
