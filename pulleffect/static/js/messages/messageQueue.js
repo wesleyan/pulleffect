@@ -55,5 +55,5 @@ var displayMessages = function(messages){
 
 
 	panel.append(table);
-	$('.Widgets').append(panel);
+	$('.content').append(panel);
 }

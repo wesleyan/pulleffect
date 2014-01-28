@@ -72,10 +72,6 @@ a:hover {text-decoration:none:;}
 .main-nav > .nav-stacked > li.logo {
   color:lightgrey;
 }
-.main-nav > .nav-stacked > li.thumbnail {
-  font-size:2em;
-  margin:.25em;
-}
 
 .flap {
   background:lightgrey;

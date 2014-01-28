@@ -28,20 +28,15 @@
     <nav class="main-nav" id="main-nav">
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
-            <li class="thumbnail">
-                <a href="#" class="fa fa-calendar"></a>
-            </li>
-            <li class="thumbnail">
-                <a href="#" class="fa fa-windows"></a>
-            </li>
-            <li class="thumbnail">
-                <a href="#" class="fa fa-apple"></a>
-            </li>
             <li>
-                <button class="btn btn-warning">
-                    <span style="color:white;" class="fa fa-sign-out"></span>
-                </button>
-            </li>
+                <button onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation" style="font-size:2em;"></button>
+            </li> 
+            <li>
+                <button onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
+            </li> 
+            <li>
+                <button onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
+            </li> 
         </ul>
     </nav>
 
@@ -59,26 +54,26 @@
 
     </div>
     <script>
-        window.onhashchange = function () { 
-            removeHash();
-        }
+//         window.onhashchange = function () { 
+//             removeHash();
+//         }
 
-        function removeHash () { 
-            var scrollV, scrollH, loc = window.location;
-            if ("pushState" in history)
-                history.pushState("", document.title, loc.pathname + loc.search);
-            else {
-                // Prevent scrolling by storing the page's current scroll offset
-                scrollV = document.body.scrollTop;
-                scrollH = document.body.scrollLeft;
+//         function removeHash () { 
+//             var scrollV, scrollH, loc = window.location;
+//             if ("pushState" in history)
+//                 history.pushState("", document.title, loc.pathname + loc.search);
+//             else {
+//                 // Prevent scrolling by storing the page's current scroll offset
+//                 scrollV = document.body.scrollTop;
+//                 scrollH = document.body.scrollLeft;
 
-                loc.hash = "";
+//                 loc.hash = "";
 
-                // Restore the scroll offset, should be flicker free
-                document.body.scrollTop = scrollV;
-                document.body.scrollLeft = scrollH;
-            }
-}
+//                 // Restore the scroll offset, should be flicker free
+//                 document.body.scrollTop = scrollV;
+//                 document.body.scrollLeft = scrollH;
+//             }
+// }
     </script>
 
 <!--     <nav class="navbar navbar-default" role="navigation">

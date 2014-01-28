@@ -41,21 +41,21 @@
             var end = events[i].end.dateTime;
 
             tableRow
-                .append(summaryCell.text(summary))
-                .append(beginCell.text(moment(start).format(timeFormat)))
-                .append(endCell.text(moment(end).format(timeFormat)));
+            .append(summaryCell.text(summary))
+            .append(beginCell.text(moment(start).format(timeFormat)))
+            .append(endCell.text(moment(end).format(timeFormat)));
 
-        $("#eventsTable").append(tableRow);
+            $("#eventsTable").append(tableRow);
+        }
+
     }
 
-}
-
-var loadWidget = function(){
-    var calendar = $('<div/>', {"class": "panel panel-default col-md-4", "id":"calendar"});
-    var table = $('<table/>', {"class":"table table-striped", "id":"eventsTable"});
-    calendar.append(table);
-    $('.Widgets').append(calendar);
-}
+    var loadWidget = function(){
+        var calendar = $('<div/>', {"class": "panel panel-default col-md-4", "id":"calendar"});
+        var table = $('<table/>', {"class":"table table-striped", "id":"eventsTable"});
+        calendar.append(table);
+        $('.Widgets').append(calendar);
+    }
 
 </script>
 {%- endmacro %}
