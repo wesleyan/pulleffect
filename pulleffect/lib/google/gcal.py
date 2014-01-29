@@ -27,7 +27,7 @@ users = mongo_connection.users
 
 # Get access token for Google Calendar
 @gcal.route('/authenticate')
-@signin_required
+# @signin_required
 def authenticate():
     # Exchange code if exists
     if (request.args.get('code')):
@@ -40,7 +40,7 @@ def authenticate():
         flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gcal_access_token'] = None
         return redirect(url_for('index'))
-
+    print str(auth_uri)
     return redirect(auth_uri)
 
 
