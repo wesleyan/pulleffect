@@ -40,7 +40,7 @@ def authenticate():
         flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gcal_access_token'] = None
         return redirect(url_for('index'))
-
+        
     return redirect(auth_uri)
 
 

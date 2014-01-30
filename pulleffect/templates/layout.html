@@ -20,11 +20,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
-    <!-- TODO THIS IS NOT RIGHT -->
-    <script>$(function(){
-        $("#includeContent").load("templates/macros/tictactoe.html");
-    });</script>
-
 </head>
 
 <body>
@@ -33,16 +28,16 @@
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
-                <button onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation" style="font-size:2em;"></button>
+                <button draggable="true" onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation" style="font-size:2em;"></button>
             </li>
             <li>
-                <button onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th" style="font-size:2em;"></button>
+                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th" style="font-size:2em;"></button>
             </li>
             <li>
-                <button onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar" style="font-size:2em;"></button>
+                <button draggable="true" onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar" style="font-size:2em;"></button>
             </li>
             <li>
-                <button onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
+                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
             </li> 
         </ul>
     </nav>
@@ -50,17 +45,171 @@
     <div class="page-wrap">
         <label for="main-nav-check" class="toggle-menu flap">☰</label>
 
-        <div class="content flex-container">
-            <div class="flex-item"></div>
-            <div class="flex-item" style="height:400px; width:500px;"></div>
-            <div class="flex-item"></div>
-<!--             <div class="flex-item"></div>
-            <div class="flex-item"></div>
-            <div class="flex-item"></div>
- -->        </div>
+        <div class="content flex-container sortable">
+            <div class="flex-item" draggable="true">1</div>
+            <div class="flex-item" draggable="true">2</div>
+            <div class="flex-item" draggable="true">3</div>
+        </div>
 
     </div>
+    <style>
+    .flex-item.over {
+        border: 2px dashed #000;
+    }
+    .flex-item.moving {
+        opacity: 0.4;
+    }
+</style>
+
     <script>
+
+        var dragSrcEl;
+
+        function handleDragStart(e) {
+            $(this).addClass('moving');
+            // get the dragging element
+            dragSrcEl = this;
+            // it is moving
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnter(e) {
+            // this / e.target is the current hover target.
+            $(this).addClass('over');
+        }
+
+        function handleDragLeave(e) {
+            $(this).removeClass('over'); // this / e.target is previous target element.
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault(); // Necessary. Allows us to drop.
+            }
+            e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
+            return false;
+        }
+
+        function handleDrop(e) {
+        // this / e.target is current target element.
+        if (e.stopPropagation) {
+            e.stopPropagation(); // Stops some browsers from redirecting.
+        }
+
+        // Don't do anything if dropping the same column we're dragging.
+        if (dragSrcEl != this) {
+            // Set the source column's HTML to the HTML of the column wdropped on.
+            var oldEl = {
+                html: this.innerHTML,
+                id: this.id
+            };
+            var newEl = {
+                html: dragSrcEl.innerHTML,
+                id: dragSrcEl.id
+            };
+            // swap all the data
+            dragSrcEl.innerHTML = oldEl.html;
+            dragSrcEl.id = oldEl.id;
+            this.innerHTML = newEl.html;
+            this.id = newEl.id;
+            return;
+        }
+
+        return false;
+        }
+
+        function handleDragEnd(e) {
+            // this/e.target is the source node.
+            this.style.opacity = '1';
+            this.classList.remove('moving');
+
+            [].forEach.call(cols, function (col) {
+                col.classList.remove('over');
+                col.classList.remove('moving');
+            });
+        }
+
+    var cols = document.querySelectorAll('.flex-item');
+    [].forEach.call(cols, function(col) {
+        col.addEventListener('dragstart', handleDragStart, false);
+        col.addEventListener('dragenter', handleDragEnter, false);
+        col.addEventListener('dragover', handleDragOver, false);
+        col.addEventListener('dragleave', handleDragLeave, false);
+        col.addEventListener('drop', handleDrop, false);
+        col.addEventListener('dragend', handleDragEnd, false);
+    });
+
+
+    // var dragSrcEl = null;
+
+    // function handleDragStart(e) {
+    //     // Target (this) element is the source node.
+    //     this.style.opacity = '0.4';
+
+    //     dragSrcEl = this;
+
+    //     e.dataTransfer.effectAllowed = 'move';
+    //     e.dataTransfer.setData('innerHTML', this.innerHTML);
+    //     e.dataTransfer.setData('outerHTML', this.outerHTML);
+    // }
+
+    // function handleDragOver(e) {
+    //     if (e.preventDefault) {
+    //         e.preventDefault(); // Necessary. Allows us to drop.
+    //     }
+
+    //     e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+    //     return false;
+    // }
+
+    // function handleDragEnter(e) {
+    //     // this / e.target is the current hover target.
+    //     this.classList.add('over');
+    // }
+
+    // function handleDragLeave(e) {
+    //     this.classList.remove('over');  // this / e.target is previous target element.
+    // }
+
+    // function handleDrop(e) {
+    // // this/e.target is current target element.
+
+    //     if (e.stopPropagation) {
+    //         e.stopPropagation(); // Stops some browsers from redirecting.
+    //     }
+
+    //     // Don't do anything if dropping the same column we're dragging.
+    //     if (dragSrcEl != this) {
+    //         // Set the source column's HTML to the HTML of the column we dropped on.
+    //         dragSrcEl.innerHTML = this.innerHTML;
+    //         dragSrcEl.outerHTML = this.outerHTML;
+    //         this.innerHTML = e.dataTransfer.getData('innerHTML');
+    //         this.outerHTML = e.dataTransfer.getData('outerHTML');
+    //     }
+
+    //     return false;
+    // }
+
+    // function handleDragEnd(e) {
+    // // this/e.target is the source node.
+    //     this.style.opacity = '1';
+
+    //     [].forEach.call(cols, function (col) {
+    //         col.classList.remove('over');
+    //     });
+    // }
+
+    // var cols = document.querySelectorAll('.flex-item');
+    // [].forEach.call(cols, function(col) {
+    //     col.addEventListener('dragstart', handleDragStart, false);
+    //     col.addEventListener('dragenter', handleDragEnter, false);
+    //     col.addEventListener('dragover', handleDragOver, false);
+    //     col.addEventListener('dragleave', handleDragLeave, false);
+    //     col.addEventListener('drop', handleDrop, false);
+    //     col.addEventListener('dragend', handleDragEnd, false);
+    // });
 
 //         window.onhashchange = function () { 
 //             removeHash();
@@ -193,9 +342,11 @@
 
 
     {# Import javascript macros #}
+    {#
     <script>
         var dash = {{dashboard | tojson}}
     </script>
+    #}
 
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
@@ -204,9 +355,10 @@
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
+{#
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
-
+#}
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
 
