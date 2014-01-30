@@ -45,7 +45,7 @@
                     </button>
                 </li>
                                 <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="displayMessages()">
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderMessageQueue()">
                         <span class="fa fa-exclamation" />
                     </button>
                 </li>
@@ -146,6 +146,9 @@
     {# Import javascript macros #}
     <script>
         var dash = {{dashboard | tojson}}
+
+        //Saving url so I can use it my external javascript file
+        var messages_url = "{{ url_for('messages.index') }}"
     </script>
 
     {% from "macros/preferences.html" import preferences %}
