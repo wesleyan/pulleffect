@@ -6,6 +6,7 @@ from pulleffect.lib.utilities import mongo_connection
 import strict_rfc3339 
 import requests
 from urllib import urlencode
+import pymongo
 
 messages = Blueprint('messages', __name__, template_folder='templates')
 
@@ -16,7 +17,7 @@ messagesCollection = mongo_connection.messages
 def index():
     if request.method == 'GET': # return all messages
         ret = []
-        for message in messagesCollection.sort("date", pymongo.DESCENDING):
+        for message in messagesCollection.find(sort=[("date", pymongo.DESCENDING)]):
             ret += message
         return jsonify(ret)
     # we are adding a new message
@@ -27,3 +28,10 @@ def index():
         'time': request.form['time']
     })
     return jsonify({ 'id': newId })
+
+@messages.route('/<int:n>', methods=['GET'])
+def get_messages(n):
+    ret = []
+    for message in messagesCollection.find(sort=[("date", pymongo.DESCENDING)],limit=n):
+        ret += message
+    return jsonify(ret)
