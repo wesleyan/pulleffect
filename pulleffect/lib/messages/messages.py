@@ -12,12 +12,11 @@ messages = Blueprint('messages', __name__, template_folder='templates')
 # Get users mongo collection
 messagesCollection = mongo_connection.messages
 
-# Get access token for Google Calendar
 @messages.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET': # return all messages
         ret = []
-        for message in messagesCollection.sort("date"):
+        for message in messagesCollection.sort("date", 1):
             ret += message
         return jsonify(ret)
     # we are adding a new message
