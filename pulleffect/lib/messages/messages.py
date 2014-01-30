@@ -27,7 +27,7 @@ def index():
         'title': request.form['title'], 'description': request.form['description'],
         'time': request.form['time']
     })
-    return jsonify({ 'id': newId })
+    return jsonify({ 'id': str(newId) })
 
 @messages.route('/<int:n>', methods=['GET'])
 def get_messages(n):
