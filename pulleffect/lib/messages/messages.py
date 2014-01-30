@@ -16,7 +16,7 @@ messagesCollection = mongo_connection.messages
 def index():
     if request.method == 'GET': # return all messages
         ret = []
-        for message in messagesCollection.sort("date", 1):
+        for message in messagesCollection.sort("date", pymongo.DESCENDING):
             ret += message
         return jsonify(ret)
     # we are adding a new message
