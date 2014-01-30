@@ -140,6 +140,16 @@
         col.addEventListener('dragend', handleDragEnd, false);
     });
 
+    var cols = document.querySelectorAll('.main-nav > ul > li');
+    [].forEach.call(cols, function(col) {
+        col.addEventListener('dragstart', handleDragStart, false);
+        col.addEventListener('dragenter', handleDragEnter, false);
+        col.addEventListener('dragover', handleDragOver, false);
+        col.addEventListener('dragleave', handleDragLeave, false);
+        col.addEventListener('drop', handleDrop, false);
+        col.addEventListener('dragend', handleDragEnd, false);
+    });
+
 
     // var dragSrcEl = null;
 
