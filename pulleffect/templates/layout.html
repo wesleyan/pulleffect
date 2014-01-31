@@ -15,232 +15,143 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/jquery.gridster.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
 </head>
 
 <body>
+<style>
+.gridster * {
+  margin:0;
+  padding:0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+/*/
+/* gridster
+/*/
+
+.gridster ul {
+    background-color: silver;
+}
+
+.gridster li {
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    line-height: 100%;
+}
+
+.gridster {
+    margin: 0 auto;
+    opacity: .8;
+    padding-left:3em;
+
+    -webkit-transition: opacity .6s;
+    -moz-transition: opacity .6s;
+    -o-transition: opacity .6s;
+    -ms-transition: opacity .6s;
+    transition: opacity .6s;
+}
+
+.gridster .gs-w {
+    cursor: pointer;
+}
+
+.gridster .player {
+    background: #BBB;
+}
+
+.gridster .preview-holder {
+    border: none!important;
+    background: red!important;
+}
+
+</style>
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav" id="main-nav">
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
-                <button draggable="true" onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation" style="font-size:2em;"></button>
+                <button draggable="true" onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th" style="font-size:2em;"></button>
+                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar" style="font-size:2em;"></button>
+                <button draggable="true" onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows" style="font-size:2em;"></button>
+                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
             </li> 
         </ul>
     </nav>
 
-    <div class="page-wrap">
+    <div class="page-wrap widget-container" style="height:100%;">
         <label for="main-nav-check" class="toggle-menu flap">☰</label>
-
-        <div class="content flex-container sortable">
-            <div class="flex-item" draggable="true">1</div>
-            <div class="flex-item" draggable="true">2</div>
-            <div class="flex-item" draggable="true">3</div>
+        <div class="page-wrap" style="background:silver; height:100%;">
+            <div class="gridster">
+                <ul style="background:silver;"> 
+                </ul>
+            </div>
         </div>
-
     </div>
-    <style>
-    .flex-item.over {
-        border: 2px dashed #000;
-    }
-    .flex-item.moving {
-        opacity: 0.4;
-    }
-</style>
 
     <script>
+        var gridster;
 
-        var dragSrcEl;
+        $(function(){
 
-        function handleDragStart(e) {
-            $(this).addClass('moving');
-            // get the dragging element
-            dragSrcEl = this;
-            // it is moving
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.innerHTML);
-        }
+            gridster = $(".gridster ul").gridster({
+                widget_base_dimensions: [100, 100],
+                widget_margins: [5, 5],
+                helper: 'clone',
+                resize: {
+                    enabled: true
+                }
+            }).data('gridster');
 
-        function handleDragEnter(e) {
-            // this / e.target is the current hover target.
-            $(this).addClass('over');
-        }
+            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
+        });
 
-        function handleDragLeave(e) {
-            $(this).removeClass('over'); // this / e.target is previous target element.
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault(); // Necessary. Allows us to drop.
+        jQuery.event.props.push('dataTransfer');
+        var counter = 0;
+        $('.page-wrap').on({
+            dragstart: function() {
+                $(this).css('opacity', '0.5');
+            },
+            dragleave: function() {
+                $(this).removeClass('over');
+            },
+            dragenter: function(e) {
+                $(this).addClass('over');
+            },
+            dragover: function(e) {
+                e.preventDefault();
+            },
+            dragend: function() {
+                $(this).css('opacity', '1');
+            }, 
+            drop: function(e) {
+                counter++;
+                alert(counter);
+                e.stopPropagation();
             }
-            e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
-            return false;
-        }
-
-        function handleDrop(e) {
-        // this / e.target is current target element.
-        if (e.stopPropagation) {
-            e.stopPropagation(); // Stops some browsers from redirecting.
-        }
-
-        // Don't do anything if dropping the same column we're dragging.
-        if (dragSrcEl != this) {
-            // Set the source column's HTML to the HTML of the column wdropped on.
-            var oldEl = {
-                html: this.innerHTML,
-                id: this.id
-            };
-            var newEl = {
-                html: dragSrcEl.innerHTML,
-                id: dragSrcEl.id
-            };
-            // swap all the data
-            dragSrcEl.innerHTML = oldEl.html;
-            dragSrcEl.id = oldEl.id;
-            this.innerHTML = newEl.html;
-            this.id = newEl.id;
-            return;
-        }
-
-        return false;
-        }
-
-        function handleDragEnd(e) {
-            // this/e.target is the source node.
-            this.style.opacity = '1';
-            this.classList.remove('moving');
-
-            [].forEach.call(cols, function (col) {
-                col.classList.remove('over');
-                col.classList.remove('moving');
-            });
-        }
-
-    var cols = document.querySelectorAll('.flex-item');
-    [].forEach.call(cols, function(col) {
-        col.addEventListener('dragstart', handleDragStart, false);
-        col.addEventListener('dragenter', handleDragEnter, false);
-        col.addEventListener('dragover', handleDragOver, false);
-        col.addEventListener('dragleave', handleDragLeave, false);
-        col.addEventListener('drop', handleDrop, false);
-        col.addEventListener('dragend', handleDragEnd, false);
-    });
-
-    var cols = document.querySelectorAll('.main-nav > ul > li');
-    [].forEach.call(cols, function(col) {
-        col.addEventListener('dragstart', handleDragStart, false);
-        col.addEventListener('dragenter', handleDragEnter, false);
-        col.addEventListener('dragover', handleDragOver, false);
-        col.addEventListener('dragleave', handleDragLeave, false);
-        col.addEventListener('drop', handleDrop, false);
-        col.addEventListener('dragend', handleDragEnd, false);
-    });
+        });
 
 
-    // var dragSrcEl = null;
-
-    // function handleDragStart(e) {
-    //     // Target (this) element is the source node.
-    //     this.style.opacity = '0.4';
-
-    //     dragSrcEl = this;
-
-    //     e.dataTransfer.effectAllowed = 'move';
-    //     e.dataTransfer.setData('innerHTML', this.innerHTML);
-    //     e.dataTransfer.setData('outerHTML', this.outerHTML);
-    // }
-
-    // function handleDragOver(e) {
-    //     if (e.preventDefault) {
-    //         e.preventDefault(); // Necessary. Allows us to drop.
-    //     }
-
-    //     e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-
-    //     return false;
-    // }
-
-    // function handleDragEnter(e) {
-    //     // this / e.target is the current hover target.
-    //     this.classList.add('over');
-    // }
-
-    // function handleDragLeave(e) {
-    //     this.classList.remove('over');  // this / e.target is previous target element.
-    // }
-
-    // function handleDrop(e) {
-    // // this/e.target is current target element.
-
-    //     if (e.stopPropagation) {
-    //         e.stopPropagation(); // Stops some browsers from redirecting.
-    //     }
-
-    //     // Don't do anything if dropping the same column we're dragging.
-    //     if (dragSrcEl != this) {
-    //         // Set the source column's HTML to the HTML of the column we dropped on.
-    //         dragSrcEl.innerHTML = this.innerHTML;
-    //         dragSrcEl.outerHTML = this.outerHTML;
-    //         this.innerHTML = e.dataTransfer.getData('innerHTML');
-    //         this.outerHTML = e.dataTransfer.getData('outerHTML');
-    //     }
-
-    //     return false;
-    // }
-
-    // function handleDragEnd(e) {
-    // // this/e.target is the source node.
-    //     this.style.opacity = '1';
-
-    //     [].forEach.call(cols, function (col) {
-    //         col.classList.remove('over');
-    //     });
-    // }
-
-    // var cols = document.querySelectorAll('.flex-item');
-    // [].forEach.call(cols, function(col) {
-    //     col.addEventListener('dragstart', handleDragStart, false);
-    //     col.addEventListener('dragenter', handleDragEnter, false);
-    //     col.addEventListener('dragover', handleDragOver, false);
-    //     col.addEventListener('dragleave', handleDragLeave, false);
-    //     col.addEventListener('drop', handleDrop, false);
-    //     col.addEventListener('dragend', handleDragEnd, false);
-    // });
-
-//         window.onhashchange = function () { 
-//             removeHash();
-//         }
-
-//         function removeHash () { 
-//             var scrollV, scrollH, loc = window.location;
-//             if ("pushState" in history)
-//                 history.pushState("", document.title, loc.pathname + loc.search);
-//             else {
-//                 // Prevent scrolling by storing the page's current scroll offset
-//                 scrollV = document.body.scrollTop;
-//                 scrollH = document.body.scrollLeft;
-
-//                 loc.hash = "";
-
-//                 // Restore the scroll offset, should be flicker free
-//                 document.body.scrollTop = scrollV;
-//                 document.body.scrollLeft = scrollH;
-//             }
-// }
     </script>
 
 <!--     <nav class="navbar navbar-default" role="navigation">
