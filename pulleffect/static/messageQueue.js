@@ -1,18 +1,5 @@
 
 ////Sample messages for testing purposes
-var sampleMessages = [
-	{device: "name5", device_type: "mac", location:"SCIE 127", severity: 1, 
-	 title: "Turning off", description: "Turning off", time: 50000},
-	 {device: "name4", device_type: "pc", location:"SCIE 127", severity: 2, 
-	 title: "Turning off", description: "Turning off", time: 40000},
-	 {device: "name3", device_type: "roomtrol", location:"SCIE 127", severity: 3, 
-	 title: "Turning off", description: "Turning off", time: 30000},
-	 {device: "name2", device_type: "printer", location:"SCIE 127", severity: 4,
-	 title: "Turning off", description: "Turning off", time: 20000},
-	 {device: "name1", device_type: "roomtrol", location:"SCIE 127", severity: 5, 
-	 title: "Turning off", description: "Turning off", time: 10000}
-];
-
 var newMessages = [
 	{device: "name10", device_type: "roomtrol", location:"SCIE 127", severity: 2, 
 	 title: "Turning off", description: "Turning off", time: 100000},
@@ -31,6 +18,14 @@ var newMessages = [
 ];
 
 var lastMessageDisplayed = null;
+
+var getNewMessages = function(){
+		$.getJSON('/messages/').success(updateMessageQueue).error(function(err){
+        	console.log(err);
+        });
+        setTimeout(getNewMessages, 5000);
+
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Update is called with the result of the ajax request which gets messages after
@@ -136,6 +131,7 @@ var addRow = function(message, cb){
 // returned by the messages route without animation. 
 //////////////////////////////////////////////////////////////////////////////////////
 var renderMessages = function(messages, table){
+	console.log(messages);
 	messages = messages.reverse();
 	for(var i = 0; i < messages.length; i++){
 
@@ -153,6 +149,7 @@ var renderMessages = function(messages, table){
 //////////////////////////////////////////////////////////////////////////////////////
 var renderMessageQueue = function(){
 
+
 	var panel = $("<div />").width("400px");
 	panel.addClass("panel panel-default");
 	panel.height('200px').css({overflow: "auto"});
@@ -160,15 +157,21 @@ var renderMessageQueue = function(){
 	var table = $("<table />").addClass("table table-condensed  messageTable");
 
 
-	renderMessages(sampleMessages, table);
+
+
+	$.getJSON('/messages/5').success(function(messages){
+        	renderMessages(messages, table);
+        }).error(function(err){
+        	console.log(err);
+        });
+
+
 	panel.append(table);
-
-
 
 	$('.Widgets').append(panel);
 
 	//Only to test the update functionality.
-	setTimeout(function(){updateMessageQueue(newMessages)}, 1000);
+	setTimeout(getNewMessages, 5000);
 }
 
 //Once max gets this working......

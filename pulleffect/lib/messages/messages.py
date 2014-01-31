@@ -36,5 +36,5 @@ def get_messages(n):
     ret = []
     for message in messagesCollection.find(sort=[("time", pymongo.DESCENDING)],limit=n):
         message['_id'] = str(message['_id'])
-        ret += message
+        ret.append(message)
     return json.dumps(ret)
