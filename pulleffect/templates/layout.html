@@ -19,6 +19,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
+    <script src="{{ url_for('static', filename='specialEvents/specialEvents.js') }}"></script>
 
 </head>
 
@@ -44,9 +45,14 @@
                         <span class="fa fa-gears" />
                     </button>
                 </li>
-                                <li>
+                <li>
                     <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderMessageQueue()">
                         <span class="fa fa-exclamation" />
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderSpecialEventsWidget()">
+                        <span class="fa fa-star" />
                     </button>
                 </li>
                 <li>
