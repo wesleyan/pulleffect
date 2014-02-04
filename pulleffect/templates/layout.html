@@ -20,8 +20,7 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
 
 </head>
 
@@ -155,7 +154,7 @@ ul {
 
     </script>
 
-<!--     <nav class="navbar navbar-default" role="navigation">
+<!--   {#  <nav class="navbar navbar-default" role="navigation">
         <div class="container">
             <a class="navbar-brand" href="#">Pull <span class="fa fa-tint"  /> Effect</a>
             {% if session.signed_in %}
@@ -169,12 +168,12 @@ ul {
                     </button>
                 </li>
                 <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="\()">
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="loadTicTacToe()">
                         <span class="fa fa-gears" />
                     </button>
                 </li>
                                 <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="displayMessages()">
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderMessageQueue()">
                         <span class="fa fa-exclamation" />
                     </button>
                 </li>
@@ -188,13 +187,14 @@ ul {
             </ul>
             {% endif %}
         </div>
-    </nav> -->
-<!--     {% if session.signed_in %}
+    </nav>
+    {% if session.signed_in %}
     <a href="#" class="flap" data-toggle="tooltip">
         <span class="fa fa-bars close-drawer" data-placement="bottom" title data-original-title="Close Drawer" />
     </a>
     {% endif %}
     <div id="alerts"></div>
+
 
     <div class="container">
         {% block body %}{% endblock %}
@@ -213,7 +213,7 @@ ul {
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="google_config">
-                                {% if session.gcal_access_token %}
+                                {% if session.gcal_access_token %}     
                                 <div id="calendars">
                                     <button onclick="refreshGoogleCalendarList()" type="submit" class="btn btn-success pull-right" title="Refresh List" alt="Refresh List"><span class="fa fa-refresh"/></button>
                                     <div class="alert alert-info alert-dismissable">
@@ -221,7 +221,6 @@ ul {
                                         If you have new calendars that don't appear, click the refresh button.</div>
                                         <div id="google_calendar_list"></div>
                                     </div>
-
                                     <div id="google_authenticate" style="display:none">
                                         <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                         <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
@@ -229,7 +228,6 @@ ul {
                                         </form>
                                     </div>
                                     {% else %}
-
                                     <div id="google_authenticate" style="display:none">
                                         <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                         <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
@@ -257,18 +255,23 @@ ul {
                 {% if session.signed_in %}
 
                 <div class="Widgets"></div>
-            {% endif %}
-            {% endblock %}
+
+
+     <!--        <div class="panel panel-default col-md-4" id="calendar">
+            <table class="table table-striped" id="eventsTable">
+            </table> -->      
+            {% endblock %} #}
         </div>
     </div>
 
 
     {# Import javascript macros #}
-    {#
     <script>
         var dash = {{dashboard | tojson}}
+
+        //Saving url so I can use it my external javascript file
+        var messages_url = "{{ url_for('messages.index') }}"
     </script>
-    #}
 
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
@@ -287,7 +290,12 @@ ul {
     {{ preferences(dashboard) }}
     #}
 
-    {# {% endif %} #}
+    <script>
+        // if(Modernizr.localstorage) {
+        //     displayAlerts('info', 'Let\'s get started!');
+        // }
+    </script>
+
 </body>
 
 </html>

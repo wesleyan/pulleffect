@@ -1,11 +1,12 @@
 from apiclient.discovery import build
-from flask import Blueprint, jsonify, redirect, request, session, url_for
+from flask import Blueprint, jsonify, json, redirect, request, session, url_for
 import httplib2
 from oauth2client.client import flow_from_clientsecrets
 from pulleffect.lib.utilities import mongo_connection
 import strict_rfc3339 
 import requests
 from urllib import urlencode
+import pymongo
 
 messages = Blueprint('messages', __name__, template_folder='templates')
 
@@ -17,9 +18,10 @@ messagesCollection = mongo_connection.messages
 def index():
     if request.method == 'GET': # return all messages
         ret = []
-        for message in messagesCollection.sort("date"):
-            ret += message
-        return jsonify(ret)
+        for message in messagesCollection.find(sort=[("time", pymongo.DESCENDING)]):
+            message['_id'] = str(message['_id'])
+            ret.append(message)
+        return json.dumps(ret)
     # we are adding a new message
     newId = messagesCollection.insert({
         'device': request.form['device'], 'device_type': request.form['device_type'],
@@ -27,4 +29,13 @@ def index():
         'title': request.form['title'], 'description': request.form['description'],
         'time': request.form['time']
     })
-    return jsonify({ 'id': newId })
+    return jsonify({ 'id': str(newId) })
+
+
+@messages.route('/<int:n>', methods=['GET'])
+def get_messages(n):
+    ret = []
+    for message in messagesCollection.find(sort=[("time", pymongo.DESCENDING)],limit=n):
+        message['_id'] = str(message['_id'])
+        ret.append(message)
+    return json.dumps(ret)
