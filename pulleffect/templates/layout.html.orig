@@ -20,9 +20,12 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+<<<<<<< HEAD
+    <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
+=======
 
+>>>>>>> c09e1e239a7382be53c5d5a8047b3c247706c26d
 </head>
 
 <body>
@@ -53,7 +56,6 @@ ul {
     font-weight: bold;
     text-align: center;
     line-height: 100%;
-    background:grey;
 }
 
 .gridster {
@@ -83,7 +85,7 @@ ul {
 
 </style>
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
-    <nav class="main-nav no-select" id="main-nav">
+    <nav class="main-nav" id="main-nav">
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
@@ -93,7 +95,11 @@ ul {
                 <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+<<<<<<< HEAD
+                <button draggable="true" onclick="" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+=======
+                <button onclick="loadWidget();" type="button" class="btn btn-primary btn-lg fa fa-calendar" style="font-size:2em;"></button>
+>>>>>>> c09e1e239a7382be53c5d5a8047b3c247706c26d
             </li>
             <li>
                 <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
@@ -101,15 +107,21 @@ ul {
         </ul>
     </nav>
 
-    <div class="page-wrap" style="background:silver; height:100%;">
-        <label for="main-nav-check" class="toggle no-select">☰</label>
+    <div class="page-wrap widget-container" style="height:100%;">
+        <label for="main-nav-check" class="toggle-menu flap">☰</label>
+        <div class="page-wrap" style="background:silver; height:100%;">
             <div class="gridster">
                 <ul style="background:silver;"> 
                 </ul>
             </div>
+        </div>
     </div>
 
+<<<<<<< HEAD
+=======
+    <div id="alerts"></div>
 
+>>>>>>> c09e1e239a7382be53c5d5a8047b3c247706c26d
     <script>
         var gridster;
 
@@ -194,7 +206,6 @@ ul {
         <span class="fa fa-bars close-drawer" data-placement="bottom" title data-original-title="Close Drawer" />
     </a>
     {% endif %}
-    <div id="alerts"></div>
 
     <div class="container">
         {% block body %}{% endblock %}
@@ -277,17 +288,23 @@ ul {
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
+<<<<<<< HEAD
+{#
+    {% from "macros/tictactoe.html" import tictactoe %}
+    {{tictactoe()}}
+#}
+    {% from "macros/calendarList.html" import calendarListScripts %}
+    {{calendarListScripts()}}
+=======
     {# {% endif %} #}
 
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
 
-    {#
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
-    #}
+>>>>>>> c09e1e239a7382be53c5d5a8047b3c247706c26d
 
-    {# {% endif %} #}
 </body>
 
 </html>

@@ -73,7 +73,7 @@ a:hover {text-decoration:none:;}
   color:lightgrey;
 }
 
-.flap {
+.toggle {
   background:lightgrey;
   border-bottom:solid;
   border-right:solid;
@@ -89,9 +89,9 @@ a:hover {text-decoration:none:;}
   position:fixed; 
   z-index:1030;
 }
-.flap:link {color:black;} 
-.flap:visited {color:black} 
-.flap:hover {
+.toggle:link {color:black;} 
+.toggle:visited {color:black} 
+.toggle:hover {
   color:grey;
   cursor:pointer;}
-.flap:active {color:darkgrey;}
+.toggle:active {color:darkgrey;}

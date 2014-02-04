@@ -14,9 +14,11 @@ var sampleMessages = [
 
 var displayMessages = function(messages){
 
-	var panel = $("<div />").width("300px");
-	panel.addClass("panel panel-default")
-	var table = $("<table />").addClass("table table-striped table-condensed");
+	// var panel = $("<div />").width("300px");
+	// panel.addClass("panel panel-default")
+	var table = $("<table />")
+		.addClass("table table-striped table-condensed")
+		.css({"border":"solid 1px;","background":"white"});
 
 	messages = sampleMessages;
 
@@ -29,8 +31,6 @@ var displayMessages = function(messages){
 			row.addClass("text-warning");
 		else if (messages[i].severity == 5)
 			row.addClass("text-danger");
-
-
 
 		row.append($('<td />').text(messages[i].device))
 
@@ -54,6 +54,15 @@ var displayMessages = function(messages){
 	}
 
 
-	panel.append(table);
-	$('.content').append(panel);
+	// panel.append(table);
+	// $('.content').append(panel);
+	var col = 0;
+	var row = 0;
+	gridster.add_widget('<li class="widget">' + table[0].outerHTML + '</li>', col, row);
+	var widget = $('.widget');
+	while (widget.height() < table.outerHeight()) {
+		col++;
+		row++;
+		gridster.resize_widget($('.widget'),col, row);
+	}
 }
