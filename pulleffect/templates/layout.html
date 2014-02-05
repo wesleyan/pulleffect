@@ -82,6 +82,7 @@ ul {
 }
 
 </style>
+
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav no-select" id="main-nav">
         <ul class="nav nav-stacked">
@@ -264,30 +265,39 @@ ul {
 
 
     {# Import javascript macros #}
-    {#
+    {# all commented out
+
     <script>
         var dash = {{dashboard | tojson}}
     </script>
-    #}
 
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
--->
-    {# {% if session.signed_in %}  #}
+    
+
+    {% if session.signed_in %}
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
-    {# {% endif %} #}
+    {% endif %} 
 
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
 
-    {#
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
-    #}
 
-    {# {% endif %} #}
+    #}
+    -->
+
+    <!-- Import Widget js files -->
+    <!-- TODO: session.signed_in needs to be tested for some? -->
+    <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
+    
 </body>
 
 </html>
