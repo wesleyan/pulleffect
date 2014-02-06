@@ -1,7 +1,4 @@
-{% macro preferences(dashboard) -%}
-<script>
 
- {# Alert stuff #}
     // A helper function for displayAlerts function
     var getAlertType = function(alert) {
         switch (alert[0]) {
@@ -49,9 +46,6 @@
         $('#alerts').append(alert);
     }
 
-    {# End alert stuff #}
-
-    {# Stuff to do when page loads #}
     // TODO: This will probably need to be moved into a general page load function so 
     // we don't need to keep adding stuff here
     $(function() {
@@ -61,11 +55,9 @@
         {% if session.signed_in %}
             // Refresh google calendar list
             refreshGoogleCalendarList();
-            {% endif %}
+           {% endif %}
         });
-    {# End stuff to do when page loads #}
 
-    {# config_panel #}
 
     $("#configure").on('hide.bs.modal', function (e) {
         if (localStorage.getItem('config_open') == 'true' || localStorage.getItem('config_open') == null) {
@@ -86,10 +78,7 @@
     }
     loadConfigPrefs();
 
-    {# End config_panel #}
 
-
-    {# Drawer stuff #}
     // Navbar drawer function
     $('.flap>span').click(function() {
 
@@ -123,9 +112,4 @@
                 .tooltip('show');
             });
         }
-    });
-{# End drawer stuff #}      
-
-
-</script>
-{%- endmacro %}
+    });  
