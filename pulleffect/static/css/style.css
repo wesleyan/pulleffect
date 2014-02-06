@@ -1,0 +1,149 @@
+html, body {
+  height:100%;
+  min-height:100%;
+}
+.btn-group-vertical {
+    width:100%;
+    max-height:100%;
+}
+#ims {
+    display: block;
+    margin-right: auto;
+    margin-left:auto;
+}
+.modal-body {
+    padding-top:10px;
+    height:350px;
+}
+.navbar {
+    margin-bottom:0px;
+    background-color: silver;
+
+}
+.nav-tabs {
+    margin-bottom:10px;
+}
+.tab-content {
+    margin-bottom:10px;
+    overflow-y: auto;
+    max-height:100%;
+}
+.tab-content p {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width:50%;
+    text-align:center;
+}
+.tooltip {
+    z-index:9999;
+}
+#signout {
+    display:inline;
+    padding:0px;
+    margin-left:5px;
+}
+#signin {
+    margin-top:30px;
+}
+.col-md-5 button {
+    width: 80px;
+    height: 60px;
+    color: blue;
+    background-color: silver;
+}
+#alerts {
+    z-index:9998;
+    width:200px;
+    position:absolute;
+    right:20px;
+    top:55px;	
+    text-align:center;
+}
+#alerts .alert {
+	margin-bottom:4px;
+}
+#google_config .alert {
+    width:70%;
+    margin:0px;
+    padding-top:1px;
+    padding-bottom:1px;
+    padding-right:10px;
+    padding-left:10px;
+    margin-right:auto;
+    margin-left:auto;
+    text-align:center;
+
+}
+#google_config .alert .close {
+    right:2px;
+}
+
+}
+[title] {
+	top:10px;
+}
+
+#calendar {
+    margin-top: 10px;
+    height:250px;
+    overflow: none;
+    padding-left:0px;
+    padding-right:0px;
+}
+
+#tictac{
+    margin-top: 10px;
+    height:250px;
+}
+
+.event{
+    height: 10px;
+    font-size: 12px;
+}
+
+.centered{
+
+    text-align:center;
+    vertical-align:middle;
+    line-height:300px; 
+    transform:transformY(-50%);  
+}
+
+.tic{
+    height: 70px;
+}
+
+.reset{
+    height: 30px;
+    width: 70px;
+    position:relative;
+    left: 40%;
+}
+
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    width:95%;
+    background-color: Silver;   
+    flex-wrap:wrap;
+}
+
+.flex-item {
+    background-color: DeepSkyBlue;
+    width: 300px;
+    height: 300px;
+    margin: 5px;
+    cursor: move;
+}
+
+.no-select {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.table {
+    height:100%;
+}

@@ -13,29 +13,158 @@
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/jquery.gridster.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
     <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='specialEvents/specialEvents.js') }}"></script>
 
 </head>
 
-
 <body>
-    <nav class="navbar navbar-default" role="navigation">
+<style>
+.gridster * {
+  margin:0;
+  padding:0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+/*/
+/* gridster
+/*/
+
+.gridster ul {
+    background-color: silver;
+}
+
+.gridster li {
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    line-height: 100%;
+    background:grey;
+}
+
+.gridster {
+    margin: 0 auto;
+    opacity: .8;
+    padding-left:3em;
+
+    -webkit-transition: opacity .6s;
+    -moz-transition: opacity .6s;
+    -o-transition: opacity .6s;
+    -ms-transition: opacity .6s;
+    transition: opacity .6s;
+}
+
+.gridster .gs-w {
+    cursor: pointer;
+}
+
+.gridster .player {
+    background: #BBB;
+}
+
+.gridster .preview-holder {
+    border: none!important;
+    background: red!important;
+}
+
+</style>
+    <input type="checkbox" class="main-nav-check" id="main-nav-check" />
+    <nav class="main-nav no-select" id="main-nav">
+        <ul class="nav nav-stacked">
+            <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
+            <li>
+                <button draggable="true" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button draggable="true" onclick="loadWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+            </li> 
+        </ul>
+    </nav>
+
+    <div class="page-wrap" style="background:silver; height:100%;">
+        <label for="main-nav-check" class="toggle no-select">☰</label>
+            <div class="gridster">
+                <ul style="background:silver;"> 
+                </ul>
+            </div>
+    </div>
+
+
+    <script>
+        var gridster;
+
+        $(function(){
+
+            gridster = $(".gridster ul").gridster({
+                widget_base_dimensions: [100, 100],
+                widget_margins: [5, 5],
+                helper: 'clone',
+                resize: {
+                    enabled: true
+                }
+            }).data('gridster');
+
+            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
+        });
+
+        jQuery.event.props.push('dataTransfer');
+        var counter = 0;
+        $('.page-wrap').on({
+            dragstart: function() {
+                $(this).css('opacity', '0.5');
+            },
+            dragleave: function() {
+                $(this).removeClass('over');
+            },
+            dragenter: function(e) {
+                $(this).addClass('over');
+            },
+            dragover: function(e) {
+                e.preventDefault();
+            },
+            dragend: function() {
+                $(this).css('opacity', '1');
+            }, 
+            drop: function(e) {
+                counter++;
+                alert(counter);
+                e.stopPropagation();
+            }
+        });
+
+
+    </script>
+
+<!--   {#  <nav class="navbar navbar-default" role="navigation">
         <div class="container">
             <a class="navbar-brand" href="#">Pull <span class="fa fa-tint"  /> Effect</a>
             {% if session.signed_in %}
-            <!-- Form for signing out -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <span class="navbar-text">{{ session.google_email }}</span>
                 </li>
                 <li>
-                    <!-- Configure button -->
                     <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
                         <span class="fa fa-calendar" />
                     </button>
@@ -91,8 +220,7 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="google_config">
-                                {% if session.gcal_access_token %}
-                                <!-- Refresh Google calendar list -->
+                                {% if session.gcal_access_token %}     
                                 <div id="calendars">
                                     <button onclick="refreshGoogleCalendarList()" type="submit" class="btn btn-success pull-right" title="Refresh List" alt="Refresh List"><span class="fa fa-refresh"/></button>
                                     <div class="alert alert-info alert-dismissable">
@@ -100,7 +228,6 @@
                                         If you have new calendars that don't appear, click the refresh button.</div>
                                         <div id="google_calendar_list"></div>
                                     </div>
-                                    <!-- Fetch Google Calendar list -->
                                     <div id="google_authenticate" style="display:none">
                                         <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                         <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
@@ -108,7 +235,6 @@
                                         </form>
                                     </div>
                                     {% else %}
-                                    <!-- Fetch Google Calendar list -->
                                     <div id="google_authenticate" style="display:none">
                                         <p class="well">You can use Pull Effect to monitor your Google calendars. All you need to do is click the button below to give Pull Effect access to your calendars, then select the calendars you want displayed on your dashboard.</p>
                                         <form action="{{ url_for('gcal.authenticate') }}" method="get" role="form">
@@ -128,9 +254,7 @@
                             <button type="button" onclick='getGoogleCalendarEvents()' class="btn btn-primary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title data-original-title="Save Changes">Load Calendar</button>
                         </div>
                     </div>
-                    <!-- /.modal-content -->
                 </div>
-                <!-- /.modal-dialog -->
             </div>
             {% endif %}
             <div>
@@ -142,9 +266,8 @@
 
      <!--        <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
-            </table> -->
-            {% endif %}
-            {% endblock %}
+            </table> -->      
+            {% endblock %} #}
         </div>
     </div>
 
@@ -157,20 +280,22 @@
         var messages_url = "{{ url_for('messages.index') }}"
     </script>
 
-    {% from "macros/preferences.html" import preferences %}
-    {{ preferences(dashboard) }}
-
-    {% if session.signed_in %}
+    {% from "macros/calendarList.html" import calendarListScripts %}
+    {{calendarListScripts()}}
+-->
+    {# {% if session.signed_in %}  #}
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
+
+    {# {% endif %} #}
 
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
 
-    {% from "macros/calendarList.html" import calendarListScripts %}
-    {{calendarListScripts()}}
-
-    {% endif %}
+    {#
+    {% from "macros/preferences.html" import preferences %}
+    {{ preferences(dashboard) }}
+    #}
 
     <script>
         // if(Modernizr.localstorage) {

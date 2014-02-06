@@ -88,9 +88,13 @@ function resetClick(reset_clicked) {
 
 
 var loadTicTacToe = function() {
+    var panel = $("<div />").width("300px");
+    panel.addClass("panel panel-default")
+    var table = $("<table />").addClass("table table-striped table-condensed");
+
     htmlStr = '\
-    <div class="panel panel-default col-md-4" id="tictac">\
-		<div class="tictactoe" style="height:200px;">\
+    <div class="panel panel-default col-md-3" style="width=300;" id="tictac">\
+		<div class="tictactoe" style="height:270px;">\
 		    <div class="row">\
 		        <button id="0" class="tic col-md-4" onClick="buttonClick(this.id)"/>\
 		        <button id="1" class="tic col-md-4" onClick="buttonClick(this.id)"/>\
@@ -111,7 +115,8 @@ var loadTicTacToe = function() {
 		    </div>\
 		</div>\
 	</div>';
-	$('.Widgets').append(htmlStr);
+    panel.append(table);
+	$('.content').append(htmlStr);
 }
 
 </script>

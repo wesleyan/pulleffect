@@ -68,19 +68,23 @@
     {# config_panel #}
 
     $("#configure").on('hide.bs.modal', function (e) {
-        localStorage.setItem("drawer_open", false);
+        if (localStorage.getItem('config_open') == 'true' || localStorage.getItem('config_open') == null) {
+            localStorage.setItem('config_open', 'false');
+        }
     });
 
     $("#configure").on('show.bs.modal', function (e) {
-        localStorage.setItem("drawer_open", true);
+        if (localStorage.getItem('config_open') == 'false' || localStorage.getItem('config_open') == null) {
+            localStorage.setItem('config_open', 'true');
+        }
     });
 
-    var loadDrawerPrefs = function() {
-        if (localStorage.getItem("drawer_open")) {
+    var loadConfigPrefs = function() {
+        if (localStorage.getItem("config_open") == 'true') {
             $('#configure').modal('show');
         }
     }
-    loadDrawerPrefs();
+    loadConfigPrefs();
 
     {# End config_panel #}
 
