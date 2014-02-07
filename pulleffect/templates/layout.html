@@ -21,8 +21,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
-    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
-    <script src="{{ url_for('static', filename='specialEvents/specialEvents.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
 
 </head>
 
@@ -89,6 +89,9 @@ ul {
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
                 <button draggable="true" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button draggable="true" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
             </li>
             <li>
                 <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>

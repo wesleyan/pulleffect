@@ -1,22 +1,4 @@
 
-////Sample messages for testing purposes
-var newMessages = [
-	{device: "name10", device_type: "roomtrol", location:"SCIE 127", severity: 2, 
-	 title: "Turning off", description: "Turning off", time: 100000},
-	{device: "name9", device_type: "roomtrol", location:"SCIE 127", severity: 3, 
-	 title: "Turning off", description: "Turning off", time: 90000},
-	{device: "name8", device_type: "roomtrol", location:"SCIE 127", severity: 4, 
-	 title: "Turning off", description: "Turning off", time: 80000},
-	{device: "name7", device_type: "roomtrol", location:"SCIE 127", severity: 5, 
-	 title: "Turning off", description: "Turning off", time: 70000},
-	{device: "name6", device_type: "roomtrol", location:"SCIE 127", severity: 5, 
-	 title: "Turning off", description: "Turning off", time: 60000},
-	{device: "name5", device_type: "mac", location:"SCIE 127", severity: 1, 
-	 title: "Turning off", description: "Turning off", time: 50000},
-	 {device: "name4", device_type: "pc", location:"SCIE 127", severity: 2, 
-	 title: "Turning off", description: "Turning off", time: 40000}
-];
-
 var lastMessageDisplayed = null;
 
 var getNewMessages = function(){
@@ -36,7 +18,7 @@ var updateMessageQueue = function(messages){
 	//Forms a list of the messages which have not yet been displayed
 	var newMessageList = [];
 	var i = 0;
-	while(messages[i].time != lastMessageDisplayed.time){
+	while(messages.length > 0 && messages[i].time != lastMessageDisplayed.time){
 		newMessageList.push(messages[i]);
 		i++;
 	}
@@ -159,7 +141,7 @@ var renderMessageQueue = function(){
 
 
 
-	$.getJSON('/messages/5').success(function(messages){
+	$.getJSON('/messages/').success(function(messages){
         	renderMessages(messages, table);
         }).error(function(err){
         	console.log(err);
@@ -168,23 +150,10 @@ var renderMessageQueue = function(){
 
 	panel.append(table);
 
-	$('.Widgets').append(panel);
+	// $('.Widgets').append(panel);
+	gridster.add_widget(panel);
 
 	//Only to test the update functionality.
-	setTimeout(getNewMessages, 5000);
+	setTimeout(getNewMessages, 60000);
 }
 
-//Once max gets this working......
-var pullMessages = function(){
-	$.ajax({
-        type: 'GET',
-        url: '/messages/',
-        success: function(messages){
-        	console.log(messages);
-
-        },
-        error: function(err) {
-            console.log(err);
-        }
-    });
-}

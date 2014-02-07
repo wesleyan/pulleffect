@@ -4,7 +4,7 @@ var loadEventTable = function(event, cb){
 	var eventItem = $('<li />').addClass('list-group-item').css('font-size', '12px');
 
 	eventItem.append($('<div />').html(htmlspecialchars_decode(htmlspecialchars_decode(event.title,' ENT_NOQUOTES'))).css('border-bottom', '1px solid #aaa'));
-
+  eventItem.css('background-color', '#FFFFFF');
 
 	var timeDiv = $('<div />');
 	timeDiv.append('<b>' + moment(event.start).format('hh:mm A') + '</b> ');
@@ -29,9 +29,6 @@ var loadEventTable = function(event, cb){
 		eventItem.css('background-color', '#FFABAB');
 	}
 
-	// eventItem.hover(function(){$(this).css('background-color', '#EFEFEF');}, 
-	// 				function(){$(this).css('background-color', '#fff')});
-		
 	if (typeof cb === 'function')
 		cb(eventItem);
 }
@@ -50,20 +47,28 @@ var renderSpecialEventsWidget = function(){
 
 	var panel = $("<div />").width("300px").height('200px').css('overflow', 'auto').css('margin-top', '10px');
 	panel.addClass("panel panel-default");
+  panel.css('background-color', '#FFFFFF');
 	var eventsList = $("<ul />").addClass("eventsList").addClass('list-group ')
 	panel.append(eventsList);
 
 
-	var startTime = moment().startOf('day').unix();
-	var endTime = moment().endOf('day').unix();
+	// var startTime = moment().startOf('day').unix();
+	// var endTime = moment().endOf('day').unix();
 
-	$.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?start='+startTime + 'end=' + endTime )
-		.success(renderSpecialEvents)
-		.error(function(err){
-        	console.log(err);
+	// $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?start='+startTime + 'end=' + endTime )
+	// 	.success(renderSpecialEvents)
+	// 	.error(function(err){
+ //        	console.log(err);
+ //    });
+
+  $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
+    .success(renderSpecialEvents)
+    .error(function(err){
+          console.log(err);
     });
 
-	$('.Widgets').append(panel);
+	// $('.Widgets').append(panel);
+  gridster.add_widget(panel);
 }
 
 
