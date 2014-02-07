@@ -18,11 +18,13 @@
     <link href="{{ url_for('static', filename='css/jquery.gridster.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
 
 </head>
 
@@ -82,13 +84,17 @@ ul {
     background: red!important;
 }
 
+.generic {
+    background-color: white;
+}
+
 </style>
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav no-select" id="main-nav">
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
-                <button draggable="true" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
                 <button draggable="true" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
@@ -97,11 +103,11 @@ ul {
                 <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
-            </li> 
+                <button draggable="true" data-id="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+            </li>
         </ul>
     </nav>
 
@@ -125,6 +131,17 @@ ul {
                 helper: 'clone',
                 resize: {
                     enabled: true
+                },
+                serialize_params: function($w, wgd) { 
+                    //the function to edit to change the way gridster serializes the widgets
+                    //widget name etc can be added here
+                    return {
+                        type: $w.attr('data-id'),
+                        col: wgd.col,
+                        row: wgd.row,
+                        size_x: wgd.size_x,
+                        size_y: wgd.size_y
+                    }
                 }
             }).data('gridster');
 
@@ -132,8 +149,7 @@ ul {
         });
 
         jQuery.event.props.push('dataTransfer');
-        var counter = 0;
-        $('.page-wrap').on({
+        $('button[draggable=true]').on({
             dragstart: function() {
                 $(this).css('opacity', '0.5');
             },
@@ -144,19 +160,28 @@ ul {
                 $(this).addClass('over');
             },
             dragover: function(e) {
-                e.preventDefault();
+                //e.preventDefault();
             },
             dragend: function() {
                 $(this).css('opacity', '1');
-            }, 
-            drop: function(e) {
-                counter++;
-                alert(counter);
-                e.stopPropagation();
+                widgetOnDrop($(this).attr('data-id'));
             }
         });
 
+        widgetOnDrop = function (widgetName) {
+               console.log(widgetName);
+               var widget = {name: widgetName};
+               gridster.add_widget(_.template($('#generic-widget').html(), {'widget': widget}), 3, 3);
+               //make a request to the server to get data and get data / get template
 
+        }
+
+    </script>
+    <script type="text/template" id="generic-widget">
+        <li class="generic" data-id="generic">
+            <%=widget.name%>
+            <button type="button" class="close">&times;</button>
+        </li>
     </script>
 
 <!--   {#  <nav class="navbar navbar-default" role="navigation">
