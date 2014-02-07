@@ -54,9 +54,7 @@ ul {
 .gridster li {
     font-size: 1em;
     font-weight: bold;
-    text-align: center;
     line-height: 100%;
-    background:grey;
 }
 
 .gridster {
@@ -87,7 +85,13 @@ ul {
 .generic {
     background-color: white;
 }
-
+.generic header {
+    padding:10px;
+    background-color:#eaeaea;
+}
+.generic header .close {
+    line-height: inherit;
+}
 </style>
 
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
@@ -98,10 +102,10 @@ ul {
                 <button draggable="true" data-id="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
                 <button draggable="true" data-id="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
@@ -131,7 +135,8 @@ ul {
                 widget_margins: [5, 5],
                 helper: 'clone',
                 resize: {
-                    enabled: true
+                    enabled: true,
+                    
                 },
                 serialize_params: function($w, wgd) { 
                     //the function to edit to change the way gridster serializes the widgets
@@ -143,10 +148,11 @@ ul {
                         size_x: wgd.size_x,
                         size_y: wgd.size_y
                     }
+                },
+                draggable: {
+                    handle: 'header'
                 }
             }).data('gridster');
-
-            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
         });
 
         jQuery.event.props.push('dataTransfer');
@@ -182,8 +188,10 @@ ul {
     </script>
     <script type="text/template" id="generic-widget">
         <li class="generic" data-id="<%=widget.name%>">
-            <%=widget.name%>
-            <button type="button" class="close">&times;</button>
+            <header>
+                <%=widget.name%>
+                <button type="button" class="close">&times;</button>
+            </header>
         </li>
     </script>
 
