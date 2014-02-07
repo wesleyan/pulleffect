@@ -136,17 +136,17 @@ ul {
         var gridster;
 
         $(function(){
-
+            saveWidgetPositions = function() {
+               //some stuff to update the local storage
+                console.log(gridster.serialize());
+            }
             gridster = $(".gridster ul").gridster({
                 widget_base_dimensions: [100, 100],
                 widget_margins: [5, 5],
                 helper: 'clone',
                 resize: {
                     enabled: true,
-                    stop: function (e, ui, $widget) {
-                        console.log('STOP position: ' + ui.position.top +' '+ ui.position.left);
-                        $('.gs-resize-handle').hide();
-                    }
+                    stop: saveWidgetPositions
                 },
                 serialize_params: function($w, wgd) { 
                     //the function to edit to change the way gridster serializes the widgets
@@ -160,7 +160,8 @@ ul {
                     }
                 },
                 draggable: {
-                    handle: 'header'
+                    handle: 'header',
+                    stop: saveWidgetPositions
                 }
             }).data('gridster');
         });
@@ -193,11 +194,22 @@ ul {
                gridster.add_widget(_.template($('#generic-widget').html(), {'widget': widget}), 3, 3);
                //make a request to the server to get data and get data / get template
 
-        }
+        };
 
-        $('body').dblclick(function () {
-            $('.gs-resize-handle').toggle();
-        })
+        
+
+        (function() {
+            var resizable = false;
+            $('body').dblclick(function() {
+                resizable = !resizable;
+                if(resizable === true) {
+                    $('.gs-resize-handle').show();
+                } else {
+                    $('.gs-resize-handle').hide();
+                }  
+            })
+        })();
+        
     </script>
     <script type="text/template" id="generic-widget">
         <li class="generic" data-id="<%=widget.name%>">
