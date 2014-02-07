@@ -113,7 +113,7 @@ var addRow = function(message, cb){
 // returned by the messages route without animation. 
 //////////////////////////////////////////////////////////////////////////////////////
 var renderMessages = function(messages, table){
-	console.log(messages);
+
 	messages = messages.reverse();
 	for(var i = 0; i < messages.length; i++){
 
