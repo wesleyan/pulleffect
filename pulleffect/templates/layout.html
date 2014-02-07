@@ -133,22 +133,24 @@ ul {
 
 
     <script>
+        //these variables should be in closure later on, now keeping them for debugging purposes
         var gridster;
-
-        $(function(){
-            saveWidgetPositions = function() {
-               //some stuff to update the local storage
+        var PullEffect = {};
+        $(function() {
+            PullEffect.saveWidgetPositions = function() {
+                //some stuff to update the local storage
                 console.log(gridster.serialize());
-            }
+            };
+
             gridster = $(".gridster ul").gridster({
                 widget_base_dimensions: [100, 100],
                 widget_margins: [5, 5],
                 helper: 'clone',
                 resize: {
                     enabled: true,
-                    stop: saveWidgetPositions
+                    stop: PullEffect.saveWidgetPositions
                 },
-                serialize_params: function($w, wgd) { 
+                serialize_params: function($w, wgd) {
                     //the function to edit to change the way gridster serializes the widgets
                     //widget name etc can be added here
                     return {
@@ -161,12 +163,13 @@ ul {
                 },
                 draggable: {
                     handle: 'header',
-                    stop: saveWidgetPositions
+                    stop: PullEffect.saveWidgetPositions
                 }
             }).data('gridster');
         });
 
         jQuery.event.props.push('dataTransfer');
+
         $('button[draggable=true]').on({
             dragstart: function() {
                 $(this).css('opacity', '0.5');
@@ -178,35 +181,42 @@ ul {
                 $(this).addClass('over');
             },
             dragover: function(e) {
-                //e.preventDefault();
-                
+
             },
             dragend: function(e) {
-                //console.log(e);
                 $(this).css('opacity', '1');
                 widgetOnDrop($(this).attr('data-id'));
             }
         });
 
-        widgetOnDrop = function (widgetName) {
-               console.log(widgetName);
-               var widget = {name: widgetName};
-               gridster.add_widget(_.template($('#generic-widget').html(), {'widget': widget}), 3, 3);
-               //make a request to the server to get data and get data / get template
+        widgetOnDrop = function(widgetName) {
+            var widget = {
+                name: widgetName
+            };
+            var $toAdd = $(_.template($('#generic-widget').html(), {
+                'widget': widget
+            }));
+            gridster.add_widget($toAdd, 3, 3);
+            PullEffect.saveWidgetPositions();
+            //make a request to the server to get data and get data / get template
 
         };
-
-        
+        $('body').on('click', '.gridster li .close', function(e) {
+            var $toRemove = $(this).parent().parent();
+            $toRemove.hide(); //hiding first so that users don't feel the delay
+            gridster.remove_widget($toRemove);
+            PullEffect.saveWidgetPositions();
+        });
 
         (function() {
             var resizable = false;
             $('body').dblclick(function() {
                 resizable = !resizable;
-                if(resizable === true) {
+                if (resizable === true) {
                     $('.gs-resize-handle').show();
                 } else {
                     $('.gs-resize-handle').hide();
-                }  
+                }
             })
         })();
         
@@ -217,7 +227,6 @@ ul {
                 <%=widget.name%>
                 <button type="button" class="close">&times;</button>
             </header>
-            <span class="res">res</span>
         </li>
     </script>
 
