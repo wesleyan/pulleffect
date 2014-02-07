@@ -148,13 +148,15 @@ ul {
             dragleave: function() {
                 $(this).removeClass('over');
             },
-            dragenter: function(e) {
+            dragenter: function() {
                 $(this).addClass('over');
             },
             dragover: function(e) {
                 //e.preventDefault();
+                
             },
-            dragend: function() {
+            dragend: function(e) {
+                //console.log(e);
                 $(this).css('opacity', '1');
                 widgetOnDrop($(this).attr('data-id'));
             }
@@ -170,7 +172,7 @@ ul {
 
     </script>
     <script type="text/template" id="generic-widget">
-        <li class="generic" data-id="generic">
+        <li class="generic" data-id="<%=widget.name%>">
             <%=widget.name%>
             <button type="button" class="close">&times;</button>
         </li>
