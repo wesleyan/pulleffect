@@ -139,7 +139,7 @@ ul {
         $(function() {
             PullEffect.saveWidgetPositions = function() {
                 //some stuff to update the local storage
-                console.log(gridster.serialize());
+                //for example: localStorage.pullEffect = gridster.serialize();
             };
 
             gridster = $(".gridster ul").gridster({
@@ -185,11 +185,11 @@ ul {
             },
             dragend: function(e) {
                 $(this).css('opacity', '1');
-                widgetOnDrop($(this).attr('data-id'));
+                PullEffect.widgetOnDrop($(this).attr('data-id'));
             }
         });
 
-        widgetOnDrop = function(widgetName) {
+        PullEffect.widgetOnDrop = function(widgetName) {
             var widget = {
                 name: widgetName
             };
@@ -198,9 +198,18 @@ ul {
             }));
             gridster.add_widget($toAdd, 3, 3);
             PullEffect.saveWidgetPositions();
-            //make a request to the server to get data and get data / get template
-
+            
+            widget.eq = $('.gridster').find($toAdd).index();
+            PullEffect.fetchWidgetContent(widget);
         };
+
+        PullEffect.fetchWidgetContent = function (widget) {
+            //below is the widget li element that the content is to be loaded
+            $widget = $('.gridster li').eq(widget.eq);
+            //make a request to the server to get data and get data / get template
+            console.log(JSON.stringify(widget));
+        };
+
         $('body').on('click', '.gridster li .close', function(e) {
             var $toRemove = $(this).parent().parent();
             $toRemove.hide(); //hiding first so that users don't feel the delay
