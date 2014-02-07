@@ -18,6 +18,7 @@
     <link href="{{ url_for('static', filename='css/jquery.gridster.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
@@ -52,9 +53,7 @@ ul {
 .gridster li {
     font-size: 1em;
     font-weight: bold;
-    text-align: center;
     line-height: 100%;
-    background:grey;
 }
 
 .gridster {
@@ -82,6 +81,10 @@ ul {
     background: red!important;
 }
 
+.generic {
+    background-color: white;
+}
+
 </style>
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav no-select" id="main-nav">
@@ -98,7 +101,7 @@ ul {
             </li>
             <li>
                 <button draggable="true" data-id="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
-            </li> 
+            </li>
         </ul>
     </nav>
 
@@ -127,6 +130,7 @@ ul {
                     //the function to edit to change the way gridster serializes the widgets
                     //widget name etc can be added here
                     return {
+                        type: $w.attr('data-id'),
                         col: wgd.col,
                         row: wgd.row,
                         size_x: wgd.size_x,
@@ -134,8 +138,6 @@ ul {
                     }
                 }
             }).data('gridster');
-
-            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
         });
 
         jQuery.event.props.push('dataTransfer');
@@ -160,11 +162,18 @@ ul {
 
         widgetOnDrop = function (widgetName) {
                console.log(widgetName);
-
+               var widget = {name: widgetName};
+               gridster.add_widget(_.template($('#generic-widget').html(), {'widget': widget}), 3, 3);
                //make a request to the server to get data and get data / get template
 
         }
 
+    </script>
+    <script type="text/template" id="generic-widget">
+        <li class="generic" data-id="generic">
+            <%=widget.name%>
+            <button type="button" class="close">&times;</button>
+        </li>
     </script>
 
 <!--   {#  <nav class="navbar navbar-default" role="navigation">
