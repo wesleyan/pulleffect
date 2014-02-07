@@ -21,7 +21,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
-    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
 
 </head>
 
@@ -82,6 +81,7 @@ ul {
 }
 
 </style>
+
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav no-select" id="main-nav">
         <ul class="nav nav-stacked">
@@ -258,15 +258,17 @@ ul {
                 <div class="Widgets"></div>
 
 
-     <!--        <div class="panel panel-default col-md-4" id="calendar">
+            <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
-            </table> -->      
+            </table> 
             {% endblock %} #}
         </div>
-    </div>
+    </div> -->
 
 
-    {# Import javascript macros #}
+<!--     {# Import javascript macros #}
+    {# all commented out
+
     <script>
         var dash = {{dashboard | tojson}}
 
@@ -276,20 +278,21 @@ ul {
 
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
--->
-    {# {% if session.signed_in %}  #}
+    
+
+    {% if session.signed_in %}
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
-    {# {% endif %} #}
+    {% endif %} 
 
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
 
-    {#
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
-    #}
+
+    #} -->
 
     <script>
         // if(Modernizr.localstorage) {
@@ -297,6 +300,15 @@ ul {
         // }
     </script>
 
+    <!-- Import Widget js files -->
+    <!-- TODO: session.signed_in needs to be tested for some? -->
+    <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
+    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
+    
 </body>
 
 </html>

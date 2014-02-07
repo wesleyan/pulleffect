@@ -1,5 +1,3 @@
-{% macro eventScripts() -%}
-<script>
 
     var getGoogleCalendarEvents = function() {
 
@@ -66,6 +64,3 @@
         panel.append(loginForm)
         $('.content').append(panel);
     }
-
-</script>
-{%- endmacro %}
