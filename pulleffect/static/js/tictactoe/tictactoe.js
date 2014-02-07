@@ -1,5 +1,3 @@
-{% macro tictactoe() -%}
-<script>
 
 var board = ["", "", "", "", "", "", "", "", ""];
 
@@ -118,6 +116,3 @@ var loadTicTacToe = function() {
     panel.append(table);
 	$('.content').append(htmlStr);
 }
-
-</script>
-{%- endmacro %}

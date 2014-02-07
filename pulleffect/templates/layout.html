@@ -54,9 +54,7 @@ ul {
 .gridster li {
     font-size: 1em;
     font-weight: bold;
-    text-align: center;
     line-height: 100%;
-    background:grey;
 }
 
 .gridster {
@@ -87,8 +85,15 @@ ul {
 .generic {
     background-color: white;
 }
-
+.generic header {
+    padding:10px;
+    background-color:#eaeaea;
+}
+.generic header .close {
+    line-height: inherit;
+}
 </style>
+
     <input type="checkbox" class="main-nav-check" id="main-nav-check" />
     <nav class="main-nav no-select" id="main-nav">
         <ul class="nav nav-stacked">
@@ -97,10 +102,10 @@ ul {
                 <button draggable="true" data-id="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
                 <button draggable="true" data-id="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
@@ -130,7 +135,8 @@ ul {
                 widget_margins: [5, 5],
                 helper: 'clone',
                 resize: {
-                    enabled: true
+                    enabled: true,
+                    
                 },
                 serialize_params: function($w, wgd) { 
                     //the function to edit to change the way gridster serializes the widgets
@@ -142,10 +148,11 @@ ul {
                         size_x: wgd.size_x,
                         size_y: wgd.size_y
                     }
+                },
+                draggable: {
+                    handle: 'header'
                 }
             }).data('gridster');
-
-            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
         });
 
         jQuery.event.props.push('dataTransfer');
@@ -181,8 +188,10 @@ ul {
     </script>
     <script type="text/template" id="generic-widget">
         <li class="generic" data-id="<%=widget.name%>">
-            <%=widget.name%>
-            <button type="button" class="close">&times;</button>
+            <header>
+                <%=widget.name%>
+                <button type="button" class="close">&times;</button>
+            </header>
         </li>
     </script>
 
@@ -294,15 +303,17 @@ ul {
                 <div class="Widgets"></div>
 
 
-     <!--        <div class="panel panel-default col-md-4" id="calendar">
+            <div class="panel panel-default col-md-4" id="calendar">
             <table class="table table-striped" id="eventsTable">
-            </table> -->      
+            </table> 
             {% endblock %} #}
         </div>
-    </div>
+    </div> -->
 
 
-    {# Import javascript macros #}
+<!--     {# Import javascript macros #}
+    {# all commented out
+
     <script>
         var dash = {{dashboard | tojson}}
 
@@ -312,20 +323,21 @@ ul {
 
     {% from "macros/calendarList.html" import calendarListScripts %}
     {{calendarListScripts()}}
--->
-    {# {% if session.signed_in %}  #}
+    
+
+    {% if session.signed_in %}
     {% from "macros/calendarEvents.html" import eventScripts %}
     {{eventScripts()}}
 
-    {# {% endif %} #}
+    {% endif %} 
 
     {% from "macros/tictactoe.html" import tictactoe %}
     {{tictactoe()}}
 
-    {#
     {% from "macros/preferences.html" import preferences %}
     {{ preferences(dashboard) }}
-    #}
+
+    #} -->
 
     <script>
         // if(Modernizr.localstorage) {
@@ -333,6 +345,15 @@ ul {
         // }
     </script>
 
+    <!-- Import Widget js files -->
+    <!-- TODO: session.signed_in needs to be tested for some? -->
+    <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
+    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
+    
 </body>
 
 </html>

@@ -1,7 +1,4 @@
-{% macro calendarListScripts() %}
-<script>
-    {% if session.signed_in %}
-    var getGoogleCalendarList = function() {
+var getGoogleCalendarList = function() {
         $.ajax({
             type: 'GET',
             url: '{{ url_for("gcal.get_calendar_list") }}' ,
@@ -41,6 +38,3 @@
         } 
         return displayAlerts('error', 'Sorry! We seem to have encountered an unknown error!');
     }
-    {% endif %}
-</script>
-{%- endmacro %}

@@ -14,7 +14,6 @@
 .gridster .gs-w {
     z-index: 2;
     position: absolute;
-    padding:10px;
 }
 
 .ready .gs-w:not(.preview-holder) {
