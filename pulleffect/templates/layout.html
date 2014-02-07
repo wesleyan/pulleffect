@@ -137,18 +137,15 @@ ul {
         var gridster;
         var PullEffect = {};
         $(function() {
-            PullEffect.saveWidgetPositions = function() {
-                //some stuff to update the local storage
-                //for example: localStorage.pullEffect = gridster.serialize();
-            };
-
             gridster = $(".gridster ul").gridster({
                 widget_base_dimensions: [100, 100],
                 widget_margins: [5, 5],
                 helper: 'clone',
                 resize: {
                     enabled: true,
-                    stop: PullEffect.saveWidgetPositions
+                    stop: function () {
+                        PullEffect.saveWidgetPositions()
+                    }
                 },
                 serialize_params: function($w, wgd) {
                     //the function to edit to change the way gridster serializes the widgets
@@ -163,9 +160,26 @@ ul {
                 },
                 draggable: {
                     handle: 'header',
-                    stop: PullEffect.saveWidgetPositions
+                    stop: function () {
+                        PullEffect.saveWidgetPositions()
+                    }
                 }
             }).data('gridster');
+
+            PullEffect.saveWidgetPositions = function() {
+                //some stuff to update the local storage
+                localStorage.pullEffect = JSON.stringify(gridster.serialize());
+            };
+            PullEffect.loadWidgets = function () {
+                gridster.remove_all_widgets();
+                $.each(JSON.parse(localStorage.pullEffect), function() {
+                    PullEffect.startWidget(this.type, this);
+                });
+            }
+
+            $(document).ready(function() {
+                PullEffect.loadWidgets();
+            });
         });
 
         jQuery.event.props.push('dataTransfer');
@@ -185,20 +199,24 @@ ul {
             },
             dragend: function(e) {
                 $(this).css('opacity', '1');
-                PullEffect.widgetOnDrop($(this).attr('data-id'));
+                PullEffect.startWidget($(this).attr('data-id'));
             }
         });
 
-        PullEffect.widgetOnDrop = function(widgetName) {
+        PullEffect.startWidget = function(widgetName, savedWidget) {
             var widget = {
                 name: widgetName
             };
             var $toAdd = $(_.template($('#generic-widget').html(), {
                 'widget': widget
             }));
-            gridster.add_widget($toAdd, 3, 3);
-            PullEffect.saveWidgetPositions();
-            
+            if(typeof savedWidget == 'undefined') {
+                gridster.add_widget($toAdd, 3, 3);
+                PullEffect.saveWidgetPositions();
+            } else {
+                gridster.add_widget($toAdd, savedWidget.size_x, savedWidget.size_y, savedWidget.col, savedWidget.row);
+            }
+
             widget.eq = $('.gridster').find($toAdd).index();
             PullEffect.fetchWidgetContent(widget);
         };
