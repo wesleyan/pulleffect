@@ -152,19 +152,15 @@ var renderMessageQueue = function(){
 
 	var panel = $("<div />").width("400px");
 	panel.addClass("panel panel-default");
-	panel.height('200px').css({overflow: "auto"});
+	panel.height('200px').css({"overflow-y": "auto", "overflow-x":"hidden"});
 
 	var table = $("<table />").addClass("table table-condensed  messageTable");
-
-
-
 
 	$.getJSON('/messages/5').success(function(messages){
         	renderMessages(messages, table);
         }).error(function(err){
         	console.log(err);
         });
-
 
 	panel.append(table);
 

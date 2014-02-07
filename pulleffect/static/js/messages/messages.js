@@ -168,7 +168,8 @@ var renderMessageQueue = function(){
 
 	panel.append(table);
 
-	$('.Widgets').append(panel);
+	// $('.Widgets').append(panel);
+	gridster.add_widget(panel);
 
 	//Only to test the update functionality.
 	setTimeout(getNewMessages, 5000);
