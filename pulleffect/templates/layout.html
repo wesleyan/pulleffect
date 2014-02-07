@@ -23,6 +23,7 @@
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
 
 </head>
@@ -53,7 +54,9 @@ ul {
 .gridster li {
     font-size: 1em;
     font-weight: bold;
+    text-align: center;
     line-height: 100%;
+    background:grey;
 }
 
 .gridster {
@@ -95,7 +98,10 @@ ul {
                 <button draggable="true" data-id="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" data-id="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+                <button draggable="true" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+            </li>
+            <li>
+                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
                 <button draggable="true" data-id="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
@@ -139,6 +145,8 @@ ul {
                     }
                 }
             }).data('gridster');
+
+            gridster.add_widget('<li class="new" style="background:red;">The HTML of the widget...</li>', 2, 2);
         });
 
         jQuery.event.props.push('dataTransfer');
@@ -197,9 +205,14 @@ ul {
                         <span class="fa fa-gears" />
                     </button>
                 </li>
-                                <li>
+                <li>
                     <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderMessageQueue()">
                         <span class="fa fa-exclamation" />
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderSpecialEventsWidget()">
+                        <span class="fa fa-star" />
                     </button>
                 </li>
                 <li>
