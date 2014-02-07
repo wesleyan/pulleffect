@@ -152,12 +152,9 @@ var renderMessageQueue = function(){
 
 	var panel = $("<div />").width("400px");
 	panel.addClass("panel panel-default");
-	panel.height('200px').css({overflow: "auto"});
+	panel.height('200px').css({"overflow-y": "auto", "overflow-x":"hidden"});
 
 	var table = $("<table />").addClass("table table-condensed  messageTable");
-
-
-
 
 	$.getJSON('/messages/5').success(function(messages){
         	renderMessages(messages, table);
@@ -165,10 +162,10 @@ var renderMessageQueue = function(){
         	console.log(err);
         });
 
-
 	panel.append(table);
 
-	$('.Widgets').append(panel);
+	// $('.Widgets').append(panel);
+	gridster.add_widget(panel);
 
 	//Only to test the update functionality.
 	setTimeout(getNewMessages, 5000);
