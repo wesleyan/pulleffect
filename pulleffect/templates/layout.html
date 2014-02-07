@@ -87,16 +87,16 @@ ul {
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
-                <button draggable="true" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="message" onclick="displayMessages();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="loadWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="calendar" onclick="loadWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-id="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
             </li> 
         </ul>
     </nav>
@@ -121,6 +121,16 @@ ul {
                 helper: 'clone',
                 resize: {
                     enabled: true
+                },
+                serialize_params: function($w, wgd) { 
+                    //the function to edit to change the way gridster serializes the widgets
+                    //widget name etc can be added here
+                    return {
+                        col: wgd.col,
+                        row: wgd.row,
+                        size_x: wgd.size_x,
+                        size_y: wgd.size_y
+                    }
                 }
             }).data('gridster');
 
@@ -128,8 +138,7 @@ ul {
         });
 
         jQuery.event.props.push('dataTransfer');
-        var counter = 0;
-        $('.page-wrap').on({
+        $('button[draggable=true]').on({
             dragstart: function() {
                 $(this).css('opacity', '0.5');
             },
@@ -140,18 +149,20 @@ ul {
                 $(this).addClass('over');
             },
             dragover: function(e) {
-                e.preventDefault();
+                //e.preventDefault();
             },
             dragend: function() {
                 $(this).css('opacity', '1');
-            }, 
-            drop: function(e) {
-                counter++;
-                alert(counter);
-                e.stopPropagation();
+                widgetOnDrop($(this).attr('data-id'));
             }
         });
 
+        widgetOnDrop = function (widgetName) {
+               console.log(widgetName);
+
+               //make a request to the server to get data and get data / get template
+
+        }
 
     </script>
 
