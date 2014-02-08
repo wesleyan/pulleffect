@@ -106,19 +106,19 @@ ul {
         <ul class="nav nav-stacked">
             <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
             <li>
-                <button draggable="true" data-id="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" data-id="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" data-id="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-type="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" data-id="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
             </li>
             <li>
-                <button draggable="true" data-id="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+                <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
             </li>
         </ul>
     </nav>
@@ -141,6 +141,7 @@ ul {
                 widget_base_dimensions: [100, 100],
                 widget_margins: [5, 5],
                 helper: 'clone',
+                avoid_overlapped_widgets: true,
                 resize: {
                     enabled: true,
                     stop: function () {
@@ -151,7 +152,8 @@ ul {
                     //the function to edit to change the way gridster serializes the widgets
                     //widget name etc can be added here
                     return {
-                        type: $w.attr('data-id'),
+                        time: parseInt($w.attr('data-time')), //this should be a unique millisecond timestamp
+                        type: $w.attr('data-type'),
                         col: wgd.col,
                         row: wgd.row,
                         size_x: wgd.size_x,
@@ -199,7 +201,7 @@ ul {
             },
             dragend: function(e) {
                 $(this).css('opacity', '1');
-                PullEffect.startWidget($(this).attr('data-id'));
+                PullEffect.startWidget($(this).attr('data-type'));
             }
         });
 
@@ -249,7 +251,7 @@ ul {
         
     </script>
     <script type="text/template" id="generic-widget">
-        <li class="generic" data-id="<%=widget.name%>">
+        <li class="generic" data-type="<%=widget.name%>" data-time="<%=(new Date()).getTime()%>">
             <header>
                 <%=widget.name%>
                 <button type="button" class="close">&times;</button>
