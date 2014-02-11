@@ -20,6 +20,7 @@ gcal = Blueprint('gcal', __name__, template_folder='templates')
 flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json',
                                scope='https://www.googleapis.com/auth/calendar',
                                redirect_uri='http://localhost:5000/gcal/authenticate')
+
 auth_uri = flow.step1_get_authorize_url()
 
 # Get users mongo collection
@@ -29,19 +30,19 @@ users = mongo_connection.users
 @gcal.route('/authenticate')
 @signin_required
 def authenticate():
-    # Exchange code if exists
+    # Exchange if 'code' exists
     if (request.args.get('code')):
         credentials = flow.step2_exchange(request.args.get('code'))
         session['gcal_access_token'] = credentials.access_token
         return redirect(url_for('index'))
 
-    # Handle error if exists
+    # Handle if 'error' exists
     if (request.args.get('error')):
         flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gcal_access_token'] = None
         return redirect(url_for('index'))
         
-    return redirect(auth_uri)
+    return redirect(flow.step1_get_authorize_url())
 
 
 # Get Google Calendar list
@@ -72,23 +73,20 @@ def refresh_calendar_list():
     req = req.json()
 
     # Initialize return variables
-    error = False
     calendar_list = []
 
-    print req
-
-    # Get error and calendar list
+    # Return redirect if error
     if (req.get('error')):
-        error = True
+        return jsonify({'calendars':calendar_list, 'redirect':url_for('gcal.authenticate')})
+
+    # Return calendars if no error
     else:
         calendars = req.get('items')
         for calendar_item in calendars:
             calendar_list.append({'calendar_name':calendar_item.get('summary'), 
                 'calendar_id':calendar_item.get('id'), 
                 'selected':False})
-
-    # Return Google calendar list and error
-    return jsonify({'error':error, 'calendars':calendar_list})
+        return jsonify({'calendars':calendar_list, 'redirect':''})
 
 # Get Google Calendar events
 @gcal.route('/get_calendar_events')

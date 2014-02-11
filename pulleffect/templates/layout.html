@@ -29,19 +29,19 @@
 </head>
 
 <body>
-<style>
-.gridster * {
-  margin:0;
-  padding:0;
-}
+    <style>
+        .gridster * {
+          margin:0;
+          padding:0;
+      }
 
-ul {
-  list-style-type: none;
-}
+      ul {
+          list-style-type: none;
+      }
 
-.controls {
-    margin-bottom: 20px;
-}
+      .controls {
+        margin-bottom: 20px;
+    }
 
 /*/
 /* gridster
@@ -70,7 +70,7 @@ ul {
 }
 
 .gridster .gs-w {
-   
+
 }
 
 .gridster .player {
@@ -101,38 +101,38 @@ ul {
 
 </style>
 
-    <input type="checkbox" class="main-nav-check" id="main-nav-check" />
-    <nav class="main-nav no-select" id="main-nav">
-        <ul class="nav nav-stacked">
-            <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
-            <li>
-                <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
-            </li>
-            <li>
-                <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
-            </li>
-            <li>
-                <button draggable="true" data-type="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
-            </li>
-            <li>
-                <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
-            </li>
-            <li>
-                <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
-            </li>
+<input type="checkbox" class="main-nav-check" id="main-nav-check" />
+<nav class="main-nav no-select" id="main-nav">
+    <ul class="nav nav-stacked">
+        <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
+        <li>
+            <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+        </li>
+        <li>
+            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+        </li>
+        <li>
+            <button draggable="true" data-type="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+        </li>
+        <li>
+            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
+        </li>
+        <li>
+            <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+        </li>
+    </ul>
+</nav>
+
+<div class="page-wrap" style="background:silver; height:100%;">
+    <label for="main-nav-check" class="toggle no-select">☰</label>
+    <div class="gridster">
+        <ul style="background:silver;"> 
         </ul>
-    </nav>
-
-    <div class="page-wrap" style="background:silver; height:100%;">
-        <label for="main-nav-check" class="toggle no-select">☰</label>
-            <div class="gridster">
-                <ul style="background:silver;"> 
-                </ul>
-            </div>
     </div>
+</div>
 
 
-    <script>
+<script>
         //these variables should be in closure later on, now keeping them for debugging purposes
         var gridster;
         var PullEffect = {};
@@ -168,7 +168,7 @@ ul {
                 }
             }).data('gridster');
 
-            PullEffect.saveWidgetPositions = function() {
+PullEffect.saveWidgetPositions = function() {
                 //some stuff to update the local storage
                 localStorage.pullEffect = JSON.stringify(gridster.serialize());
             };
@@ -184,46 +184,46 @@ ul {
             });
         });
 
-        jQuery.event.props.push('dataTransfer');
+jQuery.event.props.push('dataTransfer');
 
-        $('button[draggable=true]').on({
-            dragstart: function() {
-                $(this).css('opacity', '0.5');
-            },
-            dragleave: function() {
-                $(this).removeClass('over');
-            },
-            dragenter: function() {
-                $(this).addClass('over');
-            },
-            dragover: function(e) {
+$('button[draggable=true]').on({
+    dragstart: function() {
+        $(this).css('opacity', '0.5');
+    },
+    dragleave: function() {
+        $(this).removeClass('over');
+    },
+    dragenter: function() {
+        $(this).addClass('over');
+    },
+    dragover: function(e) {
 
-            },
-            dragend: function(e) {
-                $(this).css('opacity', '1');
-                PullEffect.startWidget($(this).attr('data-type'));
-            }
-        });
+    },
+    dragend: function(e) {
+        $(this).css('opacity', '1');
+        PullEffect.startWidget($(this).attr('data-type'));
+    }
+});
 
-        PullEffect.startWidget = function(widgetName, savedWidget) {
-            var widget = {
-                name: widgetName
-            };
-            var $toAdd = $(_.template($('#generic-widget').html(), {
-                'widget': widget
-            }));
-            if(typeof savedWidget == 'undefined') {
-                gridster.add_widget($toAdd, 3, 3);
-                PullEffect.saveWidgetPositions();
-            } else {
-                gridster.add_widget($toAdd, savedWidget.size_x, savedWidget.size_y, savedWidget.col, savedWidget.row);
-            }
+PullEffect.startWidget = function(widgetName, savedWidget) {
+    var widget = {
+        name: widgetName
+    };
+    var $toAdd = $(_.template($('#generic-widget').html(), {
+        'widget': widget
+    }));
+    if(typeof savedWidget == 'undefined') {
+        gridster.add_widget($toAdd, 3, 3);
+        PullEffect.saveWidgetPositions();
+    } else {
+        gridster.add_widget($toAdd, savedWidget.size_x, savedWidget.size_y, savedWidget.col, savedWidget.row);
+    }
 
-            widget.eq = $('.gridster').find($toAdd).index();
-            PullEffect.fetchWidgetContent(widget);
-        };
+    widget.eq = $('.gridster').find($toAdd).index();
+    PullEffect.fetchWidgetContent(widget);
+};
 
-        PullEffect.fetchWidgetContent = function (widget) {
+PullEffect.fetchWidgetContent = function (widget) {
             //below is the widget li element that the content is to be loaded
             $widget = $('.gridster li').eq(widget.eq);
             //make a request to the server to get data and get data / get template
@@ -374,50 +374,26 @@ ul {
         </div>
     </div> -->
 
-
-<!--     {# Import javascript macros #}
-    {# all commented out
-
-    <script>
-        var dash = {{dashboard | tojson}}
-
-        //Saving url so I can use it my external javascript file
-        var messages_url = "{{ url_for('messages.index') }}"
-    </script>
-
-    {% from "macros/calendarList.html" import calendarListScripts %}
-    {{calendarListScripts()}}
-    
-
-    {% if session.signed_in %}
-    {% from "macros/calendarEvents.html" import eventScripts %}
-    {{eventScripts()}}
-
-    {% endif %} 
-
-    {% from "macros/tictactoe.html" import tictactoe %}
-    {{tictactoe()}}
-
-    {% from "macros/preferences.html" import preferences %}
-    {{ preferences(dashboard) }}
-
-    #} -->
-
     <script>
         // if(Modernizr.localstorage) {
         //     displayAlerts('info', 'Let\'s get started!');
         // }
     </script>
 
+    <script>
+        $(function() {
+            // Display alerts
+            displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
+        });
+    </script>
+
     <!-- Import Widget js files -->
     <!-- TODO: session.signed_in needs to be tested for some? -->
     <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/messages/messageQueue.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
-    <script src="{{ url_for('static', filename='messages/messages.js') }}"></script>
-    
+    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>    
 </body>
 
 </html>

@@ -1,21 +1,19 @@
 var getGcalList = function() {
+    // $.get( '/gcal/get_calendar_list', renderGcalList);
     $.ajax({
         type: 'GET',
-        url: '{{ url_for("gcal.get_calendar_list") }}' ,
-        success: renderCalendarList,
-        error: function(err) {
-            console.log(err);
-        }
+        url: '/gcal/get_calendar_list',
+        success: renderGcalList
     });
 }
 
 var refreshGcalList = function() {
     $.getJSON('/gcal/refresh_calendar_list')
-        .success(function(gcal_list){
-            renderGcalList(gcal_list);
-        }).error(function(err){
-            console.log(err);
-        });
+    .success(function(gcal_list){
+        renderGcalList(gcal_list);
+    }).error(function(err){
+        console.log(err);
+    });
 }
 
 var renderGcalList = function(response) {
@@ -40,22 +38,22 @@ var renderGcalList = function(response) {
 var renderGcalWidget = function(){
 
     var refresh_button = $('<button />', 
-        {
-            'type':'submit', 
-            'class': 'btn btn-success pull-right',
-            'title': 'Refresh List',
-            'alt': 'Refresh List'
-        })
-        .append($('<span />').addClass('fa fa-refresh'))
-        .click(refreshGcalList);
+    {
+        'type':'submit', 
+        'class': 'btn btn-success pull-right',
+        'title': 'Refresh List',
+        'alt': 'Refresh List'
+    })
+    .append($('<span />').addClass('fa fa-refresh'))
+    .click(refreshGcalList);
 
     var gcal_list = $('<div />').addClass('google_calendar_list');
 
     var widget = $('<div />')
-        .addClass('panel panel-default google_config')
-        .css({'height': '300px', 'width': '300px'})
-        .append(refresh_button)
-        .append(gcal_list);
+    .addClass('panel panel-default google_config')
+    .css({'height': '300px', 'width': '300px'})
+    .append(refresh_button)
+    .append(gcal_list);
 
     gridster.add_widget(widget);
 }
