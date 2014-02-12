@@ -19,6 +19,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.0/backbone.localStorage-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
@@ -130,134 +132,163 @@
         </ul>
     </div>
 </div>
-
+<script type="text/template" id="generic-widget">
+    <li class="generic" data-type="<%=widget.type %>" data-time="<%=widget.time %>">
+        <header>
+            <%=widget.type %>
+            <button type="button" class="close">&times;</button>
+        </header>
+    </li>
+</script>
 
 <script>
-        //these variables should be in closure later on, now keeping them for debugging purposes
-        var gridster;
-        var PullEffect = {};
-        $(function() {
-            gridster = $(".gridster ul").gridster({
-                widget_base_dimensions: [100, 100],
-                widget_margins: [5, 5],
-                helper: 'clone',
-                avoid_overlapped_widgets: true,
-                resize: {
-                    enabled: true,
-                    stop: function () {
-                        PullEffect.saveWidgetPositions()
-                    }
-                },
-                serialize_params: function($w, wgd) {
-                    //the function to edit to change the way gridster serializes the widgets
-                    //widget name etc can be added here
-                    return {
-                        time: parseInt($w.attr('data-time')), //this should be a unique millisecond timestamp
-                        type: $w.attr('data-type'),
-                        col: wgd.col,
-                        row: wgd.row,
-                        size_x: wgd.size_x,
-                        size_y: wgd.size_y
-                    }
-                },
-                draggable: {
-                    handle: 'header',
-                    stop: function () {
-                        PullEffect.saveWidgetPositions()
-                    }
-                }
-            }).data('gridster');
+//these variables should be in closure later on, now keeping them for debugging purposes
+var PullEffect = {};
 
-PullEffect.saveWidgetPositions = function() {
-                //some stuff to update the local storage
-                localStorage.pullEffect = JSON.stringify(gridster.serialize());
-            };
-            PullEffect.loadWidgets = function () {
-                gridster.remove_all_widgets();
-                $.each(JSON.parse(localStorage.pullEffect), function() {
-                    PullEffect.startWidget(this.type, this);
-                });
-            }
+$(document).ready(function() {
+    PullEffect.Widgets = new Widgets;
 
-            $(document).ready(function() {
-                PullEffect.loadWidgets();
+    $('button[draggable=true]').on({
+        dragstart: function() {
+            $(this).css('opacity', '0.5');
+        },
+        dragleave: function() {
+            $(this).removeClass('over');
+        },
+        dragenter: function() {
+            $(this).addClass('over');
+        },
+        dragend: function() {
+            $(this).css('opacity', '1');
+
+            PullEffect.Widgets.create({
+                type: $(this).attr('data-type')
             });
-        });
+        }
+    });
+});
 
 jQuery.event.props.push('dataTransfer');
 
-$('button[draggable=true]').on({
-    dragstart: function() {
-        $(this).css('opacity', '0.5');
+var gridster = $(".gridster ul").gridster({
+    widget_base_dimensions: [100, 100],
+    widget_margins: [5, 5],
+    helper: 'clone',
+    avoid_overlapped_widgets: true,
+    resize: {
+        enabled: true,
+        stop: function() {
+            PullEffect.Widgets.save();
+        }
     },
-    dragleave: function() {
-        $(this).removeClass('over');
+    serialize_params: function($w, wgd) {
+        //the function to edit to change the way gridster serializes the widgets
+        //widget name etc can be added here
+        return {
+            time: parseInt($w.attr('data-time')), //this should be a unique millisecond timestamp
+            type: $w.attr('data-type'),
+            col: wgd.col,
+            row: wgd.row,
+            size_x: wgd.size_x,
+            size_y: wgd.size_y
+        }
     },
-    dragenter: function() {
-        $(this).addClass('over');
-    },
-    dragover: function(e) {
+    draggable: {
+        handle: 'header',
+        stop: function() {
+            PullEffect.Widgets.save();
+        }
+    }
+}).data('gridster');
 
+var Widget = Backbone.Model.extend({
+    initialize: function() {
+        this.set('time', (new Date()).getTime());
+        this.view = new WidgetView({model: this});
+        this.fetchContent();
     },
-    dragend: function(e) {
-        $(this).css('opacity', '1');
-        PullEffect.startWidget($(this).attr('data-type'));
+    fetchContent: function () {
+        //fetch data and update the model
+        this.view.renderContent();
     }
 });
 
-PullEffect.startWidget = function(widgetName, savedWidget) {
-    var widget = {
-        name: widgetName
-    };
-    var $toAdd = $(_.template($('#generic-widget').html(), {
-        'widget': widget
-    }));
-    if(typeof savedWidget == 'undefined') {
-        gridster.add_widget($toAdd, 3, 3);
-        PullEffect.saveWidgetPositions();
-    } else {
-        gridster.add_widget($toAdd, savedWidget.size_x, savedWidget.size_y, savedWidget.col, savedWidget.row);
+var Widgets = Backbone.Collection.extend({
+    model: Widget,
+    localStorage: new Backbone.LocalStorage("widgets"),
+    initialize: function () {
+        gridster.remove_all_widgets();
+        this.fetch();
+    },
+    save: function () {
+        gridster.serialize().forEach(function (w) {
+            var model = PullEffect.Widgets.findWhere({time: w.time});
+            model.save({
+                col: w.col,
+                row: w.row,
+                size_x: w.size_x,
+                size_y: w.size_y
+            });
+        });
     }
+});
 
-    widget.eq = $('.gridster').find($toAdd).index();
-    PullEffect.fetchWidgetContent(widget);
-};
-
-PullEffect.fetchWidgetContent = function (widget) {
-            //below is the widget li element that the content is to be loaded
-            $widget = $('.gridster li').eq(widget.eq);
-            //make a request to the server to get data and get data / get template
-            console.log(JSON.stringify(widget));
-        };
-
-        $('body').on('click', '.gridster li .close', function(e) {
-            var $toRemove = $(this).parent().parent();
-            $toRemove.hide(); //hiding first so that users don't feel the delay
-            gridster.remove_widget($toRemove);
-            PullEffect.saveWidgetPositions();
+var WidgetView = Backbone.View.extend({
+    el: $('.page-wrap'),
+    templateSkeleton: _.template($('#generic-widget').html()),
+    events: {
+        "click .close": "close",
+    },
+    close: function(e) {
+        //find the widget in the DOM
+        var $toRemove = $(e.target).parent().parent();
+        $toRemove.find('.close').unbind();
+        $toRemove.hide(); //hiding first so that users don't feel the delay
+        
+        
+        var model = PullEffect.Widgets.findWhere({
+            time: parseInt($toRemove.attr('data-time'))
         });
 
-        (function() {
-            var resizable = false;
-            $('body').dblclick(function() {
-                resizable = !resizable;
-                if (resizable === true) {
-                    $('.gs-resize-handle').show();
-                } else {
-                    $('.gs-resize-handle').hide();
-                }
-            })
-        })();
-        
-    </script>
-    <script type="text/template" id="generic-widget">
-        <li class="generic" data-type="<%=widget.name%>" data-time="<%=(new Date()).getTime()%>">
-            <header>
-                <%=widget.name%>
-                <button type="button" class="close">&times;</button>
-            </header>
-        </li>
-    </script>
+        if(!_.isUndefined(model)) { //because multiple events have been delegated, has to be fixed
+            //remove the widget from the collection
+            model.destroy();
+            //remove the widget from the DOM
+            gridster.remove_widget($toRemove);
+        }
+    },
+    initialize: function() {
+        this.renderSkeleton();
+    },
+    renderSkeleton: function() {
+        var m = this.model.attributes;
+        var $toAdd = $(this.templateSkeleton({widget: m}));
+
+        if(_.isUndefined(m.size_x) || _.isUndefined(m.size_y) || _.isUndefined(m.col) || _.isUndefined(m.row)) {
+            gridster.add_widget($toAdd, 4, 4);
+        } else {
+            gridster.add_widget($toAdd, m.size_x, m.size_y, m.col, m.row);
+        }
+    },
+    renderContent: function() {
+        //console.log(this.model);
+    }
+});
+
+(function() {
+    var resizable = false;
+    $('body').dblclick(function() {
+        resizable = !resizable;
+        if (resizable === true) {
+            $('.gs-resize-handle').show();
+        } else {
+            $('.gs-resize-handle').hide();
+        }
+    })
+})();
+
+</script>
+
 
 <!--   {#  <nav class="navbar navbar-default" role="navigation">
         <div class="container">
