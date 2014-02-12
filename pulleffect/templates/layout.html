@@ -236,8 +236,12 @@ var Widgets = Backbone.Collection.extend({
 var WidgetView = Backbone.View.extend({
     el: $('.page-wrap'),
     templateSkeleton: _.template($('#generic-widget').html()),
-    events: {
-        "click .close": "close",
+    events: function () {
+        var e = {};
+        this.selector = "li[data-time='" + this.model.get('time') + "']";
+        e["click " + this.selector + " .close"] = 'close';
+        e["dblclick " + this.selector] = 'resizeToggle';
+        return e;
     },
     close: function(e) {
         //find the widget in the DOM
@@ -250,14 +254,23 @@ var WidgetView = Backbone.View.extend({
             time: parseInt($toRemove.attr('data-time'))
         });
 
-        if(!_.isUndefined(model)) { //because multiple events have been delegated, has to be fixed
+        if(!_.isUndefined(model)) { //if multiple events have been delegated
             //remove the widget from the collection
             model.destroy();
             //remove the widget from the DOM
             gridster.remove_widget($toRemove);
         }
     },
+    resizeToggle: function (e) {
+        this.resizable = !this.resizable;
+        if (this.resizable === true) {
+            $(e.target).find('.gs-resize-handle').show();
+        } else {
+            $(e.target).find('.gs-resize-handle').hide();
+        }
+    },
     initialize: function() {
+        this.resizable = false;
         this.renderSkeleton();
     },
     renderSkeleton: function() {
@@ -274,18 +287,6 @@ var WidgetView = Backbone.View.extend({
         //console.log(this.model);
     }
 });
-
-(function() {
-    var resizable = false;
-    $('body').dblclick(function() {
-        resizable = !resizable;
-        if (resizable === true) {
-            $('.gs-resize-handle').show();
-        } else {
-            $('.gs-resize-handle').hide();
-        }
-    })
-})();
 
 </script>
 
