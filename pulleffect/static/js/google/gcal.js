@@ -1,3 +1,5 @@
+
+// Gets list of Google calendars for user, then fires render function
 var getGcalList = function() {
     $.ajax({
         type: 'GET',
@@ -6,6 +8,7 @@ var getGcalList = function() {
     });
 }
 
+// Refreshes list of Google calendars for user, then fires render function
 var refreshGcalList = function() {
     $.getJSON('/gcal/refresh_calendar_list')
     .success(function(gcal_list){
@@ -15,6 +18,7 @@ var refreshGcalList = function() {
     });
 }
 
+// Gets events for a given Google calendar, then fires render function
 var getGcalEvents = function() {
     newCal = {calID: $('label.active input').val()};
 
@@ -25,6 +29,7 @@ var getGcalEvents = function() {
     });
 }
 
+// Renders list of Google calendars in a (given?) Google calendar widget
 var renderGcalList = function(response) {
     if (response.error == true) {
         displayAlerts('error', 'There\'s an error displaying calendars. Try authenticating again?');
@@ -44,6 +49,41 @@ var renderGcalList = function(response) {
     return displayAlerts('error', 'Sorry! We seem to have encountered an unknown error!');
 }
 
+// Renders table of Google calendar events in a (given?) Google calendar widget
+var renderGcalEvents = function(response) {
+    console.log(response);
+    loadWidget();
+
+    var events = response.calendar_events.items;
+
+    $("#eventsTable").empty();
+
+    if (events.length == 0){
+        $('#eventsTable').replaceWith($('<span/>').append($('<h3/>', {"class":"centered"}).text("YOU DONE FUCKED UP")));
+    }
+
+    var timeFormat = "MM/DD  h:mm A";
+
+    for (i = 0; i < 10 && i < events.length; i++) {
+        var tableRow = $('<tr/>', {"class": "event"});
+        var summaryCell = $('<td/>');
+        var beginCell = $('<td/>');
+        var endCell = $('<td/>');
+
+        var summary = events[i].summary;
+        var start = events[i].start.dateTime;
+        var end = events[i].end.dateTime;
+
+        tableRow
+        .append(summaryCell.text(summary))
+        .append(beginCell.text(moment(start).format(timeFormat)))
+        .append(endCell.text(moment(end).format(timeFormat)));
+
+        $("#eventsTable").append(tableRow);
+    }
+}
+
+// Renders a Google calendar widget
 var renderGcalWidget = function(){
 
     var refresh_button = $('<button />', 
@@ -65,4 +105,22 @@ var renderGcalWidget = function(){
     .append(gcal_list);
 
     gridster.add_widget(widget);
+}
+
+// Not sure what this one does yet, but it was related to Google calendar events.
+var loadWidget = function(){
+    var panel = $("<div />").width("300px");
+    panel.addClass("panel panel-default")
+    var loginForm = $("<form />", {"action":"{{ url_for('gcal.authenticate') }}", "method":"get", "role":"form"})
+    var loginButton = $("<button />", {"type":"submit", "class":"btn btn-info center-block fa fa-calendar", "title":"Google Calendar", "alt":"Google Calendar"})
+    // '<form action="{{ url_for("gcal.authenticate") }}" method="get" role="form"><button type="submit" class="btn btn-info center-block" title="Google Calendar" alt="Google Calendar"><span class="fa fa-calendar" /> Google Calendar</button></form>'
+    var table = $("<table />").addClass("table table-striped table-condensed");
+
+    var calendar = $('<div/>', {"class": "panel panel-default col-md-4", "id":"calendar"});
+    var table = $('<table/>', {"class":"table table-striped", "id":"eventsTable"});
+    calendar.append(table);
+
+    loginForm.append(loginButton)
+    panel.append(loginForm)
+    $('.content').append(panel);
 }
