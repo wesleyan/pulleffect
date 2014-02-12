@@ -1,16 +1,11 @@
 
     var getGoogleCalendarEvents = function() {
-
-        console.log(dash)
         newCal = {calID: $('label.active input').val()};
 
         $.ajax({
             type: "GET",
             url: "{{ url_for('gcal.get_calendar_events') }}?cal_id=" + newCal.calID,
-            success: displayEvents,
-            error: function(err) {
-                console.log(err);
-            }
+            success: displayEvents
         });
     }
 

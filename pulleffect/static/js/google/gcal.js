@@ -1,5 +1,4 @@
 var getGcalList = function() {
-    // $.get( '/gcal/get_calendar_list', renderGcalList);
     $.ajax({
         type: 'GET',
         url: '/gcal/get_calendar_list',
@@ -13,6 +12,16 @@ var refreshGcalList = function() {
         renderGcalList(gcal_list);
     }).error(function(err){
         console.log(err);
+    });
+}
+
+var getGcalEvents = function() {
+    newCal = {calID: $('label.active input').val()};
+
+    $.ajax({
+        type: "GET",
+        url: "/gcal/get_calendar_events?cal_id=" + newCal.calID,
+        success: displayEvents
     });
 }
 

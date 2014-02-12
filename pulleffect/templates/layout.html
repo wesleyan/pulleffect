@@ -361,18 +361,8 @@ PullEffect.fetchWidgetContent = function (widget) {
             </div>
             {% endif %}
             <div>
-                {% block maincontent %}
-                {% if session.signed_in %}
-
-                <div class="Widgets"></div>
-
-
-            <div class="panel panel-default col-md-4" id="calendar">
-            <table class="table table-striped" id="eventsTable">
-            </table> 
-            {% endblock %} #}
         </div>
-    </div> -->
+    </div>#} -->
 
     <script>
         // if(Modernizr.localstorage) {
@@ -389,11 +379,13 @@ PullEffect.fetchWidgetContent = function (widget) {
 
     <!-- Import Widget js files -->
     <!-- TODO: session.signed_in needs to be tested for some? -->
+    {% if session.signed_in %}
     <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>    
+    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
 </body>
 
 </html>
