@@ -42,7 +42,7 @@ def authenticate():
         session['gcal_access_token'] = None
         return redirect(url_for('index'))
         
-    return redirect(flow.step1_get_authorize_url())
+    return redirect(auth_uri)
 
 
 # Get Google Calendar list

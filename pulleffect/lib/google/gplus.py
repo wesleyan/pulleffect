@@ -21,6 +21,7 @@ auth_uri = flow.step1_get_authorize_url()
 
 users = mongo_connection.users
 
+
 # Sign in user
 @gplus.route('/signin')
 def signin():
@@ -45,7 +46,7 @@ def signin():
             # TODO: address edge case when people have more than one email?
             google_email = req["emails"].pop()["value"]
             google_name = req["displayName"]
-            users.insert({"google_id":google_id, "google_refresh_token":google_refresh_token, "google_email":google_email, "google_name":google_name, "google_creds":credentials})
+            users.insert({"google_id":google_id, "google_refresh_token":google_refresh_token, "google_email":google_email, "google_name":google_name})
 
         # Sign in case
         else: 
@@ -54,7 +55,7 @@ def signin():
             # Make sure we don't overwrite refresh_token with None object
             if google_refresh_token == None:
                 google_refresh_token = user.get("google_refresh_token")
-            users.update({"google_id":google_id}, {"$set": {"google_refresh_token":google_refresh_token, "google_creds":credentials }})
+            users.update({"google_id":google_id}, {"$set": {"google_refresh_token":google_refresh_token}})
 
 
         session['signed_in'] = True 
