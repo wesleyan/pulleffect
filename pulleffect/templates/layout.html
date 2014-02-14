@@ -25,34 +25,31 @@
     <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
-
-
 </head>
-
 <body>
 <input type="checkbox" class="main-nav-check" id="main-nav-check" />
-<nav class="main-nav no-select" id="main-nav">
+<nav class="main-nav no-select">
     <ul class="nav nav-stacked">
         <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
         <li>
-            <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Messages"></button>
+            <button draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></button>
         </li>
         <li>
-            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Events"></button>
+            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></button>
         </li>
         <li>
-            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Calendar"></button>
+            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></button>
         </li>
         <li>
-            <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Windows"></button>
+            <button draggable="true" data-type="windows" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" data-toggle="tooltip" data-placement="right" title="Windows"></button>
         </li>
     </ul>
 </nav>
 
-<div class="page-wrap" style="background:silver; height:100%;">
+<div class="page-wrap">
     <label for="main-nav-check" class="toggle no-select">☰</label>
     <div class="gridster">
-        <ul style="background:silver;"> 
+        <ul> 
         </ul>
     </div>
 </div>
@@ -61,7 +58,10 @@
     <li class="generic" data-type="<%=widget.type %>" data-time="<%=widget.time %>">
         <header>
             <%=widget.type %>
-            <button type="button" class="close">&times;</button>
+            <a class="close option">&times;</a>
+            <% if(configurable) { %>
+                <a class="config option"><span class="glyphicon glyphicon glyphicon-cog"></span></a>
+            <% } %>
         </header>
         <section>
         </section>

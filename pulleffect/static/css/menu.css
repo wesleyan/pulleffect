@@ -47,7 +47,7 @@ a:hover {text-decoration:none:;}
   display: none;
 }
 
-#main-nav-check:checked + #main-nav {
+#main-nav-check:checked + .main-nav {
   width: 10%;
 }
 #main-nav-check:checked ~ .page-wrap {
@@ -72,7 +72,9 @@ a:hover {text-decoration:none:;}
 .main-nav > .nav-stacked > li.logo {
   color:lightgrey;
 }
-
+.main-nav button {
+  font-size: 2.2em;
+}
 .toggle {
   background:lightgrey;
   border-bottom:solid;

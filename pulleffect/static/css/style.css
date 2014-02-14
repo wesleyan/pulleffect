@@ -1,6 +1,7 @@
 html, body {
   height:100%;
   min-height:100%;
+  background: silver;
 }
 .btn-group-vertical {
     width:100%;
@@ -214,8 +215,17 @@ html, body {
 .generic header .close {
     line-height: inherit;
     cursor:default;
+    opacity: 0.6;
 }
-
+.generic header .option {
+    float: right;
+    margin-left:10px;
+    color:black !important;
+    opacity: 0.6;
+}
+.generic header a:hover {
+    opacity: 1;
+}
 .gs-resize-handle {
     display: none;
 }

@@ -2,7 +2,14 @@
     var PullEffect = {};
 
     PullEffect.Types = {
+        'messages': {
+            configurable: false,
+            handler: function () {
+                
+            }
+        },
         'specialEvents': {
+            configurable: true,
             templateSelector: '#special-events-widget',
             handler: function(model) {
                 var self = this;
@@ -15,7 +22,19 @@
                         console.log(err); //or whatever
                     });
             }
-        }
+        },
+        'calendar': {
+            configurable: true,
+            handler: function () {
+                
+            }
+        },
+        'windows': {
+            configurable: false,
+            handler: function () {
+                
+            }
+        },
     };
 
     $(document).ready(function() {
@@ -77,6 +96,13 @@
 
     var Widget = Backbone.Model.extend({
         initialize: function() {
+            this.typeObject = PullEffect.Types[this.get('type')];
+            if(_.isUndefined(this.typeObject)) {
+                //if no such widget is registered in the available widgets
+                this.destroy();
+                return; 
+            }
+
             this.set('time', (new Date()).getTime());
             this.view = new WidgetView({
                 model: this
@@ -88,9 +114,8 @@
             //fetch data and update the model
 
             //some ajax stuff
-            var typeObject = PullEffect.Types[this.get('type')];
-            if(_.isUndefined(typeObject)) { return; }
-            typeObject.handler(this);
+            
+            this.typeObject.handler(this);
         }
     });
 
@@ -123,6 +148,7 @@
             var e = {};
             this.selector = "li[data-time='" + this.model.get('time') + "']";
             e["click " + this.selector + " .close"] = 'close';
+            e["click " + this.selector + " .config"] = 'config';
             e["dblclick"] = 'resizeToggle'; //this can be changed later
             return e;
         },
@@ -131,7 +157,6 @@
             var $toRemove = $(e.target).parent().parent();
             $toRemove.find('.close').unbind();
             $toRemove.hide(); //hiding first so that users don't feel the delay
-
 
             var model = PullEffect.Widgets.findWhere({
                 time: parseInt($toRemove.attr('data-time'))
@@ -143,6 +168,10 @@
                 //remove the widget from the DOM
                 gridster.remove_widget($toRemove);
             }
+        },
+        config: function(e) {
+            console.log('config ' + this.model.get('type'));
+            //we can possibly show some modal window or something for configuration
         },
         resizeToggle: function(e) {
             //$(e.target) may be needed in the future
@@ -159,8 +188,10 @@
         },
         renderSkeleton: function() {
             var m = this.model.attributes;
+            var c = this.model.typeObject.configurable;
             var $toAdd = $(this.templateSkeleton({
-                widget: m
+                widget: m,
+                configurable: c
             }));
 
             if (_.isUndefined(m.size_x) || _.isUndefined(m.size_y) || _.isUndefined(m.col) || _.isUndefined(m.row)) {
