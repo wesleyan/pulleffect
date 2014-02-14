@@ -1,15 +1,14 @@
-from flask import Flask
+from flask import Blueprint
 from flask_sockets import Sockets
 
-app = Flask(__name__)
-sockets = Sockets(app)
+sockets = Blueprint('sockets', __name__, template_folder='')
 
-@sockets.route('/echo')
+# will these be routes?  web sockets work over ws:// URIs, 
+@sockets.route('/send')
+
+
+@sockets.route('/receive')
 def echo_socket(ws):
     while True:
         message = ws.receive()
         ws.send(message)
-
-@app.route('/')
-def hello():
-    return 'Hello World!'
