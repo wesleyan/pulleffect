@@ -147,3 +147,74 @@ html, body {
 .table {
     height:100%;
 }
+
+
+/*added from layout.html*/
+   .gridster * {
+          margin:0;
+          padding:0;
+      }
+
+      ul {
+          list-style-type: none;
+      }
+
+      .controls {
+        margin-bottom: 20px;
+    }
+
+/*/
+/* gridster
+/*/
+
+.gridster ul {
+    background-color: silver;
+}
+
+.gridster li {
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 100%;
+}
+
+.gridster {
+    margin: 0 auto;
+    opacity: .8;
+    padding-left:3em;
+
+    -webkit-transition: opacity .6s;
+    -moz-transition: opacity .6s;
+    -o-transition: opacity .6s;
+    -ms-transition: opacity .6s;
+    transition: opacity .6s;
+}
+
+.gridster .gs-w {
+
+}
+
+.gridster .player {
+    background: #BBB;
+}
+
+.gridster .preview-holder {
+    border: none!important;
+    background: red!important;
+}
+
+.generic {
+    background-color: white;
+}
+.generic header {
+    cursor:pointer;
+    padding:10px;
+    background-color:#eaeaea;
+}
+.generic header .close {
+    line-height: inherit;
+    cursor:default;
+}
+
+.gs-resize-handle {
+    display: none;
+}
