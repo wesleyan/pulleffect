@@ -32,16 +32,13 @@
     <ul class="nav nav-stacked">
         <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
         <li>
-            <button draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></button>
+            <button draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-envelope-o widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></button>
         </li>
         <li>
             <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></button>
         </li>
         <li>
             <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></button>
-        </li>
-        <li>
-            <button draggable="true" data-type="windows" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" data-toggle="tooltip" data-placement="right" title="Windows"></button>
         </li>
     </ul>
 </nav>
@@ -60,7 +57,7 @@
             <%=widget.type %>
             <a class="close option">&times;</a>
             <% if(configurable) { %>
-                <a class="config option"><span class="glyphicon glyphicon glyphicon-cog"></span></a>
+                <a class="config option"><i class="fa fa-cogs"></i></a>
             <% } %>
         </header>
         <section>

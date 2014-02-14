@@ -232,6 +232,7 @@ html, body {
 
 .generic section {
     /*this part needs better styling - only temporary*/
+    margin-bottom: 34px;
     overflow: hidden;
-    height:100%;
+    height:89%;
 }

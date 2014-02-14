@@ -74,6 +74,7 @@ a:hover {text-decoration:none:;}
 }
 .main-nav button {
   font-size: 2.2em;
+  width:2em;
 }
 .toggle {
   background:lightgrey;

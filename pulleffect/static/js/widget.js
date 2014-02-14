@@ -13,7 +13,7 @@
             templateSelector: '#special-events-widget',
             handler: function(model) {
                 var self = this;
-                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
+                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=180')
                     .success(function(data) {
                         //htmlspecialchars_decode can be added from Jack's code
                         model.view.renderContent({events: data}, self.templateSelector);
@@ -28,13 +28,7 @@
             handler: function () {
                 
             }
-        },
-        'windows': {
-            configurable: false,
-            handler: function () {
-                
-            }
-        },
+        }
     };
 
     $(document).ready(function() {
@@ -77,14 +71,10 @@
         serialize_params: function($w, wgd) {
             //the function to edit to change the way gridster serializes the widgets
             //widget name etc can be added here
-            return {
+            return _.extend(wgd, {
                 time: parseInt($w.attr('data-time')), //this should be a unique millisecond timestamp
-                type: $w.attr('data-type'),
-                col: wgd.col,
-                row: wgd.row,
-                size_x: wgd.size_x,
-                size_y: wgd.size_y
-            }
+                type: $w.attr('data-type')
+            });
         },
         draggable: {
             handle: 'header',
