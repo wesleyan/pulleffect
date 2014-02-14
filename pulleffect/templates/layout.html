@@ -8,9 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Pull&bull;Effect</title>
-
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
@@ -37,19 +35,16 @@
     <ul class="nav nav-stacked">
         <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
         <li>
-            <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;"></button>
+            <button draggable="true" data-type="message" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-exclamation widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Messages"></button>
         </li>
         <li>
-            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;"></button>
+            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Events"></button>
         </li>
         <li>
-            <button draggable="true" data-type="tictactoe" onclick="loadTicTacToe();" type="button" id="includeContent" class="btn btn-primary btn-lg fa fa-th widget-button" style="font-size:2em;"></button>
+            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Calendar"></button>
         </li>
         <li>
-            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" style="font-size:2em;"></button>
-        </li>
-        <li>
-            <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;"></button>
+            <button draggable="true" data-type="windows" onclick="" type="button" class="btn btn-primary btn-lg fa fa-windows widget-button" style="font-size:2em;" data-toggle="tooltip" data-placement="right" title="Windows"></button>
         </li>
     </ul>
 </nav>
@@ -104,50 +99,7 @@
     </table>
 </script>
 
-<!--   {#  <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <a class="navbar-brand" href="#">Pull <span class="fa fa-tint"  /> Effect</a>
-            {% if session.signed_in %}
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <span class="navbar-text">{{ session.google_email }}</span>
-                </li>
-                <li>
-                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#configure" title="Configure" alt="Configure">
-                        <span class="fa fa-calendar" />
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="loadTicTacToe()">
-                        <span class="fa fa-gears" />
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderMessageQueue()">
-                        <span class="fa fa-exclamation" />
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="btn btn-default navbar-btn"  title="Configure" alt="Configure" onclick="renderSpecialEventsWidget()">
-                        <span class="fa fa-star" />
-                    </button>
-                </li>
-                <li>
-                    <form id="signout" action="{{ url_for('gplus.signout') }}" method=post class="navbar-form pull-right" role="form">
-                        <button type="submit" class="btn btn-warning" title="Sign Out" alt="Sign Out">
-                            <span class="fa fa-sign-out" />
-                        </button>
-                    </form>
-                </li>
-            </ul>
-            {% endif %}
-        </div>
-    </nav>
-    {% if session.signed_in %}
-    <a href="#" class="flap" data-toggle="tooltip">
-        <span class="fa fa-bars close-drawer" data-placement="bottom" title data-original-title="Close Drawer" />
-    </a>
-    {% endif %}
+<!--   {# 
     <div id="alerts"></div>
 
 
@@ -224,12 +176,7 @@
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <!-- Import Widget js files -->
     <!-- TODO: session.signed_in needs to be tested for some? -->
-    {% if session.signed_in %}
-    <script src="{{ url_for('static', filename='js/tictactoe/tictactoe.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/calendar/calendarEvents.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/calendar/calendarList.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
-    {% endif %}
     <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
 </body>
 

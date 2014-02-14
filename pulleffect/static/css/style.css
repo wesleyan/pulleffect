@@ -36,7 +36,8 @@ html, body {
     text-align:center;
 }
 .tooltip {
-    z-index:9999;
+    z-index:99999;
+    position: fixed;
 }
 #signout {
     display:inline;

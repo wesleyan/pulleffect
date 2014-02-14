@@ -19,6 +19,7 @@
     };
 
     $(document).ready(function() {
+        $('nav li button').tooltip();
         PullEffect.Widgets = new Widgets;
 
         $('button[draggable=true]').on({
@@ -144,11 +145,12 @@
             }
         },
         resizeToggle: function(e) {
+            //$(e.target) may be needed in the future
             this.resizable = !this.resizable;
             if (this.resizable === true) {
-                $(e.target).find('.gs-resize-handle').show();
+                $('.gs-resize-handle').show();
             } else {
-                $(e.target).find('.gs-resize-handle').hide();
+                $('.gs-resize-handle').hide();
             }
         },
         initialize: function() {
