@@ -1,6 +1,23 @@
 (function() {
     var PullEffect = {};
 
+    PullEffect.Types = {
+        'specialEvents': {
+            templateSelector: '#special-events-widget',
+            handler: function(model) {
+                var self = this;
+                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
+                    .success(function(data) {
+                        //htmlspecialchars_decode can be added from Jack's code
+                        model.view.renderContent({events: data}, self.templateSelector);
+                    })
+                    .error(function(err) {
+                        console.log(err); //or whatever
+                    });
+            }
+        }
+    };
+
     $(document).ready(function() {
         PullEffect.Widgets = new Widgets;
 
@@ -26,7 +43,7 @@
 
     jQuery.event.props.push('dataTransfer');
 
-    var gridster = $(".gridster ul").gridster({
+    gridster = $(".gridster ul").gridster({
         widget_base_dimensions: [100, 100],
         widget_margins: [5, 5],
         helper: 'clone',
@@ -66,10 +83,13 @@
             this.fetchContent();
         },
         fetchContent: function() {
+            var self = this;
             //fetch data and update the model
 
             //some ajax stuff
-            this.view.renderContent();
+            var typeObject = PullEffect.Types[this.get('type')];
+            if(_.isUndefined(typeObject)) { return; }
+            typeObject.handler(this);
         }
     });
 
@@ -102,7 +122,7 @@
             var e = {};
             this.selector = "li[data-time='" + this.model.get('time') + "']";
             e["click " + this.selector + " .close"] = 'close';
-            e["dblclick " + this.selector] = 'resizeToggle';
+            e["dblclick"] = 'resizeToggle'; //this can be changed later
             return e;
         },
         close: function(e) {
@@ -147,9 +167,9 @@
                 gridster.add_widget($toAdd, m.size_x, m.size_y, m.col, m.row);
             }
         },
-        renderContent: function() {
-            console.log($(this.selector));
-            console.log(this.model);
+        renderContent: function(data, templateSelector) {
+            var rendered = _.template($(templateSelector).html())(data);
+            $(this.selector).find('section').html(rendered);
         }
     });
 })();

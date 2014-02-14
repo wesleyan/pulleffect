@@ -27,7 +27,7 @@
     <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/google/widget.js') }}"></script>
+
 
 </head>
 
@@ -61,13 +61,47 @@
         </ul>
     </div>
 </div>
+
 <script type="text/template" id="generic-widget">
     <li class="generic" data-type="<%=widget.type %>" data-time="<%=widget.time %>">
         <header>
             <%=widget.type %>
             <button type="button" class="close">&times;</button>
         </header>
+        <section>
+        </section>
     </li>
+</script>
+
+<script type="text/template" id="special-events-widget">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Time</th>
+          <th>Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% events.forEach(function(event) { %>
+        <tr>
+          <td>
+            <%=event.title %>
+          </td>
+          <td>
+            <strong><%=moment(event.start).format('hh:mm A') %></strong>
+            <i><%=moment(event.eventStart).format('hh:mm A') %></i>
+             <i class="fa fa-long-arrow-right"></i> 
+            <i><%=moment(event.eventEnd).format('hh:mm A') %></i>
+            <strong><%=moment(event.end).format('hh:mm A') %></strong>
+          </td>
+          <td>
+          <%=(event.shifts.map(function(s) { return s.staff })).join(', ') %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
 </script>
 
 <!--   {#  <nav class="navbar navbar-default" role="navigation">
@@ -187,7 +221,7 @@
             displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
         });
     </script>
-
+    <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <!-- Import Widget js files -->
     <!-- TODO: session.signed_in needs to be tested for some? -->
     {% if session.signed_in %}

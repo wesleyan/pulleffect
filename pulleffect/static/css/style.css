@@ -218,3 +218,9 @@ html, body {
 .gs-resize-handle {
     display: none;
 }
+
+.generic section {
+    /*this part needs better styling - only temporary*/
+    overflow: hidden;
+    height:100%;
+}
