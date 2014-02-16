@@ -161,7 +161,14 @@
         },
         config: function(e) {
             console.log('config ' + this.model.get('type'));
-            //we can possibly show some modal window or something for configuration
+            //the widget should have some configurations specific to itself it it's said to be configurable.
+                //check the widget model
+                //get the widget configuration options and current configuration
+                //render a view with the configuration in #config-modal
+
+                //show the modal window    
+                $('.modal').modal('hide');
+                $('#config-modal').modal('show')
         },
         resizeToggle: function(e) {
             //$(e.target) may be needed in the future
