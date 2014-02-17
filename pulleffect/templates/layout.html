@@ -114,6 +114,33 @@
     </table>
 </script>
 
+<script type="text/template" id="calendar-widget">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Start</th>
+          <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% events.forEach(function(event) { %>
+        <tr>
+          <td>
+            <%=event.summary %>
+          </td>
+          <td>
+            <%=moment(event.start.dateTime).format('MM/DD  h:mm A') %>
+          </td>
+          <td>
+            <%=moment(event.end.dateTime).format('MM/DD  h:mm A') %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+</script>
+
 <!--   {# 
     <div id="alerts"></div>
 

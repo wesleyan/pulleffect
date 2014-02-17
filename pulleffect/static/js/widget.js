@@ -25,8 +25,12 @@
         },
         'calendar': {
             configurable: true,
-            handler: function () {
-                
+            templateSelector: '#calendar-widget',
+            handler: function (model) {
+                var self = this;
+                //fetch calendar from somewhere and then:
+                var data = []; //TEMPORARY
+                    model.view.renderContent({events: data}, self.templateSelector);
             }
         }
     };
