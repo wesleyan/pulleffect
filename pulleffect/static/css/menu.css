@@ -22,6 +22,7 @@ a:hover {text-decoration:none:;}
   height: 100%;
   background: dimgrey;
   overflow-y: auto;
+  overflow-x: hidden;
   transition: width 0.3s ease;
 }
 .main-nav:after {

@@ -2,6 +2,7 @@ html, body {
   height:100%;
   min-height:100%;
   background: silver;
+  overflow-x: hidden;
 }
 .btn-group-vertical {
     width:100%;
