@@ -2,6 +2,12 @@
     var PullEffect = {};
 
     PullEffect.Types = {
+        'roomInfo': {
+            configurable: false,
+            handler: function () {
+                
+            }
+        },
         'messages': {
             configurable: false,
             handler: function () {
@@ -39,27 +45,41 @@
         $('nav li button').tooltip();
         PullEffect.Widgets = new Widgets;
 
-        $('button[draggable=true]').on({
-            dragstart: function() {
+        $('button[draggable=true]')
+            .bind('dragstart', function(ev) {
+                ev.originalEvent.dataTransfer.setData("Text", "Dropped in zone!");
+
                 $(this).css('opacity', '0.5');
-            },
-            dragleave: function() {
-                $(this).removeClass('over');
-            },
-            dragenter: function() {
-                $(this).addClass('over');
-            },
-            dragend: function() {
+                return true;
+            })
+            .bind('dragend', function(ev) {
                 $(this).css('opacity', '1');
 
                 PullEffect.Widgets.create({
                     type: $(this).attr('data-type')
                 });
-            }
-        });
-    });
 
-    jQuery.event.props.push('dataTransfer');
+                return false;
+            });
+        $('#page-wrap')
+            .bind('dragenter', function(ev) {
+                ev.preventDefault();
+                $(ev.target).addClass('dragover');
+                return false;
+            })
+            .bind('dragleave', function(ev) {
+                $(ev.target).removeClass('dragover');
+                return false;
+            })
+            .bind('dragover', function(ev) {
+                return false;
+            })
+            .bind('drop', function(ev) {
+                var dt = ev.originalEvent.dataTransfer;
+                alert(dt.getData('Text'));
+                return false;
+            });
+    });
 
     gridster = $(".gridster ul").gridster({
         widget_base_dimensions: [100, 100],
