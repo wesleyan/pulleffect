@@ -44,6 +44,15 @@
             <div draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
         </li>
     </ul>
+    <ul class="nav nav-stacked bottom-buttons">
+        <li>
+            <div class="btn btn-danger btn-lg fa fa-trash-o widget-button" data-toggle="tooltip" data-placement="right" title="Clear all"></div>
+            </a>
+        </li>
+        <li>
+            <div class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></div>
+        </li>
+    </ul>
 
     
 </nav>
@@ -69,6 +78,24 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clear-modal" tabindex="-1" role="dialog" aria-labelledby="config-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="config-label">Clear all</h4>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to remove all of your widgets?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger">Remove</button>
       </div>
     </div>
   </div>

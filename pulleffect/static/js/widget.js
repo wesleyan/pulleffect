@@ -74,6 +74,21 @@
         document.addEventListener("drop", function(e) {
             e.preventDefault();
         });
+
+        $('.fa-trash-o').click(function () {
+            $('#clear-modal').modal('show');
+            
+        });
+        $('.fa-power-off').click(function () {
+            //do some stuff for sign out
+        });
+        $('#clear-modal .btn-danger').click(function() {
+            $('.generic').hide();
+            gridster.remove_all_widgets();
+            PullEffect.Widgets.reset();
+            localStorage.clear();
+            $('#clear-modal').modal('hide');
+        });
     });
 
     gridster = $(".gridster ul").gridster({
