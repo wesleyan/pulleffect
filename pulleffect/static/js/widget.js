@@ -42,43 +42,38 @@
     };
 
     $(document).ready(function() {
-        $('nav li button').tooltip();
+        $('nav li div').tooltip();
         PullEffect.Widgets = new Widgets;
 
-        $('button[draggable=true]')
-            .bind('dragstart', function(ev) {
-                ev.originalEvent.dataTransfer.setData("Text", "Dropped in zone!");
+        //USING VANILLA JS FOR EVENTS BECAUSE OF CROSS-BROWSER ISSUES WITH FIREFOX
 
-                $(this).css('opacity', '0.5');
-                return true;
-            })
-            .bind('dragend', function(ev) {
-                $(this).css('opacity', '1');
+        /*
+        document.addEventListener("drag", function(e) {
+        });
+        document.addEventListener("dragenter", function(e) {
+        });
+        document.addEventListener("dragleave", function(e) {
+        });
+        */
+        document.addEventListener("dragstart", function(e) {
+            e.dataTransfer.setData('text/plain', null); //necessary for firefox
+            e.target.style.opacity = .5;
+        });
 
-                PullEffect.Widgets.create({
-                    type: $(this).attr('data-type')
-                });
-
-                return false;
+        document.addEventListener("dragend", function(e) {
+            e.target.style.opacity = 1;
+            PullEffect.Widgets.create({
+                type: e.target.getAttribute('data-type')
             });
-        $('#page-wrap')
-            .bind('dragenter', function(ev) {
-                ev.preventDefault();
-                $(ev.target).addClass('dragover');
-                return false;
-            })
-            .bind('dragleave', function(ev) {
-                $(ev.target).removeClass('dragover');
-                return false;
-            })
-            .bind('dragover', function(ev) {
-                return false;
-            })
-            .bind('drop', function(ev) {
-                var dt = ev.originalEvent.dataTransfer;
-                alert(dt.getData('Text'));
-                return false;
-            });
+        });
+
+        document.addEventListener("dragover", function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener("drop", function(e) {
+            e.preventDefault();
+        });
     });
 
     gridster = $(".gridster ul").gridster({
