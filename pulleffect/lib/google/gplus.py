@@ -76,7 +76,7 @@ def signin():
 
 
 # Sign out user
-@gplus.route('/signout', methods=['POST'])
+@gplus.route('/signout')
 @signin_required
 def signout():
     session.pop('signed_in', None)

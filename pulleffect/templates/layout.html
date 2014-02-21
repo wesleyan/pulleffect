@@ -22,11 +22,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
     <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
 </head>
+
 <body>
+{% if session.signed_in %}
 <input type="checkbox" class="main-nav-check" id="main-nav-check" />
 <nav class="main-nav no-select">
     <ul class="nav nav-stacked">
@@ -50,11 +51,9 @@
             </a>
         </li>
         <li>
-            <div class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></div>
+            <a href="/gplus/signout" class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></a>
         </li>
-    </ul>
-
-    
+    </ul> 
 </nav>
 
 <div class="page-wrap">
@@ -243,15 +242,15 @@
 
     <script>
         $(function() {
+
             // Display alerts
             displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
         });
     </script>
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
-    <!-- Import Widget js files -->
-    <!-- TODO: session.signed_in needs to be tested for some? -->
-    <script src="{{ url_for('static', filename='js/messages/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
+{% endif %}
 </body>
+
 
 </html>

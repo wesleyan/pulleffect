@@ -106,3 +106,8 @@ a:hover {text-decoration:none:;}
   width: 100%;
   margin-bottom: 20px;
 }
+
+.widget-button {
+  margin-right:auto;
+  margin-left:auto;
+}

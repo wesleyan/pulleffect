@@ -80,7 +80,7 @@
             
         });
         $('.fa-power-off').click(function () {
-            //do some stuff for sign out
+            $.post( "/gplus/signout", function() {});
         });
         $('#clear-modal .btn-danger').click(function() {
             $('.generic').hide();
