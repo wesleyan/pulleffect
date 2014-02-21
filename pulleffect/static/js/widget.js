@@ -2,6 +2,12 @@
     var PullEffect = {};
 
     PullEffect.Types = {
+        'roomInfo': {
+            configurable: false,
+            handler: function () {
+                
+            }
+        },
         'messages': {
             configurable: false,
             handler: function () {
@@ -36,30 +42,54 @@
     };
 
     $(document).ready(function() {
-        $('nav li button').tooltip();
+        $('nav li div').tooltip();
         PullEffect.Widgets = new Widgets;
 
-        $('button[draggable=true]').on({
-            dragstart: function() {
-                $(this).css('opacity', '0.5');
-            },
-            dragleave: function() {
-                $(this).removeClass('over');
-            },
-            dragenter: function() {
-                $(this).addClass('over');
-            },
-            dragend: function() {
-                $(this).css('opacity', '1');
+        //USING VANILLA JS FOR EVENTS BECAUSE OF CROSS-BROWSER ISSUES WITH FIREFOX
 
-                PullEffect.Widgets.create({
-                    type: $(this).attr('data-type')
-                });
-            }
+        /*
+        document.addEventListener("drag", function(e) {
+        });
+        document.addEventListener("dragenter", function(e) {
+        });
+        document.addEventListener("dragleave", function(e) {
+        });
+        */
+        document.addEventListener("dragstart", function(e) {
+            e.dataTransfer.setData('text/plain', null); //necessary for firefox
+            e.target.style.opacity = .5;
+        });
+
+        document.addEventListener("dragend", function(e) {
+            e.target.style.opacity = 1;
+            PullEffect.Widgets.create({
+                type: e.target.getAttribute('data-type')
+            });
+        });
+
+        document.addEventListener("dragover", function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener("drop", function(e) {
+            e.preventDefault();
+        });
+
+        $('.fa-trash-o').click(function () {
+            $('#clear-modal').modal('show');
+            
+        });
+        $('.fa-power-off').click(function () {
+            //do some stuff for sign out
+        });
+        $('#clear-modal .btn-danger').click(function() {
+            $('.generic').hide();
+            gridster.remove_all_widgets();
+            PullEffect.Widgets.reset();
+            localStorage.clear();
+            $('#clear-modal').modal('hide');
         });
     });
-
-    jQuery.event.props.push('dataTransfer');
 
     gridster = $(".gridster ul").gridster({
         widget_base_dimensions: [100, 100],

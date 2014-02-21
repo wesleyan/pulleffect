@@ -73,7 +73,7 @@ a:hover {text-decoration:none:;}
 .main-nav > .nav-stacked > li.logo {
   color:lightgrey;
 }
-.main-nav button {
+.main-nav ul .btn {
   font-size: 2.2em;
   width:2em;
 }
@@ -99,3 +99,10 @@ a:hover {text-decoration:none:;}
   color:grey;
   cursor:pointer;}
 .toggle:active {color:darkgrey;}
+
+.bottom-buttons {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 20px;
+}

@@ -5,4 +5,4 @@ moment
 requests
 strict_rfc3339
 gunicorn
-
+Flask-sockets

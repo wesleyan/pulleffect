@@ -32,15 +32,29 @@
     <ul class="nav nav-stacked">
         <li class="logo"><h4>Pull <span class="fa fa-tint" ></span> Effect</h4></li>
         <li>
-            <button draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-envelope-o widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></button>
+            <div draggable="true" data-type="roomInfo" type="button" class="btn btn-primary btn-lg fa fa-external-link widget-button" data-toggle="tooltip" data-placement="right" title="Room Info"></div>
         </li>
         <li>
-            <button draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></button>
+            <div draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-envelope-o widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></div>
         </li>
         <li>
-            <button draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></button>
+            <div draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></div>
+        </li>
+        <li>
+            <div draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
         </li>
     </ul>
+    <ul class="nav nav-stacked bottom-buttons">
+        <li>
+            <div class="btn btn-danger btn-lg fa fa-trash-o widget-button" data-toggle="tooltip" data-placement="right" title="Clear all"></div>
+            </a>
+        </li>
+        <li>
+            <div class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></div>
+        </li>
+    </ul>
+
+    
 </nav>
 
 <div class="page-wrap">
@@ -64,6 +78,24 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clear-modal" tabindex="-1" role="dialog" aria-labelledby="config-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="config-label">Clear all</h4>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to remove all of your widgets?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger">Remove</button>
       </div>
     </div>
   </div>
