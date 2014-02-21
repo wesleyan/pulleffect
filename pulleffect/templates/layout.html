@@ -115,6 +115,22 @@
     </li>
 </script>
 
+<script type="text/template" id="messages-widget">
+  <table class="table table-striped">
+    <tbody>
+    <% messages.forEach(function(message){ %>
+      <tr class="<%=setSeverity(message)%>">
+        <td><span class="<%=getDeviceIcon(message)%>"/></td>
+        <td><%=message.location%></td>
+        <td><%=message.title%></td>
+        <td><%=message.description%></td>
+        <td><%=moment.unix(message.time).format("hh:mm A")%></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+</script>
+
 <script type="text/template" id="special-events-widget">
     <table class="table table-striped">
       <thead>
