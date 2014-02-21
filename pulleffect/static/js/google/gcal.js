@@ -51,7 +51,6 @@ var renderGcalList = function(response) {
 
 // Renders table of Google calendar events in a (given?) Google calendar widget
 var renderGcalEvents = function(response) {
-    console.log(response);
     loadWidget();
 
     var events = response.calendar_events.items;

@@ -165,7 +165,7 @@
         },
         config: function(e) {
             console.log('config ' + this.model.get('type'));
-            //the widget should have some configurations specific to itself it it's said to be configurable.
+            //the widget should have some configurations specific to itself if it's said to be configurable.
                 //check the widget model
                 //get the widget configuration options and current configuration
                 //render a view with the configuration in #config-modal
