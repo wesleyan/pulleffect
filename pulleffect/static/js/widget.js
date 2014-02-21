@@ -10,16 +10,40 @@
         },
         'messages': {
             configurable: false,
-            handler: function () {
-                
+            setSeverity: function(message){
+                if (message.severity == 3 || message.severity == 4)
+                    return "text-warning"
+                else if (message.severity == 5)
+                    return "text-danger"
+                else return ""
+
+            },
+            getDeviceIcon: function(message){
+                switch (message.device_type){
+                    case "mac": return "fa fa-apple"; break;
+                    case "pc": return "fa fa-windows"; break;
+                    case "printer": return "fa fa-print"; break;
+                    case "roomtrol": return "fa fa-flash"; break;
+                    default: return  "";
+                }
+            },
+            templateSelector: "#messages-widget",
+            handler: function (model) {
+                var self = this;
+                $.getJSON('/messages/10').success(function(data){
+                        model.view.renderContent({messages:data, setSeverity:self.setSeverity, getDeviceIcon:self.getDeviceIcon}, self.templateSelector)
+                    }).error(function(err){
+                        console.log(err);
+                });
             }
         },
+
         'specialEvents': {
             configurable: true,
             templateSelector: '#special-events-widget',
             handler: function(model) {
                 var self = this;
-                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=180')
+                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
                     .success(function(data) {
                         //htmlspecialchars_decode can be added from Jack's code
                         model.view.renderContent({events: data}, self.templateSelector);
