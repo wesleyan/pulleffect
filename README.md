@@ -16,6 +16,7 @@ An information consolidation machine or something
 
 ## How to start developing? (from root directory of app)
 
+  0. sudo apt-get install python-devel *or* sudo yum install python-dev
   1. sudo easy_install pip
   2. sudo pip install virtualenv
   3. virtualenv penv
