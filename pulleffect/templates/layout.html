@@ -190,8 +190,6 @@
 
 <!--   {# 
     <div id="alerts"></div>
-
-
     <div class="container">
         {% block body %}{% endblock %}
         {% if session.signed_in %}
@@ -258,15 +256,12 @@
 
     <script>
         $(function() {
-
             // Display alerts
             displayAlerts({{ get_flashed_messages(with_categories = true) | tojson }});
         });
     </script>
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
 {% endif %}
+    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
 </body>
-
-
 </html>
