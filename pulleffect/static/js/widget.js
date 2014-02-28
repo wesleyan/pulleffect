@@ -3,16 +3,19 @@
 
     PullEffect.Types = {
         'roomInfo': {
+            title: 'Room Info',
             configurable: false,
             templateSelector: '#room-info-widget',
-            handler: function () {
+            handler: function (model) {
                 var self = this;
                 //fetch room info from somewhere and then:
                 var data = []; //TEMPORARY
-                    model.view.renderContent({events: data, roomName:'Room Something'}, self.templateSelector);
+                    model.view.renderTitle('Room ALB304');
+                    model.view.renderContent({events: data}, self.templateSelector);
             }
         },
         'messages': {
+            title: 'Messages',
             configurable: false,
             setSeverity: function(message){
                 if (message.severity == 3 || message.severity == 4)
@@ -43,6 +46,7 @@
         },
 
         'specialEvents': {
+            title: 'Special Events',
             configurable: true,
             templateSelector: '#special-events-widget',
             handler: function(model) {
@@ -58,6 +62,7 @@
             }
         },
         'calendar': {
+            title: 'Calendar',
             configurable: true,
             templateSelector: '#calendar-widget',
             handler: function (model) {
@@ -247,10 +252,9 @@
         },
         renderSkeleton: function() {
             var m = this.model.attributes;
-            var c = this.model.typeObject.configurable;
             var $toAdd = $(this.templateSkeleton({
                 widget: m,
-                configurable: c
+                typeObject: this.model.typeObject
             }));
 
             if (_.isUndefined(m.size_x) || _.isUndefined(m.size_y) || _.isUndefined(m.col) || _.isUndefined(m.row)) {
@@ -258,6 +262,9 @@
             } else {
                 gridster.add_widget($toAdd, m.size_x, m.size_y, m.col, m.row);
             }
+        },
+        renderTitle: function(title) {
+            $(this.selector).find('header').find('span').html(title);
         },
         renderContent: function(data, templateSelector) {
             var rendered = _.template($(templateSelector).html())(data);

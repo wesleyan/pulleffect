@@ -105,9 +105,9 @@
 <script type="text/template" id="generic-widget">
     <li class="generic" data-type="<%=widget.type %>" data-time="<%=widget.time %>">
         <header>
-            <%=widget.type %>
+            <span><%=typeObject.title %></span>
             <a class="close option">&times;</a>
-            <% if(configurable) { %>
+            <% if(typeObject.configurable) { %>
                 <a class="config option"><i class="fa fa-cogs"></i></a>
             <% } %>
         </header>
@@ -117,7 +117,6 @@
 </script>
 
 <script type="text/template" id="room-info-widget">
-    <h3>Events in <%=roomName %></h3>
     <table class="table table-striped">
       <thead>
         <tr>
