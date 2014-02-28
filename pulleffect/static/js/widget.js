@@ -4,8 +4,12 @@
     PullEffect.Types = {
         'roomInfo': {
             configurable: false,
+            templateSelector: '#room-info-widget',
             handler: function () {
-                
+                var self = this;
+                //fetch room info from somewhere and then:
+                var data = []; //TEMPORARY
+                    model.view.renderContent({events: data, roomName:'Room Something'}, self.templateSelector);
             }
         },
         'messages': {
