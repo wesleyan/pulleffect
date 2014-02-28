@@ -16,7 +16,7 @@ gplus = Blueprint('gplus', __name__, template_folder='templates')
 # Build Google Calendar url
 flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json', 
     scope='https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email', 
-    redirect_uri='http://localhost:3000/gplus/signin')
+    redirect_uri='http://<localhost:3></localhost:3>000/gplus/signin')
 auth_uri = flow.step1_get_authorize_url()
 
 users = mongo_connection.users
@@ -71,7 +71,7 @@ def signin():
     	flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gplus_access_token'] = None
         print "we seem to have encountered an error."
-        return redirect(url_for('signin'))
+        return redirect(url_for('gplus.signin'))
     return redirect(auth_uri)
 
 

@@ -27,6 +27,7 @@
 </head>
 
 <body>
+{% block body %}
 {% if session.signed_in %}
 <input type="checkbox" class="main-nav-check" id="main-nav-check" />
 <nav class="main-nav no-select">
@@ -247,13 +248,6 @@
             <div>
         </div>
     </div>#} -->
-
-    <script>
-        // if(Modernizr.localstorage) {
-        //     displayAlerts('info', 'Let\'s get started!');
-        // }
-    </script>
-
     <script>
         $(function() {
             // Display alerts
@@ -263,5 +257,6 @@
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
 {% endif %}
     <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
+{% endblock %}
 </body>
 </html>
