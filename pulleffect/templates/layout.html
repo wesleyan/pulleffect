@@ -28,6 +28,7 @@
 
 <body>
 {% block body %}
+{% endblock %}
 {% if session.signed_in %}
 <input type="checkbox" class="main-nav-check" id="main-nav-check" />
 <nav class="main-nav no-select">
@@ -257,6 +258,5 @@
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
 {% endif %}
     <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
-{% endblock %}
 </body>
 </html>

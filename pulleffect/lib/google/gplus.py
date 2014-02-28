@@ -16,7 +16,7 @@ gplus = Blueprint('gplus', __name__, template_folder='templates')
 # Build Google Calendar url
 flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json', 
     scope='https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email', 
-    redirect_uri='http://<localhost:3></localhost:3>000/gplus/signin')
+    redirect_uri='http://localhost:3000/gplus/signin')
 auth_uri = flow.step1_get_authorize_url()
 
 users = mongo_connection.users
@@ -52,6 +52,7 @@ def signin():
         else: 
             google_email = user.get("google_email")
             google_name = user.get("google_name")
+
             # Make sure we don't overwrite refresh_token with None object
             if google_refresh_token == None:
                 google_refresh_token = user.get("google_refresh_token")
@@ -59,6 +60,8 @@ def signin():
 
 
         session['signed_in'] = True 
+
+        print session['signed_in']
 
         session['google_email'] = google_email
         session['google_name'] = google_name
@@ -81,4 +84,4 @@ def signin():
 def signout():
     session.pop('signed_in', None)
     flash('You are signed out.', 'success')
-    return redirect(url_for('gplus.signin'))
+    return redirect(url_for('index'))

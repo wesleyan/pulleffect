@@ -1,5 +1,8 @@
 {% extends "layout.html" %} 
+
+
 {% block body %} 
+{% if not session.signed_in %}
 <div id="signin" class="row">
     <div class="col-md-4">
         <div class="panel panel-default">
@@ -17,4 +20,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
