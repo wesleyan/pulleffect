@@ -28,8 +28,7 @@ app.register_blueprint(messages, url_prefix='/messages')
 # Load default config and override config from an environment variable
 app.config.update(dict(
     DEBUG=True,
-    SECRET_KEY='development key',
-    SERVER_NAME='localhost:3000'
+    SECRET_KEY='development key'
 ))
 app.config.from_envvar('PULLEFFECT_SETTINGS', silent=True)
 
