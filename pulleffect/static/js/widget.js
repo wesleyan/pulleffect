@@ -47,8 +47,9 @@
 
         'specialEvents': {
             title: 'Special Events',
-            configurable: true,
             templateSelector: '#special-events-widget',
+            configurable: true,
+            configurationTemplate: '#special-events-config',
             handler: function(model) {
                 var self = this;
                 $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
@@ -63,8 +64,9 @@
         },
         'calendar': {
             title: 'Calendar',
-            configurable: true,
             templateSelector: '#calendar-widget',
+            configurable: true,
+            configurationTemplate: '#calendar-config',
             handler: function (model) {
                 var self = this;
                 //fetch calendar from somewhere and then:
@@ -227,15 +229,8 @@
             }
         },
         config: function(e) {
-            console.log('config ' + this.model.get('type'));
             //the widget should have some configurations specific to itself if it's said to be configurable.
-                //check the widget model
-                //get the widget configuration options and current configuration
-                //render a view with the configuration in #config-modal
-
-                //show the modal window    
-                $('.modal').modal('hide');
-                $('#config-modal').modal('show')
+            var configview = new ConfigView({model: this.model});
         },
         resizeToggle: function(e) {
             //$(e.target) may be needed in the future
@@ -269,6 +264,32 @@
         renderContent: function(data, templateSelector) {
             var rendered = _.template($(templateSelector).html())(data);
             $(this.selector).find('section').html(rendered);
+        }
+    });
+
+    var ConfigView = Backbone.View.extend({
+        el: $('#config-modal'),
+        events: {
+            'click .submit': 'submit'
+        },
+        submit: function() {
+            $('.modal').modal('hide');
+            this.undelegateEvents();
+            //some stuff to update the configurations of the model
+            //this.model.set(...)
+            console.log('updated ' + this.model.get('type'));
+        },
+        initialize: function() {
+            //check the widget model
+            console.log('config ' + this.model.get('type'));
+            //get the widget configuration options and current configuration
+            
+            //render a view with the configuration in #config-modal
+            var temp = _.template($(this.model.typeObject.configurationTemplate).html())(this.model.attributes);
+            $(this.el).find('.modal-body').html(temp);
+            //show the modal window    
+            $('.modal').modal('hide');
+            $('#config-modal').modal('show');
         }
     });
 })();
