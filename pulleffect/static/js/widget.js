@@ -50,28 +50,49 @@
             templateSelector: '#special-events-widget',
             configurable: true,
             configurationTemplate: '#special-events-config',
+            defaultConfiguration: {
+                'maxNumber' : 5
+            },
             handler: function(model) {
                 var self = this;
                 $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
                     .success(function(data) {
+                        data = _.first(data, parseInt(model.get('maxNumber')));
                         //htmlspecialchars_decode can be added from Jack's code
                         model.view.renderContent({events: data}, self.templateSelector);
                     })
                     .error(function(err) {
                         console.log(err); //or whatever
                     });
+            },
+            configHandler: function(model, formInfo) {
+                //if there's any different stuff you need to do with config values, you can do it here.
+                formInfo.forEach(function (input) {
+                    model.set(input.name, input.value);
+                });
+                model.typeObject.handler(model);
             }
         },
         'calendar': {
             title: 'Calendar',
             templateSelector: '#calendar-widget',
             configurable: true,
+            defaultConfiguration: {
+                'selected' : 'main'
+            },
             configurationTemplate: '#calendar-config',
             handler: function (model) {
                 var self = this;
                 //fetch calendar from somewhere and then:
                 var data = []; //TEMPORARY
                     model.view.renderContent({events: data}, self.templateSelector);
+            },
+            configHandler: function(model, formInfo) {
+                //if there's any different stuff you need to do with config values, you can do it here.
+                formInfo.forEach(function (input) {
+                    model.set(input.name, input.value);
+                });
+                model.typeObject.handler(model);
             }
         }
     };
@@ -155,14 +176,25 @@
 
     var Widget = Backbone.Model.extend({
         initialize: function() {
+            var self = this;
             this.typeObject = PullEffect.Types[this.get('type')];
             if(_.isUndefined(this.typeObject)) {
                 //if no such widget is registered in the available widgets
                 this.destroy();
                 return; 
             }
+            if(this.typeObject.configurable) {
+                var toSetDefault = _.pairs(this.typeObject.defaultConfiguration);
+                toSetDefault.forEach(function (pair) {
+                    console.log(self.get(pair[0]));
+                    if(_.isUndefined(self.get(pair[0]))) {
+                        self.set(pair[0], pair[1]);
+                    }
+                });
+            }
 
             this.set('time', (new Date()).getTime());
+
             this.view = new WidgetView({
                 model: this
             });
@@ -272,22 +304,25 @@
         events: {
             'click .submit': 'submit'
         },
-        submit: function() {
+        submit: function(e) {
+            e.preventDefault();
             $('.modal').modal('hide');
             this.undelegateEvents();
-            //some stuff to update the configurations of the model
-            //this.model.set(...)
+            this.model.typeObject.configHandler(this.model, this.form.serializeArray());
+            PullEffect.Widgets.save();
+
             console.log('updated ' + this.model.get('type'));
         },
         initialize: function() {
             //check the widget model
             console.log('config ' + this.model.get('type'));
-            //get the widget configuration options and current configuration
-            
+
             //render a view with the configuration in #config-modal
             var temp = _.template($(this.model.typeObject.configurationTemplate).html())(this.model.attributes);
             $(this.el).find('.modal-body').html(temp);
-            //show the modal window    
+            //save the form element for later serializing
+            this.form = $(this.el).find('div[role="form"]').find("select, textarea, input");
+            //show the modal window
             $('.modal').modal('hide');
             $('#config-modal').modal('show');
         }
