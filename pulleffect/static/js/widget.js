@@ -1,23 +1,37 @@
 (function() {
     var PullEffect = {};
+    global = {
+        rooms: []
+    };
 
     PullEffect.Types = {
         'roomInfo': {
             title: 'Room Info',
-            configurable: false,
+            configurable: true,
             templateSelector: '#room-info-widget',
+            configurationTemplate: '#room-info-config',
+            defaultConfiguration: {
+                'selectedRoom' : 77
+            },
             handler: function (model) {
                 var self = this;
-                //var room = model.get('roomNumber');
-                var room = 77; //example code
-
+                var room = model.get('selectedRoom');
                 var today = moment().format('YYYY/MM/DD');
                 var apiURL = 'https://webapps.wesleyan.edu/wapi/v1/public/ems/room/' + room + '/booking_start/' + today + '/booking_end/' + today;
+                model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
+                
                 //fetch room info from somewhere and then:
                 $.getJSON(apiURL, function (data) {
-                    model.view.renderTitle('Crowell Concert Hall'); //example data, needed to be updated from room database
+                    //example data, needed to be updated from room database
                     model.view.renderContent(data, self.templateSelector);
                 });
+            },
+            configHandler: function(model, formInfo) {
+                //if there's any different stuff you need to do with config values, you can do it here.
+                formInfo.forEach(function (input) {
+                    model.set(input.name, parseInt(input.value));
+                });
+                model.typeObject.handler(model);
             }
         },
         'messages': {
@@ -105,7 +119,11 @@
 
     $(document).ready(function() {
         $('nav li div').tooltip();
-        PullEffect.Widgets = new Widgets;
+
+        $.getJSON('./static/rooms.json', function (data) {
+            global.rooms = data;
+            PullEffect.Widgets = new Widgets;
+        });
 
         //USING VANILLA JS FOR EVENTS BECAUSE OF CROSS-BROWSER ISSUES WITH FIREFOX
 
@@ -192,7 +210,6 @@
             if(this.typeObject.configurable) {
                 var toSetDefault = _.pairs(this.typeObject.defaultConfiguration);
                 toSetDefault.forEach(function (pair) {
-                    console.log(self.get(pair[0]));
                     if(_.isUndefined(self.get(pair[0]))) {
                         self.set(pair[0], pair[1]);
                     }
@@ -324,7 +341,7 @@
             console.log('config ' + this.model.get('type'));
 
             //render a view with the configuration in #config-modal
-            var temp = _.template($(this.model.typeObject.configurationTemplate).html())(this.model.attributes);
+            var temp = _.template($(this.model.typeObject.configurationTemplate).html())($.extend({}, this.model.attributes, global));
             $(this.el).find('.modal-body').html(temp);
             //save the form element for later serializing
             this.form = $(this.el).find('div[role="form"]').find("select, textarea, input");
