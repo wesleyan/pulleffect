@@ -148,7 +148,7 @@
   <div class="form-horizontal" role="form">
     <select class="form-control" name="selectedRoom">
       <% rooms.forEach(function(room) { %>
-        <option value="<%=room.id %>"><%=room.name %> (<%=room.desc %>)</option>
+        <option value="<%=room.id %>"<% if(room.id === selectedRoom) { %> selected="selected"<% } %>><%=room.name %> (<%=room.desc %>)</option>
       <% }); %>
     </select>
   </div>
