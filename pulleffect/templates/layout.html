@@ -126,16 +126,16 @@
         </tr>
       </thead>
       <tbody>
-      <% events.forEach(function(event) { %>
+      <% records.forEach(function(event) { %>
         <tr>
           <td>
-            <%=event.summary %>
+            <%=event.event_name %>
           </td>
           <td>
-            <%=moment(event.start.dateTime).format('MM/DD  h:mm A') %>
+            <%=moment(event.event_start).format('h:mm A') %>
           </td>
           <td>
-            <%=moment(event.end.dateTime).format('MM/DD  h:mm A') %>
+            <%=moment(event.event_end).format('h:mm A') %>
           </td>
         </tr>
         <% }) %>

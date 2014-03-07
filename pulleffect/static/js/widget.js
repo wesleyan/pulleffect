@@ -8,10 +8,16 @@
             templateSelector: '#room-info-widget',
             handler: function (model) {
                 var self = this;
+                //var room = model.get('roomNumber');
+                var room = 77; //example code
+
+                var today = moment().format('YYYY/MM/DD');
+                var apiURL = 'https://webapps.wesleyan.edu/wapi/v1/public/ems/room/' + room + '/booking_start/' + today + '/booking_end/' + today;
                 //fetch room info from somewhere and then:
-                var data = []; //TEMPORARY
-                    model.view.renderTitle('Room ALB304');
-                    model.view.renderContent({events: data}, self.templateSelector);
+                $.getJSON(apiURL, function (data) {
+                    model.view.renderTitle('Crowell Concert Hall'); //example data, needed to be updated from room database
+                    model.view.renderContent(data, self.templateSelector);
+                });
             }
         },
         'messages': {
