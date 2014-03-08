@@ -236,3 +236,13 @@ html, body {
     overflow: hidden;
     height:89%;
 }
+
+.overlay {
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    margin: 5px;
+    width:99% !important;
+    height:99% !important;
+    z-index:1035 !important;
+}

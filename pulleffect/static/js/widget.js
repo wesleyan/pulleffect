@@ -8,6 +8,7 @@
         'roomInfo': {
             title: 'Room Info',
             configurable: true,
+            expandable: true,
             templateSelector: '#room-info-widget',
             configurationTemplate: '#room-info-config',
             defaultConfiguration: {
@@ -68,6 +69,7 @@
         'specialEvents': {
             title: 'Special Events',
             templateSelector: '#special-events-widget',
+            expandable: true,
             configurable: true,
             configurationTemplate: '#special-events-config',
             defaultConfiguration: {
@@ -263,6 +265,7 @@
             this.selector = "li[data-time='" + this.model.get('time') + "']";
             e["click " + this.selector + " .close"] = 'close';
             e["click " + this.selector + " .config"] = 'config';
+            e["click " + this.selector + " .expand"] = 'expand';
             e["dblclick"] = 'resizeToggle'; //this can be changed later
             return e;
         },
@@ -282,10 +285,16 @@
                 //remove the widget from the DOM
                 gridster.remove_widget($toRemove);
             }
+            $('.toggle, nav').show();
         },
         config: function(e) {
             //the widget should have some configurations specific to itself if it's said to be configurable.
             var configview = new ConfigView({model: this.model});
+        },
+        expand: function (e) {
+            console.log(this.model.get('type') + ' widget expanded');
+            $(this.selector).toggleClass('overlay');
+            $('.toggle, nav').toggle();
         },
         resizeToggle: function(e) {
             //$(e.target) may be needed in the future
