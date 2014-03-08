@@ -201,7 +201,7 @@ html, body {
 
 .gridster .preview-holder {
     border: none!important;
-    background: red!important;
+    background: rgb(73,143,225) !important;
 }
 
 .generic {

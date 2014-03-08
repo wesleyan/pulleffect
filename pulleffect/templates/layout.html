@@ -22,8 +22,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/specialEvents/specialEvents.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/google/gcal.js') }}"></script>
 </head>
 
 <body>
@@ -38,13 +36,13 @@
             <div draggable="true" data-type="roomInfo" type="button" class="btn btn-primary btn-lg fa fa-external-link widget-button" data-toggle="tooltip" data-placement="right" title="Room Info"></div>
         </li>
         <li>
-            <div draggable="true" data-type="messages" onclick="renderMessageQueue();" type="button" class="btn btn-primary btn-lg fa fa-envelope-o widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></div>
+            <div draggable="true" data-type="messages" type="button" class="btn btn-primary btn-lg fa fa-envelope-o widget-button" data-toggle="tooltip" data-placement="right" title="Messages"></div>
         </li>
         <li>
-            <div draggable="true" data-type="specialEvents" onclick="renderSpecialEventsWidget();" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></div>
+            <div draggable="true" data-type="specialEvents" type="button" class="btn btn-primary btn-lg fa fa-star widget-button"data-toggle="tooltip" data-placement="right" title="Events"></div>
         </li>
         <li>
-            <div draggable="true" data-type="calendar" onclick="renderGcalWidget();" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
+            <div draggable="true" data-type="calendar" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
         </li>
     </ul>
     <ul class="nav nav-stacked bottom-buttons">

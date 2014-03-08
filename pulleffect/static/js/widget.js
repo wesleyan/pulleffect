@@ -174,7 +174,7 @@
     });
 
     gridster = $(".gridster ul").gridster({
-        widget_base_dimensions: [100, 100],
+        widget_base_dimensions: [80, 80],
         widget_margins: [5, 5],
         helper: 'clone',
         avoid_overlapped_widgets: true,
