@@ -218,7 +218,7 @@
             this.typeObject = PullEffect.Types[this.get('type')];
             if(_.isUndefined(this.typeObject)) {
                 //if no such widget is registered in the available widgets
-                this.destroy();
+                this.delete();
                 return; 
             }
             if(this.typeObject.configurable) {
@@ -239,7 +239,14 @@
         },
         save: function (attr) {
            this.set(attr);
-           var content = encodeURIComponent(JSON.stringify(PullEffect.Widgets));
+           this.store();
+        },
+        delete: function () {
+            this.destroy();
+            this.store();
+        },
+        store: function() {
+            var content = encodeURIComponent(JSON.stringify(PullEffect.Widgets));
            $.removeCookie('widgets');
            $.cookie('widgets', content, {expires: 9000, path: '/'});
         },
@@ -273,9 +280,13 @@
             });
         },
         fetch : function() {
-            var content = JSON.parse(decodeURIComponent($.cookie('widgets')));
-            console.log(content);
-            this.reset(content);
+            try {
+                var content = JSON.parse(decodeURIComponent($.cookie('widgets')));
+                this.reset(content);
+            } catch(e) {
+                console.log(e);
+                this.reset([]);
+            }  
         }
     });
 
@@ -303,7 +314,7 @@
 
             if (!_.isUndefined(model)) { //if multiple events have been delegated
                 //remove the widget from the collection
-                model.destroy();
+                model.delete();
                 //remove the widget from the DOM
                 gridster.remove_widget($toRemove);
             }
@@ -314,6 +325,14 @@
             var configview = new ConfigView({model: this.model});
         },
         expand: function (e) {
+            if(e.target) {
+                var current = this.model.get('expanded');
+                if(_.isUndefined(current)) {
+                    this.model.save({expanded: true});
+                } else {
+                    this.model.save({expanded: !current});
+                }
+            }
             console.log(this.model.get('type') + ' widget expanded');
             $(this.selector).toggleClass('overlay');
             $('.toggle, nav').toggle();
@@ -343,6 +362,17 @@
             } else {
                 gridster.add_widget($toAdd, m.size_x, m.size_y, m.col, m.row);
             }
+
+            var self = this;
+            var letMeKnow = setInterval(function () {
+                var lookFor = $(self.selector);
+                if(lookFor.length > 0) {
+                    clearInterval(letMeKnow);
+                    if(self.model.get('expanded') === true) {
+                        self.expand({});
+                    }
+                } 
+            }, 10);
         },
         renderTitle: function(title) {
             $(this.selector).find('header').find('span').html(title);
