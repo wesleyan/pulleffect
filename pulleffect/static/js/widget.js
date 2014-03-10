@@ -237,6 +237,12 @@
             });
             this.fetchContent();
         },
+        save: function (attr) {
+           this.set(attr);
+           var content = encodeURIComponent(JSON.stringify(PullEffect.Widgets));
+           $.removeCookie('widgets');
+           $.cookie('widgets', content, {expires: 9000, path: '/'});
+        },
         fetchContent: function() {
             var self = this;
             //fetch data and update the model
@@ -249,7 +255,6 @@
 
     var Widgets = Backbone.Collection.extend({
         model: Widget,
-        localStorage: new Backbone.LocalStorage("widgets"),
         initialize: function() {
             gridster.remove_all_widgets();
             this.fetch();
@@ -266,6 +271,11 @@
                     size_y: w.size_y
                 });
             });
+        },
+        fetch : function() {
+            var content = JSON.parse(decodeURIComponent($.cookie('widgets')));
+            console.log(content);
+            this.reset(content);
         }
     });
 
