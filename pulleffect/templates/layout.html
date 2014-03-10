@@ -118,6 +118,9 @@
 </script>
 
 <script type="text/template" id="room-info-widget">
+  <% if(records.length < 1) { %>
+    There are no events in this room today.
+  <% } else { %>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -142,6 +145,7 @@
         <% }) %>
       </tbody>
     </table>
+  <% } %>
 </script>
 
 <script type="text/template" id="room-info-config">
@@ -156,22 +160,29 @@
 </script>
 
 <script type="text/template" id="messages-widget">
-  <table class="table table-striped">
-    <tbody>
-    <% messages.forEach(function(message){ %>
-      <tr class="<%=setSeverity(message)%>">
-        <td><span class="<%=getDeviceIcon(message)%>"/></td>
-        <td><%=message.location%></td>
-        <td><%=message.title%></td>
-        <td><%=message.description%></td>
-        <td><%=moment.unix(message.time).format("hh:mm A")%></td>
-      </tr>
-    <% }) %>
-    </tbody>
-  </table>
+  <% if(messages.length < 1) { %>
+    There are no messages.
+  <% } else { %>
+    <table class="table table-striped">
+      <tbody>
+      <% messages.forEach(function(message){ %>
+        <tr class="<%=setSeverity(message)%>">
+          <td><span class="<%=getDeviceIcon(message)%>"/></td>
+          <td><%=message.location%></td>
+          <td><%=message.title%></td>
+          <td><%=message.description%></td>
+          <td><%=moment.unix(message.time).format("hh:mm A")%></td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
 </script>
 
 <script type="text/template" id="special-events-widget">
+  <% if(events.length < 1) { %>
+    There are no events in the given period.
+  <% } else { %>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -200,6 +211,7 @@
         <% }) %>
       </tbody>
     </table>
+  <% } %>
 </script>
 
 <script type="text/template" id="special-events-config">
@@ -215,6 +227,9 @@
 </script>
 
 <script type="text/template" id="calendar-widget">
+  <% if(events.length < 1) { %>
+    There are no events in the given period.
+  <% } else { %>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -239,6 +254,7 @@
         <% }) %>
       </tbody>
     </table>
+  <% } %>
 </script>
 
 <script type="text/template" id="calendar-config">

@@ -22,9 +22,11 @@
                 model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
                 
                 //fetch room info from somewhere and then:
-                $.getJSON(apiURL, function (data) {
+                $.getJSON(apiURL).success(function(data){
                     //example data, needed to be updated from room database
                     model.view.renderContent(data, self.templateSelector);
+                }).fail(function(jqxhr) {
+                    model.view.renderError(jqxhr);
                 });
             },
             configHandler: function(model, formInfo) {
@@ -47,21 +49,31 @@
 
             },
             getDeviceIcon: function(message){
-                switch (message.device_type){
-                    case "mac": return "fa fa-apple"; break;
-                    case "pc": return "fa fa-windows"; break;
-                    case "printer": return "fa fa-print"; break;
-                    case "roomtrol": return "fa fa-flash"; break;
-                    default: return  "";
+                var devices = {
+                    'mac': 'fa fa-apple',
+                    'pc': 'fa fa-windows',
+                    'printer': 'fa fa-print',
+                    'roomtrol': 'fa fa-flash'
+                };
+
+                var r = devices[message.device_type];
+
+                if(_.isUndefined(r)) {
+                    return '';
                 }
+                return r;
             },
             templateSelector: "#messages-widget",
             handler: function (model) {
                 var self = this;
-                $.getJSON('/messages/10').success(function(data){
-                        model.view.renderContent({messages:data, setSeverity:self.setSeverity, getDeviceIcon:self.getDeviceIcon}, self.templateSelector)
-                    }).error(function(err){
-                        console.log(err);
+                $.getJSON('/messages/10').done(function(data){
+                    model.view.renderContent({
+                        messages: data,
+                        setSeverity: self.setSeverity,
+                        getDeviceIcon: self.getDeviceIcon
+                    }, self.templateSelector);
+                }).fail(function(jqxhr) {
+                    model.view.renderError(jqxhr);
                 });
             }
         },
@@ -78,13 +90,13 @@
             handler: function(model) {
                 var self = this;
                 $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
-                    .success(function(data) {
+                    .done(function(data) {
                         data = _.first(data, parseInt(model.get('maxNumber')));
                         //htmlspecialchars_decode can be added from Jack's code
                         model.view.renderContent({events: data}, self.templateSelector);
                     })
-                    .error(function(err) {
-                        console.log(err); //or whatever
+                    .fail(function(jqxhr) {
+                        model.view.renderError(jqxhr);
                     });
             },
             configHandler: function(model, formInfo) {
@@ -328,6 +340,10 @@
         renderContent: function(data, templateSelector) {
             var rendered = _.template($(templateSelector).html())(data);
             $(this.selector).find('section').html(rendered);
+        },
+        renderError: function (jqxhr) {
+            console.log(jqxhr);
+            $(this.selector).find('section').html('There is a problem with this widget.');
         }
     });
 
