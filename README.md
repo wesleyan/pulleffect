@@ -1,13 +1,13 @@
 pulleffect
 ==========
 
-An information consolidation machine or something
+An application that polls and displays glanceable information from a variety of sources, buitl on Python Flask and BackboneJS.
 
 
 ## How do I use it?
 1. now you can run the runserver.py file with your
      python interpreter and the application will
-     greet you on http://localhost:5000/
+     greet you on http://localhost:3000/
 
 ## Is it tested?
 
