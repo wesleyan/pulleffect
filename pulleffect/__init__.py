@@ -14,8 +14,8 @@ from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.messages.messages import messages
-
 from markupsafe import Markup
+from werkzeug.contrib.fixers import ProxyFix
 import urllib
 
 
@@ -49,6 +49,7 @@ def urlencode_filter(s):
     s = urllib.quote_plus(s)
     return Markup(s)
 
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 if __name__ == '__main__':
     app.run()
