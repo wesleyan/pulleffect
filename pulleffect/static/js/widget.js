@@ -17,11 +17,9 @@
             handler: function (model) {
                 var self = this;
                 var room = model.get('selectedRoom');
-                var today = moment().format('YYYY/MM/DD');
-                var apiURL = 'https://webapps.wesleyan.edu/wapi/v1/public/ems/room/' + room + '/booking_start/' + today + '/booking_end/' + today;
+                var apiURL = 'https://webapps.wesleyan.edu/wapi/v1/public/ems/room/' + room;
                 model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
-                
-                //fetch room info from somewhere and then:
+                // fetch room info from somewhere and then:
                 $.getJSON(apiURL).success(function(data){
                     //example data, needed to be updated from room database
                     model.view.renderContent(data, self.templateSelector);
