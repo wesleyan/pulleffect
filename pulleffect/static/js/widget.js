@@ -297,7 +297,6 @@
             e["click " + this.selector + " .close"] = 'close';
             e["click " + this.selector + " .config"] = 'config';
             e["click " + this.selector + " .expand"] = 'expand';
-            e["dblclick"] = 'resizeToggle'; //this can be changed later
             return e;
         },
         close: function(e) {
@@ -333,16 +332,8 @@
             }
             console.log(this.model.get('type') + ' widget expanded');
             $(this.selector).toggleClass('overlay');
+            $(this.selector).find('.close, .config').toggle();
             $('.toggle, nav').toggle();
-        },
-        resizeToggle: function(e) {
-            //$(e.target) may be needed in the future
-            this.resizable = !this.resizable;
-            if (this.resizable === true) {
-                $('.gs-resize-handle').show();
-            } else {
-                $('.gs-resize-handle').hide();
-            }
         },
         initialize: function() {
             this.resizable = false;
