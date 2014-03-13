@@ -227,7 +227,7 @@ html, body {
     opacity: 1;
 }
 .gs-resize-handle {
-    display: none;
+    background-color: transparent !important;
 }
 
 .generic section {
