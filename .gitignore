@@ -1,7 +1,7 @@
 *.pyc
 *env/
 activate
-pulleffect/config/*
+pulleffect/config/google_client_secrets.json
 
 # Keepers
 !.gitkeep

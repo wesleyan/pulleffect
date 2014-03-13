@@ -9,6 +9,7 @@ import httplib2
 from oauth2client.client import flow_from_clientsecrets
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
+from pulleffect.config.env import config
 import strict_rfc3339 
 import requests
 from urllib import urlencode
@@ -17,9 +18,9 @@ gcal = Blueprint('gcal', __name__, template_folder='templates')
 
 
 # Build Google Calendar url
-flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json',
-                               scope='https://www.googleapis.com/auth/calendar',
-                               redirect_uri='http://localhost:3000/gcal/authenticate')
+flow = flow_from_clientsecrets(config['google_client_secrets'],
+    scope='https://www.googleapis.com/auth/calendar',
+    redirect_uri=config['home_url'] + 'gcal/authenticate')
 
 auth_uri = flow.step1_get_authorize_url()
 

@@ -1,0 +1,4 @@
+{
+	"home_url":"http://localhost:3000",
+	"google_client_secrets":"./pulleffect/config/google_client_secrets.json"
+}

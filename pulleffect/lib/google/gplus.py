@@ -7,6 +7,7 @@ from flask import flash
 from oauth2client.client import flow_from_clientsecrets
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
+from pulleffect.config.env import config
 import requests
 from urllib import urlencode
 
@@ -14,9 +15,9 @@ gplus = Blueprint('gplus', __name__, template_folder='templates')
 
 
 # Build Google Calendar url
-flow = flow_from_clientsecrets('./pulleffect/config/google_client_secrets.json', 
+flow = flow_from_clientsecrets(config['google_client_secrets'], 
     scope='https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email', 
-    redirect_uri='http://localhost:3000/gplus/signin')
+    redirect_uri=config['home_url'] + '/gplus/signin')
 auth_uri = flow.step1_get_authorize_url()
 
 users = mongo_connection.users
