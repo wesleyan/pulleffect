@@ -209,9 +209,9 @@
             $.cookie('kiosk', 'false', {expires: 9000, path: '/'});
         }
         PullEffect.Mode.setIfKiosk();
-        
+
         $('.fa-bullhorn').click(function() {
-            $.cookie('kiosk', JSON.stringify(!JSON.parse($.cookie('kiosk')), {expires: 9000, path: '/'});
+            $.cookie('kiosk', JSON.stringify(!JSON.parse($.cookie('kiosk'))), {expires: 9000, path: '/'});
             PullEffect.Mode.setIfKiosk();
         })
 
