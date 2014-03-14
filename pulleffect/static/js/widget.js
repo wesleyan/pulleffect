@@ -130,13 +130,28 @@
         'leaderboard': {
             title: 'Ticket Resolutions',
             templateSelector: '#leaderboard-widget',
-            configurable: false,
+            configurable: true,
+            defaultConfiguration: {
+                'mode' : 'kiosk'
+            },
             handler: function(model) {
                 $.getJSON('leaderboard/').done(function(data) {
+                    if(this.model.get('mode') === 'all') {
+                        $(this.model.view.selector).find('section').attr('style', 'overflow: scroll !important');
+                    } else { //kiosk mode
+                        $(this.model.view.selector).find('section').attr('style', 'overflow: hidden !important');
+                        data = _.first(data, 10);
+                    }
                     model.view.renderContent({staff: data}, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
                 });
+            },
+            configHandler: function(model, formInfo) {
+                formInfo.forEach(function (input) {
+                    model.set(input.name, parseInt(input.value));
+                });
+                model.typeObject.handler(model);
             }
         }
     };

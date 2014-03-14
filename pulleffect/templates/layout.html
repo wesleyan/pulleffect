@@ -44,6 +44,9 @@
         <li>
             <div draggable="true" data-type="calendar" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
         </li>
+        <li>
+            <div draggable="true" data-type="leaderboard" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" data-toggle="tooltip" data-placement="right" title="Leaderboard"></div>
+        </li>
     </ul>
     <ul class="nav nav-stacked bottom-buttons">
         <li>
@@ -273,10 +276,13 @@
         </tr>
       </thead>
       <tbody>
+        <% if(staff.length < 1) %>
+          <i>unstaffed</i>
+        <% } %>
         <% staff.forEach(function(person) { %>
           <tr>
             <td>
-              <%=person.name %> (<%=person.username %>)
+              <%=person.username %>
             </td>
             <td>
               <%=person.count %>
@@ -286,6 +292,19 @@
       </tbody>
     </table>
   <% } %>
+</script>
+
+<script type="text/template" id="leaderboard-config">
+  <h4 align="center">Select a mode for the resolved tickets widget:</h4>
+  <div class="form-horizontal" role="form">
+    <select class="form-control" name="mode">
+      <% rooms.forEach(function(room) { %>
+        <option value="<%=room.id %>"<% if(room.id === selectedRoom) { %> selected="selected"<% } %>><%=room.name %> (<%=room.desc %>)</option>
+      <% }); %>
+      <option value="kiosk">Kiosk Mode</option>
+      <option value="all">All Info / Manager Mode</option>
+    </select>
+  </div>
 </script>
 
 <!--   {# 
