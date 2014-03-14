@@ -160,8 +160,12 @@
         setIfKiosk: function() {
             if(JSON.parse($.cookie('kiosk')) === true) {
                 $('#modifyCSSRule').html('.option {display:none;}');
+                $('.fa-bullhorn').removeClass('btn-danger');
+                $('.fa-bullhorn').addClass('btn-success');
             } else {
                 $('#modifyCSSRule').html('');
+                $('.fa-bullhorn').addClass('btn-danger');
+                $('.fa-bullhorn').removeClass('btn-success');
             }
         }
     }
