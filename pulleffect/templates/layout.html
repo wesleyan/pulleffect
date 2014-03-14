@@ -50,6 +50,10 @@
     </ul>
     <ul class="nav nav-stacked bottom-buttons">
         <li>
+            <div class="btn btn-danger btn-lg fa fa-bullhorn widget-button" data-toggle="tooltip" data-placement="right" title="Kiosk Mode"></div>
+            </a>
+        </li>
+        <li>
             <div class="btn btn-danger btn-lg fa fa-trash-o widget-button" data-toggle="tooltip" data-placement="right" title="Clear all"></div>
             </a>
         </li>
@@ -307,6 +311,8 @@
   </div>
 </script>
 
+<style id="modifyCSSRule">
+</style>
 <!--   {# 
     <div id="alerts"></div>
     <div class="container">
@@ -374,6 +380,6 @@
     </script>
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
 {% endif %}
-    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script>    
+    <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script> 
 </body>
 </html>
