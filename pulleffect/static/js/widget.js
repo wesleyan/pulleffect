@@ -159,9 +159,9 @@
     PullEffect.Mode = {
         setIfKiosk: function() {
             if(JSON.parse($.cookie('kiosk')) === true) {
-                $('.option').hide();
+                $('#modifyCSSRule').html('.option {display:none;}');
             } else {
-                $('.option').show();
+                $('#modifyCSSRule').html('');
             }
         }
     }
