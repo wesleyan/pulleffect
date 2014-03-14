@@ -130,18 +130,18 @@
         </tr>
       </thead>
       <tbody>
-      <% records.forEach(function(event) { %>
-        <tr>
-          <td>
-            <%=event.event_name %>
-          </td>
-          <td>
-            <%=moment(event.event_start).format('h:mm A') %>
-          </td>
-          <td>
-            <%=moment(event.event_end).format('h:mm A') %>
-          </td>
-        </tr>
+        <% records.forEach(function(event) { %>
+          <tr>
+            <td>
+              <%=event.event_name %>
+            </td>
+            <td>
+              <%=moment(event.event_start).format('h:mm A') %>
+            </td>
+            <td>
+              <%=moment(event.event_end).format('h:mm A') %>
+            </td>
+          </tr>
         <% }) %>
       </tbody>
     </table>
@@ -165,15 +165,15 @@
   <% } else { %>
     <table class="table table-striped">
       <tbody>
-      <% messages.forEach(function(message){ %>
-        <tr class="<%=setSeverity(message)%>">
-          <td><span class="<%=getDeviceIcon(message)%>"/></td>
-          <td><%=message.location%></td>
-          <td><%=message.title%></td>
-          <td><%=message.description%></td>
-          <td><%=moment.unix(message.time).format("hh:mm A")%></td>
-        </tr>
-      <% }) %>
+        <% messages.forEach(function(message){ %>
+          <tr class="<%=setSeverity(message)%>">
+            <td><span class="<%=getDeviceIcon(message)%>"/></td>
+            <td><%=message.location%></td>
+            <td><%=message.title%></td>
+            <td><%=message.description%></td>
+            <td><%=moment.unix(message.time).format("hh:mm A")%></td>
+          </tr>
+        <% }) %>
       </tbody>
     </table>
   <% } %>
@@ -192,22 +192,22 @@
         </tr>
       </thead>
       <tbody>
-      <% events.forEach(function(event) { %>
-        <tr>
-          <td>
-            <%=event.title %>
-          </td>
-          <td>
-            <strong><%=moment(event.start).format('hh:mm A') %></strong>
-            <i><%=moment(event.eventStart).format('hh:mm A') %></i>
-             <i class="fa fa-long-arrow-right"></i> 
-            <i><%=moment(event.eventEnd).format('hh:mm A') %></i>
-            <strong><%=moment(event.end).format('hh:mm A') %></strong>
-          </td>
-          <td>
-          <%=(event.shifts.map(function(s) { return s.staff })).join(', ') %>
-          </td>
-        </tr>
+        <% events.forEach(function(event) { %>
+          <tr>
+            <td>
+              <%=event.title %>
+            </td>
+            <td>
+              <strong><%=moment(event.start).format('hh:mm A') %></strong>
+              <i><%=moment(event.eventStart).format('hh:mm A') %></i>
+               <i class="fa fa-long-arrow-right"></i> 
+              <i><%=moment(event.eventEnd).format('hh:mm A') %></i>
+              <strong><%=moment(event.end).format('hh:mm A') %></strong>
+            </td>
+            <td>
+            <%=(event.shifts.map(function(s) { return s.staff })).join(', ') %>
+            </td>
+          </tr>
         <% }) %>
       </tbody>
     </table>
@@ -239,18 +239,18 @@
         </tr>
       </thead>
       <tbody>
-      <% events.forEach(function(event) { %>
-        <tr>
-          <td>
-            <%=event.summary %>
-          </td>
-          <td>
-            <%=moment(event.start.dateTime).format('MM/DD  h:mm A') %>
-          </td>
-          <td>
-            <%=moment(event.end.dateTime).format('MM/DD  h:mm A') %>
-          </td>
-        </tr>
+        <% events.forEach(function(event) { %>
+          <tr>
+            <td>
+              <%=event.summary %>
+            </td>
+            <td>
+              <%=moment(event.start.dateTime).format('MM/DD  h:mm A') %>
+            </td>
+            <td>
+              <%=moment(event.end.dateTime).format('MM/DD  h:mm A') %>
+            </td>
+          </tr>
         <% }) %>
       </tbody>
     </table>
@@ -259,6 +259,33 @@
 
 <script type="text/template" id="calendar-config">
   Calendar Config Form and Inputs
+</script>
+
+<script type="text/template" id="leaderboard-widget">
+  <% if(staff.length < 1) { %>
+    There are no events in the given period.
+  <% } else { %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Staff</th>
+          <th>Tickets Resolved</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% staff.forEach(function(person) { %>
+          <tr>
+            <td>
+              <%=person.name %> (<%=person.username %>)
+            </td>
+            <td>
+              <%=person.count %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
 </script>
 
 <!--   {# 

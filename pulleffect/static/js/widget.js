@@ -64,7 +64,7 @@
             templateSelector: "#messages-widget",
             handler: function (model) {
                 var self = this;
-                $.getJSON('/messages/10').done(function(data){
+                $.getJSON('messages/10').done(function(data){
                     model.view.renderContent({
                         messages: data,
                         setSeverity: self.setSeverity,
@@ -125,6 +125,18 @@
                     model.set(input.name, input.value);
                 });
                 model.typeObject.handler(model);
+            }
+        },
+        'leaderboard': {
+            title: 'Ticket Resolutions',
+            templateSelector: '#leaderboard-widget',
+            configurable: false,
+            handler: function(model) {
+                $.getJSON('leaderboard/').done(function(data) {
+                    model.view.renderContent({staff: data}, self.templateSelector);
+                }).fail(function(jqxhr) {
+                    model.view.renderError(jqxhr);
+                });
             }
         }
     };
