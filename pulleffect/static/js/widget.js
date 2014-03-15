@@ -1,7 +1,8 @@
 (function() {
     var PullEffect = {};
     global = {
-        rooms: []
+        rooms: [],
+        gcals: []
     };
 
     PullEffect.Types = {
@@ -175,6 +176,11 @@
 
         $.getJSON('./static/rooms.json', function (data) {
             global.rooms = data;
+            PullEffect.Widgets = new Widgets;
+        });
+
+        $.getJSON('/gcal/get_calendar_list', function(data) {
+            global.gcals = !data.error ? data.calendars : [];
             PullEffect.Widgets = new Widgets;
         });
 

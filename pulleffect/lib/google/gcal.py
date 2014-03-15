@@ -106,5 +106,5 @@ def get_calendar_events():
     min_time = strict_rfc3339.now_to_rfc3339_localoffset()
 
     req = requests.get('https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token, 'maxResults': 5, 'orderBy': 'startTime', 'singleEvents':True, 'timeMin': min_time, 'fields': 'items(end,start,summary,description),summary'})  )
-    # print events
+    # return events
     return jsonify({'calendar_events':req.json()})

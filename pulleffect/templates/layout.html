@@ -160,9 +160,28 @@
   <div class="form-horizontal" role="form">
     <select class="form-control" name="selectedRoom">
       <% rooms.forEach(function(room) { %>
-        <option value="<%=room.id %>"<% if(room.id === selectedRoom) { %> selected="selected"<% } %>><%=room.name %> (<%=room.desc %>)</option>
+        <option value="<%=room.id %>"<% if(room.id === selectedRoom) { %> selected="selected"<% } %>>
+          <%=room.name %> [<%=room.desc %>]
+        </option>
       <% }); %>
     </select>
+  </div>
+</script>
+
+<script type="text/template" id="calendar-config">
+  <h4 align="center">Google Calendars</h4>
+  <div class="form-horizontal" role="form">
+    {% if session.gcal_access_token %}
+    <select class="form-control" name="selectedGcal">
+      <% global.gcals.forEach(function(gcal) { %>
+        <option value="<%=gcal.calendar_id %>"<% if(gcal.calendar_id === _.first(global.gcals).calendar_id) { %> selected="selected"<% } %>>
+        <%=gcal.calendar_name %> 
+        </option>
+      <% }); %>
+    </select>
+    {% else %}
+      <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-primary gcal-authenticate-button">Authenticate</a>
+    {% endif %}
   </div>
 </script>
 
@@ -262,10 +281,6 @@
       </tbody>
     </table>
   <% } %>
-</script>
-
-<script type="text/template" id="calendar-config">
-  Calendar Config Form and Inputs
 </script>
 
 <script type="text/template" id="leaderboard-widget">
