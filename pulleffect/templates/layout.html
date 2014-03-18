@@ -207,7 +207,7 @@
 
 <script type="text/template" id="special-events-widget">
   <% if(events.length < 1) { %>
-    There are no events in the given period.
+    There are no events in the next <%=nextHours %> hours.
   <% } else { %>
     <table class="table table-striped">
       <thead>
@@ -244,9 +244,15 @@
   <h4 align="center">Special Events</h4>
   <div class="form-horizontal" role="form">
     <div class="form-group">
-      <label for="inputEmail3" class="col-sm-4 control-label">Max number of events:</label>
+      <label for="maxNumber" class="col-sm-4 control-label">Max number of events:</label>
       <div class="col-sm-8">
         <input type="number" class="form-control" name="maxNumber" value="<%=maxNumber%>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="nextHours" class="col-sm-4 control-label">Max number of events:</label>
+      <div class="col-sm-8">
+        <input type="number" class="form-control" name="nextHours" value="<%=nextHours%>">
       </div>
     </div>
   </div>

@@ -84,15 +84,16 @@
             configurable: true,
             configurationTemplate: '#special-events-config',
             defaultConfiguration: {
-                'maxNumber' : 5
+                'maxNumber' : 5,
+                'nextHours': 50
             },
             handler: function(model) {
                 var self = this;
-                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
+                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=' + (parseInt(model.get('nextHours')) * 60))
                     .done(function(data) {
                         data = _.first(data, parseInt(model.get('maxNumber')));
                         //htmlspecialchars_decode can be added from Jack's code
-                        model.view.renderContent({events: data}, self.templateSelector);
+                        model.view.renderContent({events: data, nextHours: model.get('nextHours')}, self.templateSelector);
                     })
                     .fail(function(jqxhr) {
                         model.view.renderError(jqxhr);
@@ -176,6 +177,8 @@
 
         $.getJSON('./static/rooms.json', function (data) {
             global.rooms = data;
+            // rooms.json is already sorted, but if needed:
+            //global.rooms = _(data).sortBy('name');
             PullEffect.Widgets = new Widgets;
         });
 
