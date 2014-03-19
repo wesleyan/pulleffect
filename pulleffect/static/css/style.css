@@ -39,6 +39,8 @@ html, body {
 .tooltip {
     z-index:99999;
     position: fixed;
+    -webkit-transition: 0;
+    transition: 0;
 }
 #signout {
     display:inline;

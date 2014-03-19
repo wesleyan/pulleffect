@@ -243,7 +243,7 @@
 
         // Sign out
         $('.fa-power-off').click(function () {
-            $.post( "/gplus/signout", function() {});
+            window.location.href = $(this).attr('href');
         });
     });
 
