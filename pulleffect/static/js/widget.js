@@ -183,7 +183,7 @@
     PullEffect.refreshAllWidgets = function() {
         PullEffect.Widgets.each(function(model) {
             model.typeObject.handler(model);
-        };
+        });
     };
 
     $(document).ready(function() {
