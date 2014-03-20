@@ -208,6 +208,7 @@ html, body {
 
 .generic {
     background-color: white;
+    overflow: hidden;
 }
 .generic header {
     cursor:pointer;
@@ -240,7 +241,7 @@ html, body {
 }
 
 .generic section .alert td {
-    background-color: inherit;
+    background-color: inherit !important;
 }
 
 .overlay {
