@@ -239,6 +239,10 @@ html, body {
     height:89%;
 }
 
+.generic section .alert td {
+    background-color: inherit;
+}
+
 .overlay {
     position:fixed !important;
     top:0 !important;

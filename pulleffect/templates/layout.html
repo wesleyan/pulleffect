@@ -138,7 +138,7 @@
       </thead>
       <tbody>
         <% records.forEach(function(event) { %>
-          <tr>
+          <tr class="<%=(event.current ? 'alert alert-warning' : '') %>">
             <td>
               <%=event.event_name %>
             </td>
@@ -219,7 +219,7 @@
       </thead>
       <tbody>
         <% events.forEach(function(event) { %>
-          <tr>
+          <tr class="<%=((event.shifts.length < 1) ? 'alert alert-danger' : '') %>">
             <td>
               <%=event.title %>
             </td>
@@ -231,7 +231,8 @@
               <strong><%=moment(event.end).format('hh:mm A') %></strong>
             </td>
             <td>
-            <%=(event.shifts.map(function(s) { return s.staff })).join(', ') %>
+            <% if(event.shifts.length < 1) { %><i class="fa fa-warning"></i><% } %>
+            <%=(event.shifts.map(function(s) { return s.staff;})).join(', ') %>
             </td>
           </tr>
         <% }) %>

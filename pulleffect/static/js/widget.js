@@ -22,7 +22,15 @@
                 model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
                 // fetch room info from somewhere and then:
                 $.getJSON(apiURL).success(function(data){
-                    //example data, needed to be updated from room database
+                    data.records = data.records.map(function(event) {
+                        var now = moment();
+                        if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
+                            event.current = true;
+                        } else {
+                            event.current = false;
+                        }
+                        return event;
+                    });
                     model.view.renderContent(data, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
@@ -170,7 +178,13 @@
                 $('.fa-bullhorn').removeClass('btn-success');
             }
         }
-    }
+    };
+
+    PullEffect.refreshAllWidgets = function() {
+        PullEffect.Widgets.each(function(model) {
+            model.typeObject.handler(model);
+        };
+    };
 
     $(document).ready(function() {
         $('nav li div').tooltip();
@@ -180,6 +194,8 @@
             // rooms.json is already sorted, but if needed:
             //global.rooms = _(data).sortBy('name');
             PullEffect.Widgets = new Widgets;
+
+            setInterval(PullEffect.refreshAllWidgets, 10*60000); //every 10 min
         });
 
         $.getJSON('/gcal/get_calendar_list', function(data) {
