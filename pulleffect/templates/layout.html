@@ -174,8 +174,8 @@
   <div class="form-horizontal" role="form">
     {% if session.gcal_credentials and session.gcal_credentials.access_token %}
     <select class="form-control" name="selectedGcal">
-      <% global.gcals.forEach(function(gcal) { %>
-        <option value="<%=gcal.id %>"<% if(gcal.calendar_id === _.first(global.gcals).calendar_id) { %> selected="selected"<% } %>>
+      <% gcals.forEach(function(gcal) { %>
+        <option value="<%=gcal.id %>"<% if(gcal.calendar_id === _.first(gcals).calendar_id) { %> selected="selected"<% } %>>
         <%=gcal.name %> 
         </option>
       <% }); %>
@@ -345,12 +345,10 @@
             if (data.redirect)
                 return window.location(data.redirect);
             global.gcals = !data.error ? data.calendar_list : [];
-            PullEffect.Widgets = new Widgets;
         });
         {% else %}
         $.getJSON('/gcal/get_calendar_list', function(data) {
             global.gcals = !data.error ? data.calendar_list : [];
-            PullEffect.Widgets = new Widgets;
         });
         {% endif %}
     </script>
