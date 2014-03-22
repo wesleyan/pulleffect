@@ -1,110 +1,163 @@
-from apiclient.discovery import build
+from apiclient.discovery import build_from_document, build
 from flask import Blueprint
 from flask import jsonify
 from flask import redirect
 from flask import request
 from flask import session
 from flask import url_for
-import httplib2
-from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.client import AccessTokenCredentials
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.cache import cache
 from pulleffect.config.env import config
+from urllib import urlencode
 import strict_rfc3339 
 import requests
-from urllib import urlencode
+import json
+import httplib2
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
+google_client_secrets = json.load(open(config["google_client_secrets"])).get("web")
 
-# Build Google Calendar url
-flow = flow_from_clientsecrets(config['google_client_secrets'],
-    scope='https://www.googleapis.com/auth/calendar',
-    redirect_uri=config['home_url'] + 'gcal/authenticate')
-
-auth_uri = flow.step1_get_authorize_url()
+CLIENT_ID = google_client_secrets.get("client_id")
+CLIENT_SECRET = google_client_secrets.get("client_secret")
+GOOGLE_TOKEN_API = "https://accounts.google.com/o/oauth2/token"
+GOOGLE_CALENDAR_API = "https://www.googleapis.com/auth/calendar"
+GOOGLE_TOKEN_INFO_API = "https://www.googleapis.com/oauth2/v1/tokeninfo"
+GCAL_DISCOVERY = json.load(open(config["gcal_discovery"]))
 
 # Get users mongo collection
 users = mongo_connection.users
 
-# Get access token for Google Calendar
 @gcal.route('/authenticate')
 @signin_required
-def authenticate():
-    # Exchange if 'code' exists
-    if (request.args.get('code')):
-        credentials = flow.step2_exchange(request.args.get('code'))
-        session['gcal_access_token'] = credentials.access_token
-        return redirect(url_for('index'))
+def authenticate(): 
+    google_id = session.get("google_id", None)
+    # Check if user already has a refresh token
+    refresh_token = get_connected_user_refresh_token(google_id)
 
-    # Handle if 'error' exists
-    if (request.args.get('error')):
-        flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
-        session['gcal_access_token'] = None
-        return redirect(url_for('index'))
-        
+    if refresh_token == None:
+        flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            scope=GOOGLE_CALENDAR_API,
+            redirect_uri=config['home_url'] + '/gcal/oauth2callback',
+            approval_prompt='force',
+            access_type='offline')
+    else:
+        flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            scope=GOOGLE_CALENDAR_API,
+            redirect_uri=config['home_url'] + '/gcal/oauth2callback',
+            access_type='offline')
+
+    auth_uri = flow.step1_get_authorize_url()
     return redirect(auth_uri)
 
+@gcal.route('/oauth2callback')
+@signin_required
+def oauth2callback():
+    # Get code from query string
+    code = request.args.get('code')
 
-# Get Google Calendar list
+    # If code exists in query string, then get token information for connected user
+    if code:
+        # exchange the authorization code for user credentials
+        flow = OAuth2WebServerFlow(CLIENT_ID, CLIENT_SECRET, GOOGLE_CALENDAR_API)
+        flow.redirect_uri = request.base_url
+        try:  
+            credentials = flow.step2_exchange(code)
+        except Exception as e:
+            print "Unable to get an access token because ", e.message
+
+        google_id = session.get("google_id", None)
+
+        refresh_token = get_connected_user_refresh_token(google_id)
+        if refresh_token == None:
+            refresh_token = credentials.refresh_token
+
+        users.update({"google_id":google_id},{"$set":{"google_refresh_token":refresh_token, "google_user_agent":credentials.user_agent}}, upsert=False)
+        session["google_credentials"] = {"access_token":credentials.access_token, "user_agent":credentials.user_agent}
+
+    return redirect(url_for('index'))
+
 @gcal.route('/get_calendar_list')
 @signin_required
 def get_calendar_list():
-    # Get google id for user
-    google_id = session.get('google_id')
+    # Get google credentials from session
+    credentials = session.get('google_credentials', None)
 
-    # Fetch user's calendars by google_id
-    calendars = users.find_one({"google_id": google_id}, {"calendars":1, "_id":0})
+    # If google credentials don't exist, get them
+    if credentials == None:
+        return jsonify({"redirect":url_for('gcal.authenticate')})
 
-    # Query Google for calendars if no calendars in mongo db
-    if not calendars:
-        return refresh_calendar_list()
+    # Get fresh access token if current access token is expired
+    credentials["access_token"] = get_google_access_token(credentials)
 
-    # Return user's calendars
-    return jsonify({'calendars':calendars})
+    # If access token doesn't exist or can't be refreshed, re-authenticate
+    if credentials["access_token"] == None:
+        return jsonify({"redirect":url_for('gcal.authenticate')})
 
-# Refresh Google Calendar list
-@gcal.route('/refresh_calendar_list')
-@signin_required
-def refresh_calendar_list():
-    gcal_access_token = session.get('gcal_access_token')      
+    # Update google_credentials in session
+    session["google_credentials"] = credentials
+    
+    # Build access token credentials
+    credentials = AccessTokenCredentials(credentials["access_token"],credentials['user_agent'])
 
-    # Get calendar list
-    req = requests.get('https://www.googleapis.com/calendar/v3/users/me/calendarList?' + urlencode({"access_token": gcal_access_token}))
-    req = req.json()
+    # I think this builds a URL that can be used for retrieving the google calendar list
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = build_from_document(GCAL_DISCOVERY, http=http)
 
-    # Initialize return variables
-    calendar_list = []
+    # Get google calendar list
+    calendar_list = service.calendarList().list().execute()["items"]
 
-    # Return redirect if error
-    if (req.get('error')):
-        return jsonify({'calendars':calendar_list, 'redirect':url_for('gcal.authenticate')})
+    # Extract relevant info from google calendar list
+    calendars = []
+    for item in calendar_list:
+        calendars.append({"name":item["summary"], "id":item["id"]})
 
-    # Return calendars if no error
-    else:
-        calendars = req.get('items')
-        for calendar_item in calendars:
-            calendar_list.append({'calendar_name':calendar_item.get('summary'), 
-                'calendar_id':calendar_item.get('id'), 
-                'selected':False})
-        return jsonify({'calendars':calendar_list, 'redirect':''})
+    return jsonify({"calendar_list":calendars})
 
-# Get Google Calendar events
-@gcal.route('/get_calendar_events')
-@signin_required
-def get_calendar_events():
-    # Get calender id
-    cal_id = request.args.get('cal_id')
-    cal_name = request.args.get('cal_name')
+def is_valid_google_access_token(token):
+    # Check with google if your access token is valid
+    token_info = requests.get('{}?access_token={}'.format(GOOGLE_TOKEN_INFO_API,token))
+    return token_info.ok and token_info.json()['expires_in'] > 100
 
-    # Stupid hack to get url encoding
-    cal_id = urlencode({'cal':cal_id})[4:];    
+def refresh_google_access_token(refresh_token):
+    # Construct dictionary representing POST headers
+    headers = dict(
+        grant_type="refresh_token",
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        refresh_token=refresh_token
+    )
 
-    # Get gcal access_token
-    gcal_access_token = session.get('gcal_access_token')
+    # Get new access token from Google
+    token = requests.post(GOOGLE_TOKEN_API, headers).json()
 
-    min_time = strict_rfc3339.now_to_rfc3339_localoffset()
+    return token.get("access_token", None)
 
-    req = requests.get('https://www.googleapis.com/calendar/v3/calendars/' + cal_id + '/events?' + urlencode({'access_token':gcal_access_token, 'maxResults': 5, 'orderBy': 'startTime', 'singleEvents':True, 'timeMin': min_time, 'fields': 'items(end,start,summary,description),summary'})  )
-    # return events
-    return jsonify({'calendar_events':req.json()})
+
+def get_google_access_token(credentials):
+    # Get access token from credentials
+    token = credentials["access_token"]
+    valid_token = True
+
+    # Check with Google if access token is valid
+    if token:
+        valid_token = is_valid_google_access_token(token)
+
+    # If acess token is invalid or doesn't exist, refresh it and return it
+    if not token or not valid_token:
+        google_id = session.get("google_id", None)
+        refresh_token = get_connected_user_refresh_token(google_id)
+        token = refresh_google_access_token(refresh_token)
+
+    return token
+
+@cache.memoize(timeout=10)
+def get_connected_user_refresh_token(google_id):
+    return users.find_one({"google_id":google_id}, {"google_refresh_token":1, "_id":0}).get("google_refresh_token")
+

@@ -180,8 +180,13 @@
         });
 
         $.getJSON('/gcal/get_calendar_list', function(data) {
-            global.gcals = !data.error ? data.calendars : [];
-            PullEffect.Widgets = new Widgets;
+            if (data.redirect) {
+                data.calendars = [];
+                window.location = data.redirect;
+            } else {
+                global.gcals = !data.error ? data.calendar_list : [];
+                PullEffect.Widgets = new Widgets;
+            }
         });
 
         //USING VANILLA JS FOR EVENTS BECAUSE OF CROSS-BROWSER ISSUES WITH FIREFOX

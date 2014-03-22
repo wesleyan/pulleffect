@@ -174,8 +174,8 @@
     {% if session.gcal_access_token %}
     <select class="form-control" name="selectedGcal">
       <% global.gcals.forEach(function(gcal) { %>
-        <option value="<%=gcal.calendar_id %>"<% if(gcal.calendar_id === _.first(global.gcals).calendar_id) { %> selected="selected"<% } %>>
-        <%=gcal.calendar_name %> 
+        <option value="<%=gcal.id %>"<% if(gcal.calendar_id === _.first(global.gcals).calendar_id) { %> selected="selected"<% } %>>
+        <%=gcal.name %> 
         </option>
       <% }); %>
     </select>

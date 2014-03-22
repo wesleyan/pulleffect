@@ -5,7 +5,7 @@ import json
 	Make sure you do not commit any changes you make to this file, otherwise you will break the website.
 """
 production = False
-beta = True
+beta = False
 
 # Read configurations
 config = (open('pulleffect/config/prod_config.json') if production 

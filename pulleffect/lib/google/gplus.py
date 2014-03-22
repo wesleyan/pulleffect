@@ -11,8 +11,7 @@ from pulleffect.config.env import config
 import requests
 from urllib import urlencode
 
-gplus = Blueprint('gplus', __name__, template_folder='templates')
-
+gplus = Blueprint('gplus', __name__, template_folder='templates') 
 
 # Build Google Calendar url
 flow = flow_from_clientsecrets(config['google_client_secrets'], 

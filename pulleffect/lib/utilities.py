@@ -4,6 +4,7 @@ from flask import session
 from flask import render_template
 from pulleffect.config.env import config
 
+# Mongo stuff
 client = MongoClient('localhost', 27017)
 mongo_connection = client.pulleffect
 

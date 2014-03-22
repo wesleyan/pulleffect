@@ -14,6 +14,7 @@ from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.messages.messages import messages
+from pulleffect.lib.cache import cache
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
@@ -21,6 +22,11 @@ import urllib
 
 
 app = Flask(__name__)
+
+# Init caching
+cache.init_app(app, config={'CACHE_TYPE':'simple'})
+
+# Init blueprints
 app.register_blueprint(gcal, url_prefix='/gcal')
 app.register_blueprint(gplus, url_prefix='/gplus')
 app.register_blueprint(messages, url_prefix='/messages')

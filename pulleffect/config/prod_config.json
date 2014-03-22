@@ -1,4 +1,8 @@
 {
-	"home_url":"http://ims.wesleyan.edu/pulleffect",
-	"google_client_secrets":"./pulleffect/config/google_client_secrets.json"
+	"home_url":"http://ims.wesleyan.edu/pulleffect/",
+	"google_client_secrets":"./pulleffect/config/google_client_secrets.json",
+	"wes_timeclock_password": "",
+	"wes_timeclock_username": "student_timeclock",
+	"wes_timeclock_connection_string": "",
+	"gcal_discovery":"./pulleffect/config/gcal_discovery.json"
 }
