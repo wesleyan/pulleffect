@@ -1,7 +1,7 @@
 pulleffect
 ==========
 
-An application that polls and displays glanceable information from a variety of sources, buitl on Python Flask and BackboneJS.
+An application that polls and displays glanceable information from a variety of sources, built on Flask and Backbone.js.
 
 
 ## How do I use it?

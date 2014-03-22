@@ -58,7 +58,7 @@
             </a>
         </li>
         <li>
-            <a href="{{ url_for('gplus.signout') }}" class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></a>
+            <div href="{{ url_for('gplus.signout') }}" class="btn btn-danger btn-lg fa fa-power-off widget-button" data-toggle="tooltip" data-placement="right" title="Sign out"></div>
         </li>
     </ul> 
 </nav>
@@ -138,7 +138,7 @@
       </thead>
       <tbody>
         <% records.forEach(function(event) { %>
-          <tr>
+          <tr class="<%=(event.current ? 'alert alert-warning' : '') %>">
             <td>
               <%=event.event_name %>
             </td>
@@ -207,7 +207,7 @@
 
 <script type="text/template" id="special-events-widget">
   <% if(events.length < 1) { %>
-    There are no events in the given period.
+    There are no events in the next <%=nextHours %> hours.
   <% } else { %>
     <table class="table table-striped">
       <thead>
@@ -219,7 +219,7 @@
       </thead>
       <tbody>
         <% events.forEach(function(event) { %>
-          <tr>
+          <tr class="<%=((event.shifts.length < 1) ? 'alert alert-danger' : '') %>">
             <td>
               <%=event.title %>
             </td>
@@ -231,7 +231,8 @@
               <strong><%=moment(event.end).format('hh:mm A') %></strong>
             </td>
             <td>
-            <%=(event.shifts.map(function(s) { return s.staff })).join(', ') %>
+            <% if(event.shifts.length < 1) { %><i class="fa fa-warning"></i><% } %>
+            <%=(event.shifts.map(function(s) { return s.staff;})).join(', ') %>
             </td>
           </tr>
         <% }) %>
@@ -244,9 +245,15 @@
   <h4 align="center">Special Events</h4>
   <div class="form-horizontal" role="form">
     <div class="form-group">
-      <label for="inputEmail3" class="col-sm-4 control-label">Max number of events:</label>
+      <label for="maxNumber" class="col-sm-4 control-label">Max number of events:</label>
       <div class="col-sm-8">
         <input type="number" class="form-control" name="maxNumber" value="<%=maxNumber%>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="nextHours" class="col-sm-4 control-label">Max number of events:</label>
+      <div class="col-sm-8">
+        <input type="number" class="form-control" name="nextHours" value="<%=nextHours%>">
       </div>
     </div>
   </div>

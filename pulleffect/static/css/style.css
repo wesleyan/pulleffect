@@ -39,6 +39,8 @@ html, body {
 .tooltip {
     z-index:99999;
     position: fixed;
+    -webkit-transition: 0;
+    transition: 0;
 }
 #signout {
     display:inline;
@@ -206,6 +208,7 @@ html, body {
 
 .generic {
     background-color: white;
+    overflow: hidden;
 }
 .generic header {
     cursor:pointer;
@@ -235,6 +238,10 @@ html, body {
     margin-bottom: 34px;
     overflow: hidden;
     height:89%;
+}
+
+.generic section .alert td {
+    background-color: inherit !important;
 }
 
 .overlay {

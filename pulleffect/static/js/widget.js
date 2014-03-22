@@ -22,7 +22,15 @@
                 model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
                 // fetch room info from somewhere and then:
                 $.getJSON(apiURL).success(function(data){
-                    //example data, needed to be updated from room database
+                    data.records = data.records.map(function(event) {
+                        var now = moment();
+                        if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
+                            event.current = true;
+                        } else {
+                            event.current = false;
+                        }
+                        return event;
+                    });
                     model.view.renderContent(data, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
@@ -84,15 +92,16 @@
             configurable: true,
             configurationTemplate: '#special-events-config',
             defaultConfiguration: {
-                'maxNumber' : 5
+                'maxNumber' : 5,
+                'nextHours': 50
             },
             handler: function(model) {
                 var self = this;
-                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=3000')
+                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=' + (parseInt(model.get('nextHours')) * 60))
                     .done(function(data) {
                         data = _.first(data, parseInt(model.get('maxNumber')));
                         //htmlspecialchars_decode can be added from Jack's code
-                        model.view.renderContent({events: data}, self.templateSelector);
+                        model.view.renderContent({events: data, nextHours: model.get('nextHours')}, self.templateSelector);
                     })
                     .fail(function(jqxhr) {
                         model.view.renderError(jqxhr);
@@ -169,14 +178,24 @@
                 $('.fa-bullhorn').removeClass('btn-success');
             }
         }
-    }
+    };
+
+    PullEffect.refreshAllWidgets = function() {
+        PullEffect.Widgets.each(function(model) {
+            model.typeObject.handler(model);
+        });
+    };
 
     $(document).ready(function() {
         $('nav li div').tooltip();
 
         $.getJSON('./static/rooms.json', function (data) {
             global.rooms = data;
+            // rooms.json is already sorted, but if needed:
+            //global.rooms = _(data).sortBy('name');
             PullEffect.Widgets = new Widgets;
+
+            setInterval(PullEffect.refreshAllWidgets, 10*60000); //every 10 min
         });
 
         $.getJSON('/gcal/get_calendar_list', function(data) {
@@ -245,7 +264,7 @@
 
         // Sign out
         $('.fa-power-off').click(function () {
-            $.post( "/gplus/signout", function() {});
+            window.location.href = $(this).attr('href');
         });
     });
 
