@@ -30,8 +30,8 @@ def signin():
         session['gplus_access_token'] = credentials.access_token
 
         # Get access token, refresh token, and google id from credentials
-        google_access_token = credentials.access_token
-        google_refresh_token = credentials.refresh_token
+        gplus_access_token = session.get('gplus_access_token')
+        gplus_refresh_token = credentials.refresh_token
         google_id = credentials.id_token["sub"]
 
         # Fetch user from mongodb
@@ -40,13 +40,13 @@ def signin():
         # Sign up case
         if user is None:
             # Get user's email and user name 
-            req = requests.get('https://www.googleapis.com/plus/v1/people/' + str(google_id) + '?' + urlencode({"access_token": google_access_token}))
+            req = requests.get('https://www.googleapis.com/plus/v1/people/' + str(google_id) + '?' + urlencode({"access_token":gplus_access_token}))
             req = req.json()
 
-            # TODO: address edge case when people have more than one email?
+            # TODO(Arthur): address edge case when people have more than one email?
             google_email = req["emails"].pop()["value"]
             google_name = req["displayName"]
-            users.insert({"google_id":google_id, "google_refresh_token":google_refresh_token, "google_email":google_email, "google_name":google_name})
+            users.insert({"google_id":google_id, "gplus_refresh_token":gplus_refresh_token, "google_email":google_email, "google_name":google_name})
 
         # Sign in case
         else: 
@@ -54,18 +54,14 @@ def signin():
             google_name = user.get("google_name")
 
             # Make sure we don't overwrite refresh_token with None object
-            if google_refresh_token == None:
-                google_refresh_token = user.get("google_refresh_token")
-            users.update({"google_id":google_id}, {"$set": {"google_refresh_token":google_refresh_token}})
+            if gplus_refresh_token == None:
+                gplus_refresh_token = user.get("gplus_refresh_token")
+            users.update({"google_id":google_id}, {"$set": {"gplus_refresh_token":gplus_refresh_token}})
 
 
-        session['signed_in'] = True 
-
-        print session['signed_in']
-
+        session['signed_in'] = True
         session['google_email'] = google_email
         session['google_name'] = google_name
-        session['gcal_access_token'] = google_access_token
         session['google_id'] = google_id
         return redirect(url_for('index'))
 
@@ -73,7 +69,6 @@ def signin():
     if (request.args.get('error')):
     	flash('Google authentication failed!\nError:' + str(request.args.get('error')), 'error')
         session['gplus_access_token'] = None
-        print "we seem to have encountered an error."
         return redirect(url_for('gplus.signin'))
     return redirect(auth_uri)
 

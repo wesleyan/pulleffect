@@ -43,14 +43,12 @@ def authenticate():
             client_secret=CLIENT_SECRET,
             scope=GOOGLE_CALENDAR_API,
             redirect_uri=config['home_url'] + '/gcal/oauth2callback',
-            approval_prompt='force',
-            access_type='offline')
+            approval_prompt='force')
     else:
         flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
             scope=GOOGLE_CALENDAR_API,
-            redirect_uri=config['home_url'] + '/gcal/oauth2callback',
-            access_type='offline')
+            redirect_uri=config['home_url'] + '/gcal/oauth2callback')
 
     auth_uri = flow.step1_get_authorize_url()
     return redirect(auth_uri)
@@ -71,14 +69,15 @@ def oauth2callback():
         except Exception as e:
             print "Unable to get an access token because ", e.message
 
+        # Get gcal refresh token
         google_id = session.get("google_id", None)
-
         refresh_token = get_connected_user_refresh_token(google_id)
+
         if refresh_token == None:
             refresh_token = credentials.refresh_token
 
-        users.update({"google_id":google_id},{"$set":{"google_refresh_token":refresh_token, "google_user_agent":credentials.user_agent}}, upsert=False)
-        session["google_credentials"] = {"access_token":credentials.access_token, "user_agent":credentials.user_agent}
+        users.update({"google_id":google_id},{"$set":{"gcal_refresh_token":refresh_token, "gcal_user_agent":credentials.user_agent}}, upsert=False)
+        session["gcal_credentials"] = {"access_token":credentials.access_token, "user_agent":credentials.user_agent}
 
     return redirect(url_for('index'))
 
@@ -86,21 +85,21 @@ def oauth2callback():
 @signin_required
 def get_calendar_list():
     # Get google credentials from session
-    credentials = session.get('google_credentials', None)
+    credentials = session.get('gcal_credentials', None)
 
     # If google credentials don't exist, get them
     if credentials == None:
         return jsonify({"redirect":url_for('gcal.authenticate')})
 
     # Get fresh access token if current access token is expired
-    credentials["access_token"] = get_google_access_token(credentials)
+    credentials["access_token"] = get_gcal_access_token(credentials)
 
     # If access token doesn't exist or can't be refreshed, re-authenticate
     if credentials["access_token"] == None:
         return jsonify({"redirect":url_for('gcal.authenticate')})
 
-    # Update google_credentials in session
-    session["google_credentials"] = credentials
+    # Update gcal_credentials in session
+    session["gcal_credentials"] = credentials
     
     # Build access token credentials
     credentials = AccessTokenCredentials(credentials["access_token"],credentials['user_agent'])
@@ -120,12 +119,12 @@ def get_calendar_list():
 
     return jsonify({"calendar_list":calendars})
 
-def is_valid_google_access_token(token):
+def is_valid_gcal_access_token(token):
     # Check with google if your access token is valid
     token_info = requests.get('{}?access_token={}'.format(GOOGLE_TOKEN_INFO_API,token))
     return token_info.ok and token_info.json()['expires_in'] > 100
 
-def refresh_google_access_token(refresh_token):
+def refresh_gcal_access_token(refresh_token):
     # Construct dictionary representing POST headers
     headers = dict(
         grant_type="refresh_token",
@@ -140,24 +139,24 @@ def refresh_google_access_token(refresh_token):
     return token.get("access_token", None)
 
 
-def get_google_access_token(credentials):
+def get_gcal_access_token(credentials):
     # Get access token from credentials
     token = credentials["access_token"]
     valid_token = True
 
     # Check with Google if access token is valid
     if token:
-        valid_token = is_valid_google_access_token(token)
+        valid_token = is_valid_gcal_access_token(token)
 
     # If acess token is invalid or doesn't exist, refresh it and return it
     if not token or not valid_token:
         google_id = session.get("google_id", None)
         refresh_token = get_connected_user_refresh_token(google_id)
-        token = refresh_google_access_token(refresh_token)
+        token = refresh_gcal_access_token(refresh_token)
 
     return token
 
 @cache.memoize(timeout=10)
 def get_connected_user_refresh_token(google_id):
-    return users.find_one({"google_id":google_id}, {"google_refresh_token":1, "_id":0}).get("google_refresh_token")
+    return users.find_one({"google_id":google_id}, {"gcal_refresh_token":1, "_id":0}).get("gcal_refresh_token")
 

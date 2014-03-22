@@ -198,16 +198,6 @@
             setInterval(PullEffect.refreshAllWidgets, 10*60000); //every 10 min
         });
 
-        $.getJSON('/gcal/get_calendar_list', function(data) {
-            if (data.redirect) {
-                data.calendars = [];
-                window.location = data.redirect;
-            } else {
-                global.gcals = !data.error ? data.calendar_list : [];
-                PullEffect.Widgets = new Widgets;
-            }
-        });
-
         //USING VANILLA JS FOR EVENTS BECAUSE OF CROSS-BROWSER ISSUES WITH FIREFOX
 
         /*
