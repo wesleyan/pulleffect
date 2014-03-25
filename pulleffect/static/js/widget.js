@@ -73,7 +73,7 @@
             templateSelector: "#messages-widget",
             handler: function (model) {
                 var self = this;
-                $.getJSON('messages/10').done(function(data){
+                $.getJSON(messagesRoute).done(function(data){
                     model.view.renderContent({
                         messages: data,
                         setSeverity: self.setSeverity,
