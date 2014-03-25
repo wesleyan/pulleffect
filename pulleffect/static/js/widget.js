@@ -203,7 +203,7 @@
     $(document).ready(function() {
         $('nav li div').tooltip();
 
-        $.getJSON('./static/rooms.json', function (data) {
+        $.getJSON(roomsRoute, function (data) {
             global.rooms = data;
             // rooms.json is already sorted, but if needed:
             //global.rooms = _(data).sortBy('name');

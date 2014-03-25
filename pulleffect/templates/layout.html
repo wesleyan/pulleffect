@@ -25,6 +25,10 @@
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
 </head>
 
+<script>
+  var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
+</script>
+
 <body>
 {% block body %}
 {% endblock %}
