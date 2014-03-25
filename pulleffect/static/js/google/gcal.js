@@ -3,7 +3,7 @@
 var getGcalList = function() {
     $.ajax({
         type: 'GET',
-        url: '/gcal/get_calendar_list',
+        url: '/gcal/calendar_list',
         success: renderGcalList
     });
 }

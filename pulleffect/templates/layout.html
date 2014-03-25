@@ -180,10 +180,6 @@
         </option>
       <% }); %>
     </select>
-    {% else %}
-      <div class="text-center">
-      <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
-      </div>
     {% endif %}
   </div>
 </script>
@@ -263,7 +259,12 @@
 </script>
 
 <script type="text/template" id="calendar-widget">
-  <% if(events.length < 1) { %>
+  {% if not session.gcal_credentials %}
+  <div class="text-center">
+    <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
+  </div>
+  {% else %}
+  <% if(events.length < 1) { console.log(events); %>
     There are no events in the given period.
   <% } else { %>
     <table class="table table-striped">
@@ -291,6 +292,7 @@
       </tbody>
     </table>
   <% } %>
+  {% endif %}
 </script>
 
 <script type="text/template" id="leaderboard-widget">
@@ -341,13 +343,13 @@
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <script>
         {% if session.gcal_credentials %}
-        $.getJSON('/gcal/get_calendar_list', function(data) {
+        $.getJSON('/gcal/calendar_list', function(data) {
             if (data.redirect)
                 return window.location(data.redirect);
             global.gcals = !data.error ? data.calendar_list : [];
         });
         {% else %}
-        $.getJSON('/gcal/get_calendar_list', function(data) {
+        $.getJSON('/gcal/calendar_list', function(data) {
             global.gcals = !data.error ? data.calendar_list : [];
         });
         {% endif %}

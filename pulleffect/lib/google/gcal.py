@@ -81,9 +81,9 @@ def oauth2callback():
 
     return redirect(url_for('index'))
 
-@gcal.route('/get_calendar_list')
+@gcal.route('/calendar_list')
 @signin_required
-def get_calendar_list():
+def calendar_list():
     # Get google credentials from session
     credentials = session.get('gcal_credentials', None)
 

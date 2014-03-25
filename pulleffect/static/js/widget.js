@@ -20,7 +20,7 @@
                 var room = model.get('selectedRoom');
                 var apiURL = 'https://webapps.wesleyan.edu/wapi/v1/public/ems/room/' + room;
                 model.view.renderTitle(_.where(global.rooms, {id: parseInt(room)})[0].name);
-                // fetch room info from somewhere and then:
+                // fetch room info from somewhere and then: and then what!? and then what!?
                 $.getJSON(apiURL).success(function(data){
                     data.records = data.records.map(function(event) {
                         var now = moment();
@@ -117,17 +117,31 @@
         },
         'calendar': {
             title: 'Calendar',
-            templateSelector: '#calendar-widget',
             configurable: true,
-            defaultConfiguration: {
-                'selected' : 'main'
-            },
+            templateSelector: '#calendar-widget',
             configurationTemplate: '#calendar-config',
             handler: function (model) {
                 var self = this;
+                var gcal = model.get('selectedGcal');
+                var apiURL = "localhost:3000/gcal/calendar_events?id=" + gcal.calendar_id;
+                model.view.renderTitle(_.where(global.gcals, {id: parseInt(gcal)})[0].name);
                 //fetch calendar from somewhere and then:
+                $.getJSON(apiURL).success(function(data){
+                    data.records = data.records.map(function(event) {
+                        var now = moment();
+                        if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
+                            event.current = true;
+                        } else {
+                            event.current = false;
+                        }
+                        return event;
+                    });
+                    model.view.renderContent(data, self.templateSelector);
+                }).fail(function(jqxhr) {
+                    model.view.renderError(jqxhr);
+                });
                 var data = []; //TEMPORARY
-                    model.view.renderContent({events: data}, self.templateSelector);
+                model.view.renderContent({events: data}, self.templateSelector);
             },
             configHandler: function(model, formInfo) {
                 //if there's any different stuff you need to do with config values, you can do it here.
