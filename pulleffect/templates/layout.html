@@ -25,6 +25,11 @@
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
 </head>
 
+<script>
+  var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
+  var messagesRoute = "{{ url_for('messages.index') }}" + "/10"
+</script>
+
 <body>
   <div id="alerts"></div>
 {% block body %}
@@ -344,13 +349,13 @@
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <script>
         {% if session.gcal_credentials %}
-        $.getJSON('/gcal/calendar_list', function(data) {
+        $.getJSON("{{ url_for('gcal.calendar_list') }}", function(data) {
             if (data.redirect)
                 return window.location(data.redirect);
             global.gcals = !data.error ? data.calendar_list : [];
         });
         {% else %}
-        $.getJSON('/gcal/calendar_list', function(data) {
+        $.getJSON("{{ url_for('gcal.calendar_list') }}", function(data) {
             global.gcals = !data.error ? data.calendar_list : [];
         });
         {% endif %}

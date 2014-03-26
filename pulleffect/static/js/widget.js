@@ -73,7 +73,7 @@
             templateSelector: "#messages-widget",
             handler: function (model) {
                 var self = this;
-                $.getJSON('messages/10').done(function(data){
+                $.getJSON(messagesRoute).done(function(data){
                     model.view.renderContent({
                         messages: data,
                         setSeverity: self.setSeverity,
@@ -203,7 +203,7 @@
     $(document).ready(function() {
         $('nav li div').tooltip();
 
-        $.getJSON('./static/rooms.json', function (data) {
+        $.getJSON(roomsRoute, function (data) {
             global.rooms = data;
             // rooms.json is already sorted, but if needed:
             //global.rooms = _(data).sortBy('name');
