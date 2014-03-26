@@ -30,13 +30,22 @@ def index():
         return json.dumps(ret)
     # we are adding a new message
     message = request.get_json()
-    newId = messages_collection.insert({
-        'device':message.get('device', None), 'device_type':message.get('device_type', None),
-        'location':message.get('location', None), 'severity':message.get('severity', None),
-        'description':message.get('description', None), 'time':message.get('time', None)
-        })
-    return jsonify({ 'id': str(newId) })
+    # message = request.form
 
+    fields = ['device', 'device_type', 'location', 'severity', 'description', 'time'];
+    newMessage = {}
+    errString = ""
+    for f in fields:
+        if (message.get(f, None) == None):
+            errString += "Message is missing " + f + " field. " 
+        else: 
+            newMessage[f] = message.get(f)
+    
+    if errString:
+        return jsonify({'error': errString})
+
+    newId = messages_collection.insert(newMessage)
+    return jsonify({ 'id': str(newId) })
 
 @messages.route('/<int:n>', methods=['GET'])
 def get_messages(n):
