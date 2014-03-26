@@ -63,6 +63,7 @@ def signin():
         session['google_email'] = google_email
         session['google_name'] = google_name
         session['google_id'] = google_id
+        flash('Welcome ' + google_name, 'success');
         return redirect(url_for('index'))
 
     # Handle error

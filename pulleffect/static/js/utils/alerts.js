@@ -33,16 +33,19 @@ var displayAlerts = function(alerts) {
 }
 
 // Override function for displaying a single alert
-var displayAlerts = function(alertType, alertMessage) {
-    if (!alertMessage)
+var displayAlerts = function(flashed) {
+    if (flashed.length == 0)
         return;
+    var alertMessage = flashed[0][1];
+    var alertType = flashed[0][0];
     var alert = $('<div class="alert alert-' + getAlertType([alertType]) + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + alertMessage + '</div>')
     .hide()
     .delay(500)
     .slideDown(500)
-    .delay(10000)
+    .delay(4000)
     .slideUp(500, function() {
         $(this).remove();
     });
     $('#alerts').append(alert);
+    
 }
