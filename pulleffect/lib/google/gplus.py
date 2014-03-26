@@ -58,12 +58,15 @@ def signin():
                 gplus_refresh_token = user.get("gplus_refresh_token")
             users.update({"google_id":google_id}, {"$set": {"gplus_refresh_token":gplus_refresh_token}})
 
-
+        #Does not authenticate if email is not from wesleyan.edu
+        if not google_email.endswith("@wesleyan.edu"):
+            flash('You must use your Wesleyan email adress', 'error')
+            return redirect(url_for('index'))
         session['signed_in'] = True
         session['google_email'] = google_email
         session['google_name'] = google_name
         session['google_id'] = google_id
-        flash('Welcome ' + google_name, 'success');
+        flash('Welcome ' + google_name, 'success')
         return redirect(url_for('index'))
 
     # Handle error
