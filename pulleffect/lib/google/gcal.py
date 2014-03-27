@@ -16,6 +16,7 @@ import strict_rfc3339
 import requests
 import json
 import httplib2
+from datetime import datetime
 
 gcal = Blueprint('gcal', __name__, template_folder='templates')
 
@@ -30,6 +31,41 @@ GCAL_DISCOVERY = json.load(open(config["gcal_discovery"]))
 
 # Get users mongo collection
 users = mongo_connection.users
+@gcal.route('/calendar_events')
+@signin_required
+def calendar_events():
+    # Get google credentials from session
+    credentials = session.get('gcal_credentials', None)
+
+    # If google credentials don't exist, get them
+    if credentials == None:
+        return jsonify({"redirect":url_for('gcal.authenticate')})
+
+    # Get fresh access token if current access token is expired
+    credentials["access_token"] = get_gcal_access_token(credentials)
+
+    # If access token doesn't exist or can't be refreshed, re-authenticate
+    if credentials["access_token"] == None:
+        return jsonify({"redirect":url_for('gcal.authenticate')})
+
+    # Update gcal_credentials in session
+    session["gcal_credentials"] = credentials
+    
+    # Build access token credentials
+    credentials = AccessTokenCredentials(credentials["access_token"],credentials['user_agent'])
+
+    # I think this builds a URL that can be used for retrieving the google calendar list
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = build_from_document(GCAL_DISCOVERY, http=http)
+
+    calId = request.args.get('id')
+    now = request.args.get('now')
+
+    events = service.events().list(calendarId=calId, timeMin=now).execute()
+
+    return jsonify(events)
+
 
 @gcal.route('/authenticate')
 @signin_required
@@ -111,7 +147,7 @@ def calendar_list():
 
     # Get google calendar list
     calendar_list = service.calendarList().list().execute()["items"]
-
+    
     # Extract relevant info from google calendar list
     calendars = []
     for item in calendar_list:
@@ -159,4 +195,5 @@ def get_gcal_access_token(credentials):
 @cache.memoize(timeout=10)
 def get_connected_user_refresh_token(google_id):
     return users.find_one({"google_id":google_id}, {"gcal_refresh_token":1, "_id":0}).get("gcal_refresh_token")
+
 

@@ -122,26 +122,35 @@
             configurationTemplate: '#calendar-config',
             handler: function (model) {
                 var self = this;
-                var gcal = model.get('selectedGcal');
-                var apiURL = "localhost:3000/gcal/calendar_events?id=" + gcal.calendar_id;
-                model.view.renderTitle(_.where(global.gcals, {id: parseInt(gcal)})[0].name);
-                //fetch calendar from somewhere and then:
+                var selectedId = model.get('selectedGcal');
+                var gcal = _.where(global.gcals, {id: selectedId})[0];
+                var now = moment().format("YYYY-MM-DDTHH:mm:ssZ")
+                var apiURL = calEventsRoute + "?id=" + escape(gcal.id) + "&now=" + now;
+                
                 $.getJSON(apiURL).success(function(data){
-                    data.records = data.records.map(function(event) {
-                        var now = moment();
-                        if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
-                            event.current = true;
-                        } else {
-                            event.current = false;
-                        }
-                        return event;
-                    });
-                    model.view.renderContent(data, self.templateSelector);
-                }).fail(function(jqxhr) {
-                    model.view.renderError(jqxhr);
+                    
+                    model.view.renderContent({events: data.items}, self.templateSelector);
+
                 });
-                var data = []; //TEMPORARY
-                model.view.renderContent({events: data}, self.templateSelector);
+                model.view.renderTitle(gcal.name);// _.where(global.gcals, {id: parseInt(gcal)})[0].name);
+                //fetch calendar from somewhere and then:
+                
+                // $.getJSON(apiURL).success(function(data){
+                //     data.records = data.records.map(function(event) {
+                //         var now = moment();
+                //         if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
+                //             event.current = true;
+                //         } else {
+                //             event.current = false;
+                //         }
+                //         return event;
+                //     });
+                //     model.view.renderContent(data, self.templateSelector);
+                // }).fail(function(jqxhr) {
+                //     model.view.renderError(jqxhr);
+                // });
+                // var data = []; //TEMPORARY
+                // model.view.renderContent({events: data}, self.templateSelector);
             },
             configHandler: function(model, formInfo) {
                 //if there's any different stuff you need to do with config values, you can do it here.

@@ -27,7 +27,8 @@
 
 <script>
   var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
-  var messagesRoute = "{{ url_for('messages.index') }}" + "/10"
+  var messagesRoute = "{{ url_for('messages.index') }}" + "/10";
+  var calEventsRoute = "{{ url_for('gcal.calendar_events') }}"
 </script>
 
 <body>
