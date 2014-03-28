@@ -187,6 +187,8 @@
         </option>
       <% }); %>
     </select>
+    {%else%}
+    <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
     {% endif %}
   </div>
 </script>
@@ -212,7 +214,7 @@
 </script>
 
 <script type="text/template" id="special-events-widget">
-  <% if(events.length < 1) { %>
+  <%if(events.length < 1) { %>
     There are no events in the next <%=nextHours %> hours.
   <% } else { %>
     <table class="table table-striped">
@@ -266,14 +268,11 @@
 </script>
 
 <script type="text/template" id="calendar-widget">
-  {% if not session.gcal_credentials %}
-  <div class="text-center">
-    <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
-  </div>
-  {% else %}
-  <% if(events.length < 1) { console.log(events); %>
+  <% if (!calendarSet)%>
+    <h4>No calendars are selected. You can chose one on the config page.</h4>
+  <% if(calendarSet && events.length < 1) { console.log(events); %>
     There are no events in the given period.
-  <% } else { %>
+  <% } if (calendarSet && events.length >= 1) { %>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -299,7 +298,7 @@
       </tbody>
     </table>
   <% } %>
-  {% endif %}
+
 </script>
 
 <script type="text/template" id="leaderboard-widget">
