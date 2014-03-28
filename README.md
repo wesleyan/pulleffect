@@ -22,8 +22,11 @@ An application that polls and displays glanceable information from a variety of 
 5. source activate
 6. pip install -r requirements.txt
 7. install and launch mongodb
-8. python runserver.py
-9. Direct your web browser to http://localhost:5000
+8. Edit your env.py file by setting beta = False
+9. echo env.py > .git/info/exclude
+10. git update-index --assume-unchanged pulleffect/config/env.py
+11. python runserver.py
+12. Direct your web browser to http://localhost:5000
 
 ## EXTRA:
   If you want to code for the timeclock widget, you will need Oracle Instantclient 11.2 (basic, sql*plus, and sdk)
