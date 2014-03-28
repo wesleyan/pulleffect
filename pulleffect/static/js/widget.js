@@ -31,6 +31,10 @@
                         }
                         return event;
                     });
+                    // sort events by starting time
+                    data.records = _.sortBy(data.records, function(event) {
+                        return (new Date(event.event_start)).getTime();
+                    });
                     model.view.renderContent(data, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
@@ -99,6 +103,10 @@
                 var self = this;
                 $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=' + (parseInt(model.get('nextHours')) * 60))
                     .done(function(data) {
+                        // sort events by starting time
+                        data = _.sortBy(data, function(event) {
+                            return Date.parse(event.start);
+                        });
                         data = _.first(data, parseInt(model.get('maxNumber')));
                         //htmlspecialchars_decode can be added from Jack's code
                         model.view.renderContent({events: data, nextHours: model.get('nextHours')}, self.templateSelector);
@@ -286,7 +294,7 @@
             $('.generic').hide();
             gridster.remove_all_widgets();
             PullEffect.Widgets.reset();
-            localStorage.clear();
+            $.removeCookie('widgets');
             $('#clear-modal').modal('hide');
         });
 
