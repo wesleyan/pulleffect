@@ -1,5 +1,5 @@
 {
-	"home_url":"http://ims-dev.wesleyan.edu/pulleffect/",
+	"home_url":"http://ims-dev.wesleyan.edu/pulleffect",
 	"google_client_secrets":"./pulleffect/config/google_client_secrets.json",
 	"wes_timeclock_password": "",
 	"wes_timeclock_username": "student_timeclock",
