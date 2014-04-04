@@ -323,6 +323,7 @@
         avoid_overlapped_widgets: true,
         resize: {
             enabled: true,
+            min_size: [3, 3],
             stop: function() {
                 PullEffect.Widgets.save();
             }
