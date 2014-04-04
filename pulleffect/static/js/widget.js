@@ -537,7 +537,7 @@
 
             if(!_.isUndefined(this.model.typeObject.configAfterRender)) {
                 //the function to initialize any special form elements, such as selectize, if needed
-                this.model.typeObject.configAfterRender(model, this.form);
+                this.model.typeObject.configAfterRender(this.model, this.form);
             }
 
             //show the modal window
