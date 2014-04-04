@@ -40,6 +40,12 @@
                     model.view.renderError(jqxhr);
                 });
             },
+            configAfterRender: function(model, $form) {
+                //make room selection an input/select with typeahead
+                $form.filter("[name='selectedRoom']").selectize({
+                    sortField: 'text'
+                });
+            },
             configHandler: function(model, formInfo) {
                 //if there's any different stuff you need to do with config values, you can do it here.
                 formInfo.forEach(function (input) {
@@ -503,8 +509,15 @@
             //render a view with the configuration in #config-modal
             var temp = _.template($(this.model.typeObject.configurationTemplate).html())($.extend({}, this.model.attributes, global));
             $(this.el).find('.modal-body').html(temp);
+
             //save the form element for later serializing
             this.form = $(this.el).find('div[role="form"]').find("select, textarea, input");
+
+            if(!_.isUndefined(this.model.typeObject.configAfterRender)) {
+                //the function to initialize any special form elements, such as selectize, if needed
+                this.model.typeObject.configAfterRender(model, this.form);
+            }
+
             //show the modal window
             $('.modal').modal('hide');
             $('#config-modal').modal('show');
