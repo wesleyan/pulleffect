@@ -60,14 +60,21 @@
 
             },
             getDeviceIcon: function(message){
+
                 var devices = {
                     'mac': 'fa fa-apple',
                     'pc': 'fa fa-windows',
                     'printer': 'fa fa-print',
-                    'roomtrol': 'fa fa-flash'
+                    'roomtrol': 'fa fa-flash',
+                    'projector': 'fa fa-video-camera'
                 };
 
-                var r = devices[message.device_type];
+
+                var dtype = message.device_type;
+                if (!dtype)
+                    return '';
+                
+                var r = devices[dtype.toLowerCase()];
 
                 if(_.isUndefined(r)) {
                     return '';
