@@ -69,17 +69,16 @@
                     'projector': 'fa fa-video-camera'
                 };
 
-
                 var dtype = message.device;
-                if (!dtype)
+                if (_.isNull(dtype))
                     return '';
 
-                var r = devices[dtype.toLowerCase()];
-
-                if(_.isUndefined(r)) {
+                var icon = devices[dtype.toLowerCase()];
+                
+                if(_.isUndefined(icon)) 
                     return '';
-                }
-                return r;
+               
+                return icon;
             },
             templateSelector: "#messages-widget",
             handler: function (model) {
