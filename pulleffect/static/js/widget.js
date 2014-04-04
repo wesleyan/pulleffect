@@ -70,10 +70,10 @@
                 };
 
 
-                var dtype = message.device_type;
+                var dtype = message.device;
                 if (!dtype)
                     return '';
-                
+
                 var r = devices[dtype.toLowerCase()];
 
                 if(_.isUndefined(r)) {
