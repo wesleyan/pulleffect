@@ -66,14 +66,21 @@
 
             },
             getDeviceIcon: function(message){
+
                 var devices = {
                     'mac': 'fa fa-apple',
                     'pc': 'fa fa-windows',
                     'printer': 'fa fa-print',
-                    'roomtrol': 'fa fa-flash'
+                    'roomtrol': 'fa fa-flash',
+                    'projector': 'fa fa-video-camera'
                 };
 
-                var r = devices[message.device_type];
+
+                var dtype = message.device;
+                if (!dtype)
+                    return '';
+
+                var r = devices[dtype.toLowerCase()];
 
                 if(_.isUndefined(r)) {
                     return '';
@@ -134,19 +141,34 @@
             configurable: true,
             templateSelector: '#calendar-widget',
             configurationTemplate: '#calendar-config',
+            activeCalendar: undefined,
             handler: function (model) {
                 var self = this;
                 var selectedId = model.get('selectedGcal');
-                var gcal = _.where(global.gcals, {id: selectedId})[0];
-                var now = moment().format("YYYY-MM-DDTHH:mm:ssZ")
-                var apiURL = calEventsRoute + "?id=" + escape(gcal.id) + "&now=" + now;
-                
-                $.getJSON(apiURL).success(function(data){
+                this.activeCalendar = _.where(global.gcals, {id: selectedId})[0];
+                if (!this.activeCalendar){
+                    console.log("HERE");
+                    model.view.renderContent({events: [], calendarSet: false}, this.templateSelector);
                     
-                    model.view.renderContent({events: data.items}, self.templateSelector);
+                }
+                else{
+                    var gcal = this.activeCalendar
+                    var now = moment().format("YYYY-MM-DDTHH:mm:ssZ")
+                    var apiURL = calEventsRoute + "?id=" + escape(gcal.id) + "&now=" + now;
+                    
+                    $.getJSON(apiURL).success(function(data){
+                        
+                        model.view.renderContent({events: data.items, calendarSet: true}, self.templateSelector);
 
-                });
-                model.view.renderTitle(gcal.name);// _.where(global.gcals, {id: parseInt(gcal)})[0].name);
+                    });
+                    model.view.renderTitle(gcal.name);
+                 }
+            
+               
+
+
+
+                // _.where(global.gcals, {id: parseInt(gcal)})[0].name);
                 //fetch calendar from somewhere and then:
                 
                 // $.getJSON(apiURL).success(function(data){
