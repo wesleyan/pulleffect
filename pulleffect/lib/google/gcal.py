@@ -128,7 +128,7 @@ def calendar_events():
 
 def is_valid_gcal_access_token(token):
     # Check with google if your access token is valid
-    token_info = requests.get('{}?access_token={}'.format(GOOGLE_TOKEN_INFO_API,token))
+    token_info = requests.get('{0}?access_token={1}'.format(GOOGLE_TOKEN_INFO_API,token))
     return token_info.ok and token_info.json()['expires_in'] > 100
 
 
