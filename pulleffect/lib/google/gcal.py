@@ -122,7 +122,7 @@ def calendar_events():
     calId = request.args.get('id')
     now = request.args.get('now')
 
-    events = service.events().list(calendarId=calId, timeMin=now).execute()
+    events = service.events().list(calendarId=calId, timeMin=now, singleEvents=True, orderBy="startTime").execute()
 
     return jsonify(events)
 
