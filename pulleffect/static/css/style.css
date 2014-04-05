@@ -223,6 +223,7 @@ html, body {
 .generic header .option {
     float: right;
     margin-left:10px;
+    margin-bottom: 5px;
     color:black !important;
     opacity: 0.6;
 }

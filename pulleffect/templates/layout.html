@@ -11,6 +11,7 @@
     <title>Pull&bull;Effect</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap3.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
@@ -23,6 +24,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.0/moment.min.js"></script>
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery.gridster.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/selectize.js') }}"></script>
 </head>
 
 <script>
@@ -118,7 +120,6 @@
 <script type="text/template" id="generic-widget">
     <li class="generic" data-type="<%=widget.type %>" data-time="<%=widget.time %>">
         <header>
-            <span><%=typeObject.title %></span>
             <a class="close option" title="Remove">&times;</a>
             <% if(typeObject.configurable) { %>
                 <a class="config option" title="Configure"><i class="fa fa-cogs"></i></a>
@@ -126,6 +127,7 @@
             <% if(typeObject.expandable) { %>
                 <a class="expand option" title="View it full screen"><i class="fa fa-expand"></i></a>
             <% } %>
+            <span><%=typeObject.title %></span>
         </header>
         <section>
         </section>
@@ -187,6 +189,8 @@
         </option>
       <% }); %>
     </select>
+    {%else%}
+    <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
     {% endif %}
   </div>
 </script>
@@ -212,7 +216,7 @@
 </script>
 
 <script type="text/template" id="special-events-widget">
-  <% if(events.length < 1) { %>
+  <%if(events.length < 1) { %>
     There are no events in the next <%=nextHours %> hours.
   <% } else { %>
     <table class="table table-striped">
@@ -266,14 +270,11 @@
 </script>
 
 <script type="text/template" id="calendar-widget">
-  {% if not session.gcal_credentials %}
-  <div class="text-center">
-    <a href="{{ url_for('gcal.authenticate') }}" class="btn btn-success gcal-authenticate-button">Authenticate</a>
-  </div>
-  {% else %}
-  <% if(events.length < 1) { console.log(events); %>
+  <% if (!calendarSet)%>
+    <h4>No calendars are selected. You can chose one on the config page.</h4>
+  <% if(calendarSet && events.length < 1) { console.log(events); %>
     There are no events in the given period.
-  <% } else { %>
+  <% } if (calendarSet && events.length >= 1) { %>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -299,7 +300,7 @@
       </tbody>
     </table>
   <% } %>
-  {% endif %}
+
 </script>
 
 <script type="text/template" id="leaderboard-widget">
