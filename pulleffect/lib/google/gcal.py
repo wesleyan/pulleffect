@@ -171,7 +171,6 @@ def try_get_oauth_creds():
 
     # If google credentials don't exist, get them
     if credentials == None:
-        #return jsonify({"redirect":url_for('gcal.authenticate')})
         return {"redirect":url_for('gcal.authenticate')}
 
     # Get fresh access token if current access token is expired
@@ -179,7 +178,6 @@ def try_get_oauth_creds():
 
     # If access token doesn't exist or can't be refreshed, re-authenticate
     if credentials["access_token"] == None:
-        #return jsonify({"redirect":url_for('gcal.authenticate')})
         return {"redirect":url_for('gcal.authenticate')}
 
     return credentials
