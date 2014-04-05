@@ -33,6 +33,7 @@ GCAL_DISCOVERY = json.load(open(config["gcal_discovery"]))
 users = mongo_connection.users
 
 
+
 @gcal.route('/authenticate')
 @signin_required
 def authenticate(): 
@@ -121,7 +122,7 @@ def calendar_events():
     calId = request.args.get('id')
     now = request.args.get('now')
 
-    events = service.events().list(calendarId=calId, timeMin=now).execute()
+    events = service.events().list(calendarId=calId, timeMin=now, singleEvents=True, orderBy="startTime").execute()
 
     return jsonify(events)
 
@@ -200,3 +201,5 @@ def get_gcal_service(credentials):
 @cache.memoize(timeout=10)
 def get_connected_user_refresh_token(google_id):
     return users.find_one({"google_id":google_id}, {"gcal_refresh_token":1, "_id":0}).get("gcal_refresh_token")
+
+
