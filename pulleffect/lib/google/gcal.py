@@ -188,8 +188,6 @@ def try_get_oauth_creds():
 def get_gcal_service(credentials):
     # Update gcal_credentials in session
     session["gcal_credentials"] = credentials
-
-    print session["gcal_credentials"], "\n\n\n\n"
     
     # Build access token credentials
     credentials = AccessTokenCredentials(credentials.get("access_token", None),credentials.get('user_agent', None))
