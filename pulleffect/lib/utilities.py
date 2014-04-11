@@ -3,10 +3,17 @@ from functools import wraps
 from flask import session
 from flask import render_template
 from pulleffect.config.env import config
+#from sqlalchemy import create_engine
 
-# Mongo stuff
+# Mongo database connection
 client = MongoClient('localhost', 27017)
 mongo_connection = client.pulleffect
+
+# Wes timeclock database connection
+# wes_timeclock_engine = create_engine('oracle://{0}:{1}@{2}'.format(
+# 	config['wes_timeclock_username'],
+# 	config['wes_timeclock_password'],
+# 	config['wes_timeclock_connection_string']))
 
 def signin_required(f):
     @wraps(f)

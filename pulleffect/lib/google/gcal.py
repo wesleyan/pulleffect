@@ -31,40 +31,7 @@ GCAL_DISCOVERY = json.load(open(config["gcal_discovery"]))
 
 # Get users mongo collection
 users = mongo_connection.users
-@gcal.route('/calendar_events')
-@signin_required
-def calendar_events():
-    # Get google credentials from session
-    credentials = session.get('gcal_credentials', None)
 
-    # If google credentials don't exist, get them
-    if credentials == None:
-        return jsonify({"redirect":url_for('gcal.authenticate')})
-
-    # Get fresh access token if current access token is expired
-    credentials["access_token"] = get_gcal_access_token(credentials)
-
-    # If access token doesn't exist or can't be refreshed, re-authenticate
-    if credentials["access_token"] == None:
-        return jsonify({"redirect":url_for('gcal.authenticate')})
-
-    # Update gcal_credentials in session
-    session["gcal_credentials"] = credentials
-    
-    # Build access token credentials
-    credentials = AccessTokenCredentials(credentials["access_token"],credentials['user_agent'])
-
-    # I think this builds a URL that can be used for retrieving the google calendar list
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-    service = build_from_document(GCAL_DISCOVERY, http=http)
-
-    calId = request.args.get('id')
-    now = request.args.get('now')
-
-    events = service.events().list(calendarId=calId, timeMin=now).execute()
-
-    return jsonify(events)
 
 
 @gcal.route('/authenticate')
@@ -88,6 +55,7 @@ def authenticate():
 
     auth_uri = flow.step1_get_authorize_url()
     return redirect(auth_uri)
+
 
 @gcal.route('/oauth2callback')
 @signin_required
@@ -117,33 +85,17 @@ def oauth2callback():
 
     return redirect(url_for('index'))
 
+
 @gcal.route('/calendar_list')
 @signin_required
 def calendar_list():
-    # Get google credentials from session
-    credentials = session.get('gcal_credentials', None)
+    # Check the oauth creds and refresh if necessary
+    credentials = try_get_oauth_creds()
+    if credentials.get("redirect", None) != None:
+        return jsonify(credentials)
 
-    # If google credentials don't exist, get them
-    if credentials == None:
-        return jsonify({"redirect":url_for('gcal.authenticate')})
-
-    # Get fresh access token if current access token is expired
-    credentials["access_token"] = get_gcal_access_token(credentials)
-
-    # If access token doesn't exist or can't be refreshed, re-authenticate
-    if credentials["access_token"] == None:
-        return jsonify({"redirect":url_for('gcal.authenticate')})
-
-    # Update gcal_credentials in session
-    session["gcal_credentials"] = credentials
-    
-    # Build access token credentials
-    credentials = AccessTokenCredentials(credentials["access_token"],credentials['user_agent'])
-
-    # I think this builds a URL that can be used for retrieving the google calendar list
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-    service = build_from_document(GCAL_DISCOVERY, http=http)
+    # Get gcal service
+    service = get_gcal_service(credentials)
 
     # Get google calendar list
     calendar_list = service.calendarList().list().execute()["items"]
@@ -155,10 +107,31 @@ def calendar_list():
 
     return jsonify({"calendar_list":calendars})
 
+
+@gcal.route('/calendar_events')
+@signin_required
+def calendar_events():
+    # Check the oauth creds and refresh if necessary
+    credentials = try_get_oauth_creds()
+    if credentials.get("redirect", None) != None:
+        return jsonify(credentials)
+
+    # Get gcal service
+    service = get_gcal_service(credentials)
+
+    calId = request.args.get('id')
+    now = request.args.get('now')
+
+    events = service.events().list(calendarId=calId, timeMin=now, singleEvents=True, orderBy="startTime").execute()
+
+    return jsonify(events)
+
+
 def is_valid_gcal_access_token(token):
     # Check with google if your access token is valid
-    token_info = requests.get('{}?access_token={}'.format(GOOGLE_TOKEN_INFO_API,token))
+    token_info = requests.get('{0}?access_token={1}'.format(GOOGLE_TOKEN_INFO_API,token))
     return token_info.ok and token_info.json()['expires_in'] > 100
+
 
 def refresh_gcal_access_token(refresh_token):
     # Construct dictionary representing POST headers
@@ -191,6 +164,39 @@ def get_gcal_access_token(credentials):
         token = refresh_gcal_access_token(refresh_token)
 
     return token
+
+
+def try_get_oauth_creds():
+    # Get google credentials from session
+    credentials = session.get('gcal_credentials', None)
+
+    # If google credentials don't exist, get them
+    if credentials == None:
+        return {"redirect":url_for('gcal.authenticate')}
+
+    # Get fresh access token if current access token is expired
+    credentials["access_token"] = get_gcal_access_token(credentials)
+
+    # If access token doesn't exist or can't be refreshed, re-authenticate
+    if credentials["access_token"] == None:
+        return {"redirect":url_for('gcal.authenticate')}
+
+    return credentials
+
+
+def get_gcal_service(credentials):
+    # Update gcal_credentials in session
+    session["gcal_credentials"] = credentials
+    
+    # Build access token credentials
+    credentials = AccessTokenCredentials(credentials.get("access_token", None),credentials.get('user_agent', None))
+
+    # I think this builds a URL that can be used for retrieving the google calendar shit
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+
+    return build_from_document(GCAL_DISCOVERY, http=http)
+
 
 @cache.memoize(timeout=10)
 def get_connected_user_refresh_token(google_id):
