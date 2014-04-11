@@ -56,7 +56,10 @@
             <div draggable="true" data-type="calendar" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
         </li>
         <li>
-            <div draggable="true" data-type="leaderboard" type="button" class="btn btn-primary btn-lg fa fa-star widget-button" data-toggle="tooltip" data-placement="right" title="Leaderboard"></div>
+            <div draggable="true" data-type="leaderboard" type="button" class="btn btn-primary btn-lg fa fa-check-circle-o widget-button" data-toggle="tooltip" data-placement="right" title="Leaderboard"></div>
+        </li>
+        <li>
+            <div draggable="true" data-type="notes" type="button" class="btn btn-primary btn-lg fa fa-comment-o widget-button" data-toggle="tooltip" data-placement="right" title="Notes"></div>
         </li>
     </ul>
     <ul class="nav nav-stacked bottom-buttons">
@@ -345,6 +348,14 @@
       <option value="all">All Info / Manager Mode</option>
     </select>
   </div>
+</script>
+
+<script type="text/template" id="notes-widget">
+  <textarea class="form-control" rows="5"></textarea>
+</script>
+
+<script type="text/template" id="notes-config">
+  Notes widget configuration
 </script>
 
 <style id="modifyCSSRule">

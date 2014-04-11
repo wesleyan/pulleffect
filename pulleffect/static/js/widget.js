@@ -221,6 +221,23 @@
                 });
                 model.typeObject.handler(model);
             }
+        },
+        'notes': {
+            title: 'Notes',
+            templateSelector: '#notes-widget',
+            configurable: true,
+            handler: function(model) {
+                // fetch the existing notes.
+                model.view.renderContent({}, self.templateSelector);
+
+                // we also need to listen to onchange event for the textarea
+            },
+            configHandler: function(model, formInfo) {
+                formInfo.forEach(function (input) {
+                    model.set(input.name, parseInt(input.value));
+                });
+                model.typeObject.handler(model);
+            }
         }
     };
 
