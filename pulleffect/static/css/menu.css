@@ -111,3 +111,8 @@ a:hover {text-decoration:none:;}
   margin-right:auto;
   margin-left:auto;
 }
+
+/*selectize*/
+.dropdown-active .item {
+  color:lightgray;
+}

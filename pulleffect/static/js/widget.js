@@ -42,8 +42,8 @@
             },
             configAfterRender: function(model, $form) {
                 //make room selection an input/select with typeahead
-                $form.filter("[name='selectedRoom']").selectize({
-                    sortField: 'text'
+                $form.filter("[name='selectedRoom']").select2({
+                    width: '100%'
                 });
             },
             configHandler: function(model, formInfo) {
@@ -536,7 +536,7 @@
             this.form = $(this.el).find('div[role="form"]').find("select, textarea, input");
 
             if(!_.isUndefined(this.model.typeObject.configAfterRender)) {
-                //the function to initialize any special form elements, such as selectize, if needed
+                //the function to initialize any special form elements, such as Select2, if needed
                 this.model.typeObject.configAfterRender(this.model, this.form);
             }
 
