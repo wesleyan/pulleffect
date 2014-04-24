@@ -1,18 +1,8 @@
-from apiclient.discovery import build
 from flask import Blueprint
 from flask import jsonify
 from flask import json
-from flask import redirect
 from flask import request
-from flask import session
-from flask import url_for
-from oauth2client.client import flow_from_clientsecrets
 from pulleffect.lib.utilities import mongo_connection
-from urllib import urlencode
-import strict_rfc3339 
-import requests
-import httplib2
-import pymongo
 
 messages = Blueprint('messages', __name__, template_folder='templates')
 

@@ -15,6 +15,15 @@ mongo_connection = client.pulleffect
 # 	config['wes_timeclock_password'],
 # 	config['wes_timeclock_connection_string']))
 
+# This dictionary contains all the database names
+# that we use, so if we ever name them something different,
+# we can just change the name in one spot
+db_names = {
+	"wes_timeclock":"wes_timeclock"
+}
+
+# Middleware to ensure user is authenticated before accessing a route
+# Just stick @signin_required above any route method calls
 def signin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
