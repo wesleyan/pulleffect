@@ -3,10 +3,11 @@ from flask import jsonify
 from flask import json
 from flask import request
 from pulleffect.lib.utilities import mongo_connection
+import pymongo
 
 messages = Blueprint('messages', __name__, template_folder='templates')
 
-# Get users mongo collection
+# Get messages mongo collection
 messages_collection = mongo_connection.messages
 
 # Process message from device (ie cmdr), or return messages in queue
@@ -20,7 +21,6 @@ def index():
         return json.dumps(ret)
     # we are adding a new message
     message = request.get_json()
-    # message = request.form
 
     fields = ['device', 'device_type', 'location', 'severity', 'description', 'time'];
     newMessage = {}

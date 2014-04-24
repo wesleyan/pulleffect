@@ -13,6 +13,7 @@ from pulleffect.config.env import config
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
+from pulleffect.lib.notes.notes import notes
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.messages.messages import messages
@@ -46,6 +47,7 @@ cache.init_app(app, config={'CACHE_TYPE':'simple'})
 app.register_blueprint(gcal, url_prefix='/gcal')
 app.register_blueprint(gplus, url_prefix='/gplus')
 app.register_blueprint(messages, url_prefix='/messages')
+app.register_blueprint(notes, url_prefix='/notes')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
 
