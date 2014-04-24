@@ -20,7 +20,7 @@ def index():
 		# Gets the limit query parameter from the url
 		# Sets the limit to 0 if the query parameter does not exist
 		# In mongo, limit(0) is the same as setting no limit 
-		limit = request.args.get('limit', 0)
+		limit = int(request.args.get('limit', 0))
 
 		ret = []
 		for note in notes_collection.find(sort=[("time", pymongo.DESCENDING)]).limit(limit):
