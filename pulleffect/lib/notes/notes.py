@@ -6,53 +6,102 @@ from flask import make_response
 from pulleffect.lib.utilities import mongo_connection
 import pymongo
 
+# Create blueprint
 notes = Blueprint('notes', __name__, template_folder='templates')
 
-# Get notes mongo collection
+# Get mongo connection to note collection selection detection defection dejection election
 notes_collection = mongo_connection.notes
 
-# Respond with most recent notes
-# Can take a query string like this: 'http://localhost:3000/notes?limit=5'
-@notes.route('', methods=['GET', 'POST'])
-def index():
-	if request.method == 'GET': # return all messages
+def get_notes(integer_limit):
+	"""Gets the most recent notes from database
 
-		# Gets the limit query parameter from the url
-		# Sets the limit to 0 if the query parameter does not exist
-		# In mongo, limit(0) is the same as setting no limit 
-		limit = int(request.args.get('limit', 0))
+	Keyword arguments:
+	integer_limit -- the limit on notes returned
 
-		ret = []
-		for note in notes_collection.find(sort=[("time", pymongo.DESCENDING)]).limit(limit):
-			if (note != None) and (note.get('_id') != None):
-				note['_id'] = str(note.get('_id'))
-				ret.append(note)
+	Example route: 'http://localhost:3000/notes?limit=5'	
+	"""
+	ret=[]
+		# Check all notes have valid id and append to return array
+	for note in notes_collection.find(sort=[("time", pymongo.DESCENDING)]).limit(integer_limit):
+		if (note != None) and (note.get('_id') != None):
+			note['_id'] = str(note.get('_id'))
+			ret.append(note)
 
-		# Since REST APIs are meant to respect idempotence, return a 404
-		# when there are no routes in the db
+		# Return 404 NOT FOUND when no notes in database
 		if len(ret) == 0:
 			return make_response(jsonify({ 'error': 'No notes found.' }), 404)
 
+		# Return jsonified array of notes
 		return json.dumps(ret)
+	
+	
+def add_notes(notes):	
+	"""Adds notes to database	
 
-	# Add new note
-	note = request.get_json()
+	Keyword arguments:
+	notes -- the notes to add to the database
 
-	if (note == None):
-		return make_response(jsonify({ 'error': 'No note submitted.' }), 404)
+	Example route: 'http://localhost:3000/notes'
+	"""
 
+	# Check notes exist
+	if len(notes) == 0:
+		return make_response(jsonify({ 'error': 'No notes submitted.' }), 404)
+
+	# Note fields that must be submitted in POST request
 	required_fields = ['text', 'author', 'time']
-	new_note = {}
-	err_string = ""
 
-	for field in required_fields:
-		if (note.get(field, None) == None):
-			err_string += "Note is missing " + field + " field. "
-		else:
-			new_note[field] = note.get(field)
+	# Init some parameters
+	new_notes = []
+	error_response = {}
 
-	if err_string:
-		return make_response(jsonify({ 'error': err_string }), 404)
+	# Check all notes have all required fields
+	for i in range(len(notes)):
+		new_note = {}
+		error_message = ""
 
-	new_id = notes_collection.insert(new_note)
-	return jsonify({ 'id' : str(new_id) })
+		for field in required_fields:
+			# If field is missing, add it to error message
+			if (notes[i].get(field, None) == None):
+				error_message += "{0}, ".format(field)
+			else:
+				new_note[field] = note.get(field)
+		# If error message, then append to error response		
+		if error_message:
+			clean_error_message = "Note is missing these fields: {0}".format(error_message)[:-2]
+			error_response[i] = clean_error_message
+		new_notes.append(new_note)
+
+	# If notes have any errors, return 404 NOT FOUND with errors keyed by note index
+	if len(error_response) > 0:
+		return make_response(jsonify({ 'error': err_response }), 404)
+
+	# Insert new notes into collection
+	new_ids = notes_collection.insert(new_notes, { 'ordered':True })
+
+	# Return note ids?
+	return jsonify({ 'id' : str(new_ids) })
+
+
+@notes.route('', methods=['GET', 'POST'])
+def index():
+	"""Route controller for notes
+
+	Keyword arguments:
+	route_url -- the url where this route can be found on the server
+	methods -- accepted request types
+	"""
+	
+	# If GET request, get notes
+	if request.method == 'GET':
+		# Get absolute value of the limit query value from query string
+		limit = fabs(int(request.args.get('limit', 0)))
+		# Get notes with limit
+		get_notes(limit)
+	# If POST request, add notes
+	elif request.method == 'POST':
+		# Get notes from request body and add them
+		notes = request.get_json()	
+		add_notes(notes)
+	# Otherwise throw 404 NOT FOUND
+	return make_response(jsonify({ 'error': 'NOT FOUND' }), 404)

@@ -18,7 +18,7 @@ from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.cache import cache
-from pulleffect.lib.sqlalchemy import db
+#from pulleffect.lib.sqlalchemy import db
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
@@ -38,10 +38,10 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_BINDS'] = SQLALCHEMY_BINDS
 
 # Create database connection to wes timeclock database
-db.init_app(app)
+#db.init_app(app)
 
 # Init caching
-cache.init_app(app, config={'CACHE_TYPE':'simple'})
+#cache.init_app(app, config={'CACHE_TYPE':'simple'})
 
 # Init blueprints
 app.register_blueprint(gcal, url_prefix='/gcal')
