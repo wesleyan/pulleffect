@@ -231,7 +231,20 @@
             handler: function(model) {
                 var self = this;
                 $.getJSON('notes/?limit=10').done(function(data){
-                    model.view.renderContent({notes: data}, self.templateSelector);
+                    model.view.renderContent({notes: data}, self.templateSelector, function(view) {
+                        $(view.selector).find('input').keyup(function(e) {
+                            if(e.which !== 13) {
+                                return;
+                            }
+                            //if pressed enter
+                            //make an POST request to back end
+                            $.post( "notes/", {
+                                text: this.val()
+                            }).done(function( data ) {
+                                self.handler(model);
+                            });
+                        })
+                    });
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
                 });
@@ -521,9 +534,12 @@
         renderTitle: function(title) {
             $(this.selector).find('header').find('span').html(title);
         },
-        renderContent: function(data, templateSelector) {
+        renderContent: function(data, templateSelector, afterRender) {
             var rendered = _.template($(templateSelector).html())(data);
             $(this.selector).find('section').html(rendered);
+            if(!_.isUndefined(afterRender)) {
+                afterRender(this);
+            }
         },
         renderError: function (jqxhr) {
             console.log(jqxhr);
