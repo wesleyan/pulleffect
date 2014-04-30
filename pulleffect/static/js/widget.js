@@ -199,6 +199,7 @@
             title: 'Ticket Resolutions',
             templateSelector: '#leaderboard-widget',
             configurable: true,
+            configurationTemplate: '#leaderboard-config',
             defaultConfiguration: {
                 'mode' : 'kiosk'
             },
@@ -226,11 +227,14 @@
             title: 'Notes',
             templateSelector: '#notes-widget',
             configurable: true,
+            configurationTemplate: '#notes-config',
             handler: function(model) {
-                // fetch the existing notes.
-                model.view.renderContent({}, self.templateSelector);
-
-                // we also need to listen to onchange event for the textarea
+                var self = this;
+                $.getJSON(messagesRoute).done(function(data){
+                    model.view.renderContent({notes: data}, self.templateSelector);
+                }).fail(function(jqxhr) {
+                    model.view.renderError(jqxhr);
+                });
             },
             configHandler: function(model, formInfo) {
                 formInfo.forEach(function (input) {

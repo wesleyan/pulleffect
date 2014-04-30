@@ -351,7 +351,30 @@
 </script>
 
 <script type="text/template" id="notes-widget">
-  <textarea class="form-control" rows="5"></textarea>
+  <input type="text" class="form-control" placeholder="What is to be done?">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Note</th>
+        <th>Author</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if(notes.error) %>
+        <i><%=notes.error %></i>
+      <% } %>
+      <% notes.forEach(function(note) { %>
+        <tr>
+          <td>
+            <%=note.text %>
+          </td>
+          <td>
+            <%=note.author %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 </script>
 
 <script type="text/template" id="notes-config">
