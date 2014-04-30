@@ -230,7 +230,7 @@
             configurationTemplate: '#notes-config',
             handler: function(model) {
                 var self = this;
-                $.getJSON(messagesRoute).done(function(data){
+                $.getJSON('notes/?limit=10').done(function(data){
                     model.view.renderContent({notes: data}, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);

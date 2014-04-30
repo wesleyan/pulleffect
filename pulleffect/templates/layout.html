@@ -362,17 +362,18 @@
     <tbody>
       <% if(notes.error) %>
         <i><%=notes.error %></i>
+      <% } else { %>
+        <% notes.forEach(function(note) { %>
+          <tr>
+            <td>
+              <%=note.text %>
+            </td>
+            <td>
+              <%=note.author %>
+            </td>
+          </tr>
+        <% }) %>
       <% } %>
-      <% notes.forEach(function(note) { %>
-        <tr>
-          <td>
-            <%=note.text %>
-          </td>
-          <td>
-            <%=note.author %>
-          </td>
-        </tr>
-      <% }) %>
     </tbody>
   </table>
 </script>
