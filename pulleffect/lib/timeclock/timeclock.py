@@ -8,6 +8,8 @@ from pulleffect.lib.utilities import signin_required
 
 timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 
+timeclock_entries = Table('NED_SHIFT')
+
 @timeclock.route('')
 @signin_required
 def index():
