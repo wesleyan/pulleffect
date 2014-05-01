@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 """
     Pull Effect
     ~~~~~~
@@ -14,11 +14,12 @@ from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.notes.notes import notes
+from pulleffect.lib.service.service import service
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.cache import cache
-from pulleffect.lib.sqlalchemy import db
+# from pulleffect.lib.sqlalchemy import db
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
@@ -38,7 +39,7 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_BINDS'] = SQLALCHEMY_BINDS
 
 # Create database connection to wes timeclock database
-db.init_app(app)
+# db.init_app(app)
 
 # Init caching
 cache.init_app(app, config={'CACHE_TYPE':'simple'})
@@ -48,6 +49,7 @@ app.register_blueprint(gcal, url_prefix='/gcal')
 app.register_blueprint(gplus, url_prefix='/gplus')
 app.register_blueprint(messages, url_prefix='/messages')
 app.register_blueprint(notes, url_prefix='/notes')
+app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
 
