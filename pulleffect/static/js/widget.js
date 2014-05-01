@@ -204,13 +204,20 @@
                 'mode' : 'kiosk'
             },
             handler: function(model) {
-                $.getJSON('leaderboard/').done(function(data) {
-                    if(this.model.get('mode') === 'all') {
-                        $(this.model.view.selector).find('section').attr('style', 'overflow: scroll !important');
-                    } else { //kiosk mode
-                        $(this.model.view.selector).find('section').attr('style', 'overflow: hidden !important');
-                        data = _.first(data, 10);
-                    }
+                var self = this;
+                
+
+
+                $.getJSON(recordsRoute).done(function(data) {
+                    console.log(data);
+
+                    // if(this.model.get('mode') === 'all') {
+                    //     $(this.model.view.selector).find('section').attr('style', 'overflow: scroll !important');
+                    // } else { //kiosk mode
+                    //     $(this.model.view.selector).find('section').attr('style', 'overflow: hidden !important');
+                    //     data = _.first(data, 10);
+                    // }
+                    data = [{username:"a", count:2}]
                     model.view.renderContent({staff: data}, self.templateSelector);
                 }).fail(function(jqxhr) {
                     model.view.renderError(jqxhr);
