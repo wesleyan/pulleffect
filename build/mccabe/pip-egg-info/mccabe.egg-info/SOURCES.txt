@@ -1,0 +1,9 @@
+README.rst
+mccabe.py
+setup.cfg
+pip-egg-info/mccabe.egg-info/PKG-INFO
+pip-egg-info/mccabe.egg-info/SOURCES.txt
+pip-egg-info/mccabe.egg-info/dependency_links.txt
+pip-egg-info/mccabe.egg-info/entry_points.txt
+pip-egg-info/mccabe.egg-info/not-zip-safe
+pip-egg-info/mccabe.egg-info/top_level.txt
