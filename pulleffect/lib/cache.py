@@ -1,3 +1,3 @@
-from flask.ext.cache import Cache 
+from flask.ext.cache import Cache
 
 cache = Cache()

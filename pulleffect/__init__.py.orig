@@ -16,6 +16,10 @@ from pulleffect.lib.service.service import service
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.cache import cache
+<<<<<<< HEAD
+# from pulleffect.lib.sqlalchemy import db
+=======
+>>>>>>> 0c1540b9047cc87b1891982f195fd585cc23cb52
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
@@ -23,6 +27,22 @@ import urllib
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
+# Define database
+# SQLALCHEMY_BINDS = {
+#     # SQLAlchemy connection string for wes timeclock db
+#     'wes_timeclock': 'oracle://{0}:{1}@{2}'.format(
+#         config['wes_timeclock_username'],
+#         config['wes_timeclock_password'],
+#         config['wes_timeclock_connection_string'])
+# }
+# app.config['SQLALCHEMY_BINDS'] = SQLALCHEMY_BINDS
+
+# Create database connection to wes timeclock database
+# db.init_app(app)
+
+=======
+>>>>>>> 0c1540b9047cc87b1891982f195fd585cc23cb52
 # Init caching
 cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 
