@@ -11,48 +11,55 @@ notes = Blueprint('notes', __name__, template_folder='templates')
 # Get notes mongo collection
 notes_collection = mongo_connection.notes
 
+
 # Respond with most recent notes
 # Can take a query string like this: 'http://localhost:3000/notes?limit=5'
 @notes.route('', methods=['GET', 'POST'])
 def index():
-	if request.method == 'GET': # return all messages
+    if request.method == 'GET':  # return all messages
 
-		# Gets the limit query parameter from the url
-		# Sets the limit to 0 if the query parameter does not exist
-		# In mongo, limit(0) is the same as setting no limit 
-		limit = int(request.args.get('limit', 0))
+        # Gets the limit query parameter from the url
+        # Sets the limit to 0 if the query parameter does not exist
+        # In mongo, limit(0) is the same as setting no limit
+        limit = int(request.args.get('limit', 0))
 
-		ret = []
-		for note in notes_collection.find(sort=[("time", pymongo.DESCENDING)]).limit(limit):
-			if (note != None) and (note.get('_id') != None):
-				note['_id'] = str(note.get('_id'))
-				ret.append(note)
+        # TODO(arthur): could be written as a ternary expression,
+        # but I couldn't get it to work for some reason
+        if limit < 0:
+            limit = 0
 
-		# Since REST APIs are meant to respect idempotence, return a 404
-		# when there are no routes in the db
-		if len(ret) == 0:
-			return make_response(jsonify({ 'error': 'No notes found.' }), 404)
+        ret = []
+        sort_params = [("time", pymongo.DESCENDING)]
+        for note in notes_collection.find(sort=sort_params).limit(limit):
+            if (note is not None) and (note.get('_id') is not None):
+                note['_id'] = str(note.get('_id'))
+                ret.append(note)
 
-		return json.dumps(ret)
+        # Since REST APIs are meant to respect idempotence, return a 404
+        # when there are no routes in the db
+        if len(ret) == 0:
+            return make_response(jsonify({'error': 'No notes found.'}), 404)
 
-	# Add new note
-	note = request.get_json()
+        return json.dumps(ret)
 
-	if (note == None):
-		return make_response(jsonify({ 'error': 'No note submitted.' }), 404)
+    # Add new note
+    note = request.get_json()
 
-	required_fields = ['text', 'author', 'time']
-	new_note = {}
-	err_string = ""
+    if (note is None):
+        return make_response(jsonify({'error': 'No note submitted.'}), 404)
 
-	for field in required_fields:
-		if (note.get(field, None) == None):
-			err_string += "Note is missing " + field + " field. "
-		else:
-			new_note[field] = note.get(field)
+    required_fields = ['text', 'author', 'time']
+    new_note = {}
+    err_string = ""
 
-	if err_string:
-		return make_response(jsonify({ 'error': err_string }), 404)
+    for field in required_fields:
+        if (note.get(field, None) is None):
+            err_string += "Note is missing " + field + " field. "
+        else:
+            new_note[field] = note.get(field)
 
-	new_id = notes_collection.insert(new_note)
-	return jsonify({ 'id' : str(new_id) })
+    if err_string:
+        return make_response(jsonify({'error': err_string}), 404)
+
+    new_id = notes_collection.insert(new_note)
+    return jsonify({'id': str(new_id)})
