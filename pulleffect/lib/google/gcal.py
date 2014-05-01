@@ -33,7 +33,6 @@ GCAL_DISCOVERY = json.load(open(config["gcal_discovery"]))
 users = mongo_connection.users
 
 
-
 @gcal.route('/authenticate')
 @signin_required
 def authenticate(): 
