@@ -33,8 +33,8 @@ def get_notes(integer_limit):
         if len(ret) == 0:
             return make_response(jsonify({'error': 'No notes found.'}), 404)
 
-        # Return jsonified array of notes
-        return json.dumps(ret)
+    # Return jsonified array of notes
+    return json.dumps(ret)
 
 
 def add_notes(notes):
