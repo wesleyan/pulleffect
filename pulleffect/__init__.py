@@ -22,6 +22,19 @@ import urllib
 
 app = Flask(__name__)
 
+# Define database
+# SQLALCHEMY_BINDS = {
+#     # SQLAlchemy connection string for wes timeclock db
+#     'wes_timeclock': 'oracle://{0}:{1}@{2}'.format(
+#         config['wes_timeclock_username'],
+#         config['wes_timeclock_password'],
+#         config['wes_timeclock_connection_string'])
+# }
+# app.config['SQLALCHEMY_BINDS'] = SQLALCHEMY_BINDS
+
+# Create database connection to wes timeclock database
+#db.init_app(app)
+
 # Init caching
 cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 
@@ -56,7 +69,6 @@ def urlencode_filter(s):
     s = s.encode('utf8')
     s = urllib.quote_plus(s)
     return Markup(s)
-
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
