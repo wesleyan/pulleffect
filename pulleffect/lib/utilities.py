@@ -12,8 +12,8 @@ import cx_Oracle
 client = MongoClient('localhost', 27017)
 mongo_connection = client.pulleffect
 
-wes_timeclock_username = config['wes_timeclock_username']
-wes_timeclock_password = config['wes_timeclock_password']
+wes_timeclock_username = str(config['wes_timeclock_username'])
+wes_timeclock_password = str(config['wes_timeclock_password'])
 
 # Construct oracle dsn
 wes_timeclock_dsn = cx_Oracle.makedsn(host='curltest.db.wesleyan.edu',
