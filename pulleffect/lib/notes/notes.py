@@ -3,6 +3,7 @@ from flask import jsonify
 from flask import json
 from flask import request
 from flask import make_response
+from datetime import datetime
 from pulleffect.lib.utilities import mongo_connection
 import pymongo
 
@@ -29,15 +30,15 @@ def get_notes(integer_limit):
             note['_id'] = str(note.get('_id'))
             ret.append(note)
 
-        # Return 404 NOT FOUND when no notes in database
-        if len(ret) == 0:
-            return make_response(jsonify({'error': 'No notes found.'}), 404)
+		return json.dumps(ret)
 
     # Return jsonified array of notes
     return json.dumps(ret)
 
+	if (note == None):
+		return make_response(jsonify({ 'error': 'No note submitted.' }), 404)
 
-def add_notes(notes):
+def add_note(note=None):
     """Adds notes to database
 
     Keyword arguments:
@@ -47,44 +48,41 @@ def add_notes(notes):
     """
 
     # Check notes exist
-    if len(notes) == 0:
+    if note is None:
         return make_response(jsonify({'error': 'No notes submitted.'}), 404)
 
     # Note fields that must be submitted in POST request
-    required_fields = ['text', 'author', 'time']
+    required_fields = ['text', 'author']
 
     # Init some parameters
-    new_notes = []
     error_response = {}
-
+    newNote = {}
     # Check all notes have all required fields
-    for i in range(len(notes)):
-        new_note = {}
-        error_message = ""
+    clean_error_message = ""
+    error_message = ""
+    for field in required_fields:
+        # If field is missing, add it to error message
+        if (note.get(field, None) is None):
+            error_message += "{0}, ".format(field)
+        else:
+            newNote[field] = note.get(field)
+        # If error message, then append to error response
+        if error_message:
+            err = "Note is missing these fields: {0}"
+            clean_error_message += err.format(error_message)[:-2]
 
-        for field in required_fields:
-            # If field is missing, add it to error message
-            if (notes[i].get(field, None) is None):
-                error_message += "{0}, ".format(field)
-            else:
-                new_note[field] = notes.get(field)
-            # If error message, then append to error response
-            if error_message:
-                err = "Note is missing these fields: {0}"
-                clean_error_message = err.format(error_message)[:-2]
-                error_response[i] = clean_error_message
-            new_notes.append(new_note)
-
+    newNote["time"] = note.get("time", datetime.now())
     # If notes have any errors, return 404 NOT FOUND with
     # errors keyed by note index
     if len(error_response) > 0:
         return make_response(jsonify({'error': error_message}), 404)
 
     # Insert new notes into collection
-    new_ids = notes_collection.insert(new_notes, {'ordered': True})
+    newId = notes_collection.insert(newNote)
 
+     # Give current timestamp
     # Return note ids?
-    return jsonify({'id': str(new_ids)})
+    return jsonify({'id': str(newId)})
 
 
 @notes.route('', methods=['GET', 'POST'])
@@ -101,11 +99,11 @@ def index():
         # Get absolute value of the limit query value from query string
         limit = abs(int(request.args.get('limit', 0)))
         # Get notes with limit
-        get_notes(limit)
+        return get_notes(limit)
     # If POST request, add notes
     elif request.method == 'POST':
         # Get notes from request body and add them
-        notes = request.get_json()
-        add_notes(notes)
+        note = request.get_json()
+        return add_note(note)
     # Otherwise throw 404 NOT FOUND
     return make_response(jsonify({'error': 'NOT FOUND'}), 404)
