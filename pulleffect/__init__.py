@@ -8,7 +8,6 @@
 
 from flask import Flask
 from flask import render_template
-from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 from pulleffect.lib.notes.notes import notes
@@ -19,6 +18,7 @@ from pulleffect.lib.cache import cache
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
+from pulleffect.config.env import is_beta
 import urllib
 
 app = Flask(__name__)
@@ -34,6 +34,13 @@ app.register_blueprint(notes, url_prefix='/notes')
 app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
+# The timeclock route depends on Oracle being installed on the machine,
+# which is a total pain in the ass to install, so it's ignored on all
+# machines but the beta machine
+if is_beta:
+    from pulleffect.lib.timeclock.timeclock import timeclock
+    app.register_blueprint(timeclock, url_prefix='/timeclock')
+
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -45,10 +52,7 @@ app.config.from_envvar('PULLEFFECT_SETTINGS', silent=True)
 
 @app.route('/')
 def index():
-    dashboards = mongo_connection.dashboards
-    dashboard = dashboards.find_one({}, {"_id": 0})
-
-    return render_template('index.html', dashboard=dashboard)
+    return render_template('index.html')
 
 
 @app.template_filter('urlencode')
@@ -59,7 +63,8 @@ def urlencode_filter(s):
     s = urllib.quote_plus(s)
     return Markup(s)
 
-
+# Some reverse proxy stuff that was necessary for pulleffect to work as
+# a subroute in Rob's nginx setup
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 
