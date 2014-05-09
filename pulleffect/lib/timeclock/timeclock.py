@@ -4,7 +4,8 @@ from flask import request
 from flask import make_response
 from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.utilities import wes_timeclock_pool
-from pulleffect.lib.timeclock.timeclock_depts import timeclock_depts
+from pulleffect.lib.timeclock.timeclock_depts import dept_to_job_id_dict
+from pulleffect.lib.timeclock.timeclock_depts import job_id_to_dept_dict
 from datetime import datetime
 import cx_Oracle
 
@@ -13,12 +14,11 @@ timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 
 # Timeclock entry model
 class TimeclockEntry:
-    def __init__(self, username, time_in, time_out, job_id, note):
+    def __init__(self, username, time_in, time_out, dept, note):
         self.username = username
         self.time_in = time_in
         self.time_out = time_out
-        # self.role = role
-        self.job_id = job_id
+        self.dept = dept
         self.note = note
 
     # Serializes the object into a dictionary so it can be jsonified
@@ -27,8 +27,7 @@ class TimeclockEntry:
             'username': self.username,
             'time_in': self.time_in,
             'time_out': self.time_out,
-            # 'role': self.role,
-            'job_id': self.job_id,
+            'dept': self.dept,
             'note': self.note
         }
 
@@ -41,8 +40,8 @@ class TimeclockQuery:
                          "TIME_IN DESC) ")
 
         # Converts datetime objects to timestamps in SQL
-        # sql_timestamp = "TO_TIMESTAMP({0}, 'yyyy-mm-dd hh24.mi.ss.ff')"
-        sql_timestamp = "TO_TIMESTAMP({0})"
+        sql_timestamp = ("(TO_DATE('19700101','yyyymmdd') +"
+                         " (TO_NUMBER({0})/24/60/60))")
 
         # Build time in and time out clauses
         time_in_clause = sql_timestamp.format(':time_in')
@@ -76,14 +75,6 @@ class TimeclockQuery:
         self.named_params = named_params
 
 
-def valid_datetime(d):
-    try:
-        datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
-        return True
-    except ValueError:
-        return False
-
-
 @timeclock.route('')
 @signin_required
 def index():
@@ -100,8 +91,10 @@ def index():
 
     # Validate username
     if username is not None and not isinstance(username, str):
-        error_message = jsonify({'error': "cannot accept unicode: username"})
-        return make_response(error_message, 400)
+        username = username.encode('ascii', 'replace')
+        if '?' in username:
+            error_message = jsonify({'error': "no unicode allowed: username"})
+            return make_response(error_message, 400)
 
     # Validate time in
     if time_in is None:
@@ -113,22 +106,27 @@ def index():
     # Validate time out
     if time_out is None:
         time_out = str(now_seconds)
-    elif not valid_datetime(time_out):
+    elif not time_out.isdigit():
         error_message = jsonify({'error': "invalid parameter: 'time_out'"})
         return make_response(error_message, 400)
 
     # Validate departments
     job_ids = []
     if departments is None:
-        job_ids = timeclock_depts.values()
+        job_ids = dept_to_job_id_dict.values()
     else:
+        departments = departments.encode('ascii', 'replace')
+        if '?' in departments:
+            error_message = jsonify({'error': "no unicode allowed: depts"})
+            return make_response(error_message, 400)
+
         # Remove parentheses from ends of array
         departments = departments[1:-1].split(',')
 
         # Map department names to their respective job_id
         dept_errors = []
         for i in range(len(departments)):
-            job_id = timeclock_depts.get(departments[i], None)
+            job_id = dept_to_job_id_dict.get(departments[i], None)
             if job_id is None:
                 dept_errors.append(departments[i])
             job_ids.append(job_id)
@@ -156,11 +154,17 @@ def index():
 
         # Add timeclock entry objects to array
         for row in cursor:
-            tc_entries.append(TimeclockEntry(row[0], row[1], row[2], row[3]))
+            username = row[0]
+            time_in = row[1]
+            time_out = row[2]
+            dept = job_id_to_dept_dict.get(str(row[3]), "???")
+            note = row[4]
+            tc_entries.append(TimeclockEntry(username, time_in, time_out,
+                                             dept, note))
 
         # Serialize array of timeclock entries
         tc_entries = [entry.serialize() for entry in tc_entries]
-        return jsonify(tc_entries=tc_entries)
+        return jsonify({'timeclock_entries': tc_entries})
 
     # Catch exceptions that may be thrown during connection to database
     except cx_Oracle.DatabaseError, exception:
