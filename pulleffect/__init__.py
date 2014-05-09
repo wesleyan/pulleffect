@@ -10,7 +10,7 @@ from flask import Flask
 from flask import render_template
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
-from pulleffect.lib.notes.notes import notes
+# from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.messages.messages import messages
@@ -30,12 +30,12 @@ cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 app.register_blueprint(gcal, url_prefix='/gcal')
 app.register_blueprint(gplus, url_prefix='/gplus')
 app.register_blueprint(messages, url_prefix='/messages')
-app.register_blueprint(notes, url_prefix='/notes')
+# app.register_blueprint(notes, url_prefix='/notes')
 app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
 # The timeclock route depends on Oracle being installed on the machine,
-# which is a total pain in the ass to install, so it's ignored on all
+# which is a total pain in the ass, so it's ignored on all
 # machines but the beta machine
 if is_beta:
     from pulleffect.lib.timeclock.timeclock import timeclock
