@@ -115,6 +115,7 @@ def index():
     if departments is None:
         job_ids = dept_to_job_id_dict.values()
     else:
+        departments = departments.replace(" ", "")
         departments = departments.encode('ascii', 'replace')
         if '?' in departments:
             error_message = jsonify({'error': "no unicode allowed: depts"})
