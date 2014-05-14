@@ -6,8 +6,9 @@ MarkupSafe==0.21
 SQLAlchemy==0.9.4
 Werkzeug==0.9.4
 argparse==1.2.1
-cx-Oracle==5.1.2
+--allow-external cx-Oracle==5.1.2
 google-api-python-client==1.2
+gunicorn==18.0
 httplib2==0.9
 itsdangerous==0.24
 pymongo==2.7
