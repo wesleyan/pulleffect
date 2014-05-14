@@ -57,8 +57,9 @@ class TimeclockQuery:
         # Build SQL array with job ids
         job_id_clause = "("
         for i in range(len(job_ids)):
-            named_params['job_id' + str(i)] = job_ids[i]
-            job_id_clause += ":{0},".format("job_id" + str(i))
+            job_id = 'job_id{0}'.format(str(i))
+            named_params[job_id] = job_ids[i]
+            job_id_clause += ":{0},".format(job_id)
 
         # Add job ids to WHERE clause
         where_clause += job_id_clause[:-1] + ")"
