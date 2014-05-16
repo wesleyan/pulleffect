@@ -10,6 +10,7 @@ argparse==1.2.1
 cx-Oracle==5.1.2
 google-api-python-client==1.2
 httplib2==0.9
+gunicorn==18.0
 itsdangerous==0.24
 pymongo==2.7
 requests==2.2.1
