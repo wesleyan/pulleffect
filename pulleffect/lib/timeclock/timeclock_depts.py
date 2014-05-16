@@ -6,3 +6,19 @@ dept_to_job_id_dict = {"cfa_lab": "4044", "has_lab": "2832",
                        "tech": "4052", "temp": "2836", "temp_events": "66847",
                        "training": "24502", "wes_pregame": "308306"}
 job_id_to_dept_dict = dict((v, k) for k, v in dept_to_job_id_dict.iteritems())
+
+
+def get_job_id(dept):
+    return dept_to_job_id_dict.get(dept, None)
+
+
+def get_dept(job_id):
+    return job_id_to_dept_dict.get(job_id, None)
+
+
+def get_all_depts():
+    return dept_to_job_id_dict.keys()
+
+
+def get_all_job_ids():
+    return dept_to_job_id_dict.values()
