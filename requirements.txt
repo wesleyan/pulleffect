@@ -1,3 +1,4 @@
+--allow-all-external
 Flask==0.10.1
 Flask-Cache==0.13.1
 Jinja2==2.7.2
@@ -5,9 +6,9 @@ MarkupSafe==0.21
 SQLAlchemy==0.9.4
 Werkzeug==0.9.4
 argparse==1.2.1
---allow-external cx-Oracle==5.1.2
+--allow-unverified cx-Oracle
+cx-Oracle==5.1.2
 google-api-python-client==1.2
-gunicorn==18.0
 httplib2==0.9
 itsdangerous==0.24
 pymongo==2.7
