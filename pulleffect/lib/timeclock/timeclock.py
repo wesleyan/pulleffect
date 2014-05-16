@@ -15,8 +15,12 @@ timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 def get_parsed_request(request):
     """Parses request parameters from URL
 
-    Keyword arguments:
-    request -- HTTP request containing parameters
+    Args:
+        request -- HTTP request containing parameters
+
+    Returns:
+        TimeclockRequest -- an object representing Oracle SQL query with
+                            named parameters
     """
     # Default query parameters
     now = datetime.now()
@@ -82,8 +86,11 @@ def get_parsed_request(request):
 def build_timeclock_entries(cursor):
     """Build TimeclockEntry from cursor
 
-    Keyword arguments:
-    cursor -- tuple representation of Oracle SQL query results
+    Args:
+        cursor -- tuple representation of Oracle SQL query results
+
+    Returns:
+        array -- An array containing TimeclockEntry objects
     """
     # Build array of timeclock entries retrieved in cursor
     tc_entries = []
@@ -103,9 +110,25 @@ def build_timeclock_entries(cursor):
 def try_get_timeclock_entries(timeclockOracleQuery):
     """Tries to get timeclock entries from Oracle db
 
-    Keyword arguments:
+    Args:
     timeclockOracleQuery -- object representing Oracle SQL and
                             its named parameters
+
+    Returns:
+        Response -- A list of timeclock entries of the form:
+
+            [{
+                'username': 'aburkart',
+                'dept': 'om',
+                'time_in': <timestamp>,
+                'time_out': <timestamp>
+            }]
+
+        or
+
+            {
+                'error' <some indicative error message>
+            }
     """
     # Grab connection from pool of connections
     connection = wes_timeclock_pool.acquire()
@@ -149,7 +172,7 @@ def index():
     """Tries to get timeclock entries from Oracle db
 
     Returns:
-        Response: Returns a list of timeclock entries of the form:
+        Response: A list of timeclock entries of the form:
 
             [{
                 'username': 'aburkart',
@@ -161,7 +184,7 @@ def index():
         or
 
             {
-                'error' <indicative error message>
+                'error' <some indicative error message>
             }
 
 

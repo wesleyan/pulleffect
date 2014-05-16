@@ -113,7 +113,7 @@
             },
             handler: function(model) {
                 var self = this;
-                $.getJSON('http://ims-dev.wesleyan.edu:8080/api/events?minutes=' + (parseInt(model.get('nextHours')) * 60))
+                $.getJSON('https://spec.wesleyan.edu/api/events?minutes=' + (parseInt(model.get('nextHours')) * 60))
                     .done(function(data) {
                         // sort events by starting time
                         data = _.sortBy(data, function(event) {
