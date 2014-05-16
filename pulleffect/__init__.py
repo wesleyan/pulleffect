@@ -18,7 +18,7 @@ from pulleffect.lib.cache import cache
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from markupsafe import Markup
 from werkzeug.contrib.fixers import ProxyFix
-from pulleffect.config.env import is_beta
+import pulleffect.config.env as env
 import urllib
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ app.register_blueprint(service, url_prefix='/service')
 # The timeclock route depends on Oracle being installed on the machine,
 # which is a total pain in the ass, so it's ignored on all
 # machines but the beta machine
-if is_beta:
+if env.is_beta:
     from pulleffect.lib.timeclock.timeclock import timeclock
     app.register_blueprint(timeclock, url_prefix='/timeclock')
 
