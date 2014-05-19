@@ -2,7 +2,7 @@
 *env/
 activate
 pulleffect/config/google_client_secrets.json
-dev.config.json
+config.json
 
 # Keepers
 !.gitkeep
