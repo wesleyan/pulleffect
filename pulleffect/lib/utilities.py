@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import session
 from flask import redirect
+from flask import current_app
 from pymongo import MongoClient
 from flask.ext.cache import Cache
 import pulleffect.config.env as env
@@ -25,7 +26,8 @@ def signin_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('CAS_USERNAME_SESSION_KEY', None):
+        if not session.get(current_app.config['CAS_USERNAME_SESSION_KEY'],
+                           None):
             return redirect('/')
         return f(*args, **kwargs)
     return decorated_function
