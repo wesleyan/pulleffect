@@ -17,7 +17,7 @@ from pulleffect.lib.service.service import service
 from pulleffect.lib.messages.messages import messages
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from pulleffect.lib.utilities import cache
-# from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import signin_required
 from werkzeug.contrib.fixers import ProxyFix
 import pulleffect.config.env as env
 
@@ -53,7 +53,7 @@ app.config.update(dict(
 
 
 @app.route('/')
-# @signin_required
+@signin_required
 def index():
     return render_template('index.html')
 
