@@ -24,9 +24,9 @@ import pulleffect.config.env as env
 app = Flask(__name__)
 
 # Init CAS integration
-app.config['CAS_SERVER'] = 'sso.wesleyan.edu'
+app.config['CAS_SERVER'] = 'sso.wesleyan.edu/serviceValidate'
 app.config['CAS_AFTER_LOGIN'] = 'index'
-CAS(app, '/serviceValidate')
+CAS(app)
 
 # Init function caching
 cache.init_app(app, config={'CACHE_TYPE': 'simple'})
