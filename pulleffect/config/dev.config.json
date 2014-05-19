@@ -1,7 +1,22 @@
 {
 	"home_url":"http://localhost:3000",
 	"google_client_secrets":"./pulleffect/config/google_client_secrets.json",
-	"wes_timeclock_username": "student_timeclock",
-	"wes_timeclock_password": "",
+    "databases": {
+        "wes_timeclock": {
+            "username": "student_timeclock",
+            "password": "",
+            "dsn": { 
+                "host": "curltest.db.wesleyan.edu",
+                "port": 2111,
+                "service_name": "CURLTEST.WESLEYAN.EDU"
+            }
+        },
+        "local_mongo": {
+            "dsn": {
+                "host": "localhost",
+                "port": 27017
+            } 
+        }
+    },
 	"gcal_discovery":"./pulleffect/config/gcal_discovery.json"
 }

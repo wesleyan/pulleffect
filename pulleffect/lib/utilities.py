@@ -1,43 +1,81 @@
 from pymongo import MongoClient
 from functools import wraps
 from flask import session
-from flask import render_template
-from pulleffect.config.env import config
-from pulleffect.config.env import is_beta
+from flask import redirect
+from flask.ext.cache import Cache
+import pulleffect.config.env as env
 import cx_Oracle
 
-# Mongo database connection
-client = MongoClient('localhost', 27017)
-mongo_connection = client.pulleffect
-
-# More oracle stuff that will break the dev machines if loaded
-if is_beta:
-    # Need to be wrapped in str because unicode does not work with Oracle
-    wes_timeclock_username = str(config['wes_timeclock_username'])
-    wes_timeclock_password = str(config['wes_timeclock_password'])
-
-    # Construct oracle dsn
-    wes_timeclock_dsn = cx_Oracle.makedsn(host='curltest.db.wesleyan.edu',
-                                          port=2111,
-                                          service_name='CURLTEST.WESLEYAN.EDU')
-
-    # Construct oracle database connection pool
-    wes_timeclock_pool = cx_Oracle.SessionPool(wes_timeclock_username,
-                                               wes_timeclock_password,
-                                               wes_timeclock_dsn, 1, 4, 1)
-
-# Single point of reference for database names
-db_names = {
-    "wes_timeclock": "wes_timeclock"
-}
+# Get db configs to initiate db connections
+db_configs = env.config['databases']
 
 
-# Middleware to ensure user is authenticated before accessing a route
-# Just stick @signin_required above any route method calls
+def build_db_connection(db_config, db_type):
+    """Shove a database configuration into this function
+       to build a connection to it.
+
+       Args:
+            db_config -- a configuration of the form:
+
+                "wes_timeclock": {
+                    "username": "student_timeclock",
+                    "password": "",
+                    "dsn": {
+                        "host": "curltest.db.wesleyan.edu",
+                        "port": 2111,
+                        "service_name": "CURLTEST.WESLEYAN.EDU"
+                    }
+                }
+
+            db_type -- a very simple way of indicating the
+                       database connection type to build
+    """
+    if db_type is "oracle":
+        # Get username and password
+        db_username = db_config['username']
+        db_password = db_config['password']
+
+        # Build DSN
+        dsn_config = db_config['dsn']
+        db_dsn = cx_Oracle.makedsn(host=dsn_config['host'],
+                                   port=dsn_config['port'],
+                                   service_name=dsn_config['service_name'])
+        # Return Oracle connection
+        return cx_Oracle.SessionPool(db_username, db_password, db_dsn, 1, 4, 1)
+    elif db_type is "mongo":
+        dsn_config = db_config['dsn']
+        client = MongoClient(dsn_config['host'], dsn_config['port'])
+        return client.pulleffect
+    else:
+        return
+
+
 def signin_required(f):
+    """Middleware to ensure user is authenticated before accessing a route.
+    Just stick @signin_required above any route method calls
+
+    Args:
+        f -- this is the function that is being wrapped by signin_required
+
+    Example usage:
+        @signin_required
+        def function_name():
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('signed_in'):
-            return render_template('signin.html')
+        if not session.get('CAS_USERNAME', None):
+            return redirect('/cas/login')
         return f(*args, **kwargs)
     return decorated_function
+
+# Oracle stuff that will 'break' dev machines if loaded
+if not env.is_dev:
+    # Build pooled Oracle database connection for Wesleyan timeclock
+    wes_timeclock_config = db_configs['wes_timeclock']
+    wes_timeclock_pool = build_db_connection(wes_timeclock_config, "oracle")
+
+# Mongo database connection
+mongo_connection = build_db_connection(db_configs['local_mongo'], 'mongo')
+
+# Used for caching function calls
+cache = Cache()

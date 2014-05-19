@@ -9,7 +9,8 @@ from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.client import AccessTokenCredentials
 from pulleffect.lib.utilities import mongo_connection
 from pulleffect.lib.utilities import signin_required
-from pulleffect.lib.cache import cache
+from pulleffect.lib.utilities import cache
+# from pulleffect.lib.cache import cache
 from pulleffect.config.env import config
 import requests
 import json
