@@ -6,6 +6,8 @@ from flask.ext.cache import Cache
 import pulleffect.config.env as env
 import cx_Oracle
 
+counter = 0
+
 # Get db configs to initiate db connections
 db_configs = env.config['databases']
 
@@ -63,7 +65,9 @@ def signin_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('CAS_USERNAME', None):
+        print session.get('CAS_USERNAME', None)
+        if not session.get('CAS_USERNAME', None) and counter < 3:
+            print "Trying to authenticate"
             return redirect('/cas/login')
         return f(*args, **kwargs)
     return decorated_function
