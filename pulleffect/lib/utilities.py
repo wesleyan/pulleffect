@@ -67,8 +67,7 @@ def signin_required(f):
     def decorated_function(*args, **kwargs):
         print session.get('CAS_USERNAME_SESSION_KEY', None)
         if not session.get('CAS_USERNAME_SESSION_KEY', None) and counter < 3:
-            print "Trying to authenticate"
-            return redirect('/cas/login')
+            return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
 
