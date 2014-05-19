@@ -28,7 +28,7 @@ def signin_required(f):
     def decorated_function(*args, **kwargs):
         if not session.get(current_app.config['CAS_USERNAME_SESSION_KEY'],
                            None):
-            return redirect('/')
+            return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
 
