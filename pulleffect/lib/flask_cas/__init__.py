@@ -24,10 +24,13 @@ class CAS(object):
 
     Optional Configs:
 
-    |Key                      | Default      |
-    |-------------------------|--------------|
-    |CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN   |
-    |CAS_USERNAME_SESSION_KEY | CAS_USERNAME |
+    |Key                      | Default        |
+    |-------------------------|----------------|
+    |CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
+    |CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
+    |CAS_LOGIN_ROUTE          | '/cas'         |
+    |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
+    |CAS_VALIDATE_ROUTE       | '/cas/validate'|
     """
 
     def __init__(self, app=None, url_prefix=None):
@@ -39,7 +42,9 @@ class CAS(object):
         # Configuration defaults
         app.config.setdefault('CAS_TOKEN_SESSION_KEY', '_CAS_TOKEN')
         app.config.setdefault('CAS_USERNAME_SESSION_KEY', 'CAS_USERNAME')
-
+        app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
+        app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
+        app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/validate')
         # Register Blueprint
         app.register_blueprint(routing.blueprint, url_prefix=url_prefix)
 

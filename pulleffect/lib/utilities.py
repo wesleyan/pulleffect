@@ -7,8 +7,6 @@ from flask.ext.cache import Cache
 import pulleffect.config.env as env
 import cx_Oracle
 
-counter = 0
-
 # Get db configs to initiate db connections
 db_configs = env.config['databases']
 

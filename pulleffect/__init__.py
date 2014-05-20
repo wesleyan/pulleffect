@@ -26,6 +26,9 @@ app = Flask(__name__)
 # Init CAS integration
 app.config['CAS_SERVER'] = 'https://sso.wesleyan.edu'
 app.config['CAS_AFTER_LOGIN'] = 'index'
+app.config['CAS_LOGIN_ROUTE'] = '/login'
+app.config['CAS_LOGOUT_ROUTE'] = '/logout'
+app.config['CAS_VALIDATE_ROUTE'] = '/validate'
 CAS(app)
 
 # Init function caching

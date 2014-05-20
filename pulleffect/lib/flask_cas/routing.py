@@ -1,7 +1,3 @@
-"""
-flask_cas.routing
-"""
-
 import flask
 from flask import current_app
 from .cas_urls import create_cas_login_url
@@ -20,13 +16,13 @@ blueprint = flask.Blueprint('cas', __name__)
 @blueprint.route('/login/')
 def login():
     """
-    This route is has two purposes. First, it is used by the user
+    This route has two purposes. First, it is used by the user
     to login. Second, it is used by the CAS to respond with the
-    `ticket` after the user logins in successfully.
+    `ticket` after the user logs in successfully.
 
-    When the user accesses this url they are redirected to the CAS
-    to login. If the login was successful the CAS will respond to this
-    route with the ticket in the url. The ticket this then validated.
+    When the user accesses this url, they are redirected to the CAS
+    to login. If the login was successful, the CAS will respond to this
+    route with the ticket in the url. The ticket is then validated.
     If validation was successful the logged in username is saved in
     the user's session under the key `CAS_USERNAME_SESSION_KEY`.
     """
@@ -35,6 +31,7 @@ def login():
 
     redirect_url = create_cas_login_url(
         current_app.config['CAS_SERVER'],
+        current_app.config['CAS_LOGIN_ROUTE'],
         flask.url_for('.login', _external=True))
 
     if 'ticket' in flask.request.args:
@@ -63,15 +60,19 @@ def logout():
 
     if cas_username_session_key in flask.session:
         del flask.session[cas_username_session_key]
-    redirect_url = create_cas_logout_url(current_app.config['CAS_SERVER'])
+
+    redirect_url = create_cas_logout_url(
+        current_app.config['CAS_SERVER'],
+        current_app.config['CAS_LOGOUT_ROUTE'])
+
     current_app.logger.debug('Redirecting to: {}'.format(redirect_url))
     return flask.redirect(redirect_url)
 
 
 def validate(ticket):
     """
-    Will attempt to validate the ticket. If validation fails False
-    is returned. If validation is successful then True is returned
+    Will attempt to validate the ticket. If validation fails, then False
+    is returned. If validation is successful, then True is returned
     and the validated username is saved in the session under the
     key `CAS_USERNAME_SESSION_KEY`.
     """
@@ -82,9 +83,9 @@ def validate(ticket):
 
     cas_validate_url = create_cas_validate_url(
         current_app.config['CAS_SERVER'],
+        current_app.config['CAS_VALIDATE_ROUTE'],
         flask.url_for('.login', _external=True),
-        ticket,
-        False)
+        ticket)
 
     current_app.logger.debug("Making GET request to {}".format(
         cas_validate_url))
