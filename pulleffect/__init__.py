@@ -24,7 +24,7 @@ import pulleffect.config.env as env
 app = Flask(__name__)
 
 # Init CAS integration
-app.config['CAS_SERVER'] = 'https://sso.wesleyan.edu/serviceValidate'
+app.config['CAS_SERVER'] = 'https://sso.wesleyan.edu'
 app.config['CAS_AFTER_LOGIN'] = 'index'
 CAS(app)
 

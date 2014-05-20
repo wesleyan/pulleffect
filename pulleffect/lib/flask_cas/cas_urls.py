@@ -112,7 +112,7 @@ def create_cas_validate_url(cas_url, service, ticket, renew=None):
     """
     return create_url(
         cas_url,
-        '/serviceValidate',
+        '/validate',
         ('service', service),
         ('ticket', ticket),
         ('renew', renew),
