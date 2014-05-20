@@ -53,6 +53,7 @@ def build_db_connection(db_config, db_type):
             db_type -- a very simple way of indicating the
                        database connection type to build
     """
+    # Oracle connections
     if db_type is "oracle":
         # Get username and password
         db_username = db_config['username']
@@ -65,6 +66,8 @@ def build_db_connection(db_config, db_type):
                                    service_name=dsn_config['service_name'])
         # Return Oracle connection
         return cx_Oracle.SessionPool(db_username, db_password, db_dsn, 1, 4, 1)
+
+    # Mongo connections
     elif db_type is "mongo":
         dsn_config = db_config['dsn']
         client = MongoClient(dsn_config['host'], dsn_config['port'])

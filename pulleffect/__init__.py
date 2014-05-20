@@ -53,7 +53,7 @@ app.config.update(dict(
 
 
 @app.route('/')
-@signin_required
+# @signin_required
 def index():
     return render_template('index.html')
 
