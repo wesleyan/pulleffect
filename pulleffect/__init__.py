@@ -8,7 +8,7 @@
 
 from flask import Flask
 from flask import render_template
-from flask_cas import CAS
+from pulleffect.lib.flask_cas import CAS
 from pulleffect.lib.google.gcal import gcal
 from pulleffect.lib.google.gplus import gplus
 # from pulleffect.lib.notes.notes import notes
@@ -17,14 +17,14 @@ from pulleffect.lib.service.service import service
 from pulleffect.lib.messages.messages import messages
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from pulleffect.lib.utilities import cache
-from pulleffect.lib.utilities import signin_required
+# from pulleffect.lib.utilities import signin_required
 from werkzeug.contrib.fixers import ProxyFix
 import pulleffect.config.env as env
 
 app = Flask(__name__)
 
 # Init CAS integration
-app.config['CAS_SERVER'] = 'sso.wesleyan.edu/serviceValidate'
+app.config['CAS_SERVER'] = 'https://sso.wesleyan.edu/serviceValidate'
 app.config['CAS_AFTER_LOGIN'] = 'index'
 CAS(app)
 
