@@ -83,7 +83,8 @@ def validate(ticket):
     cas_validate_url = create_cas_validate_url(
         current_app.config['CAS_SERVER'],
         flask.url_for('.login', _external=True),
-        ticket)
+        ticket,
+        False)
 
     current_app.logger.debug("Making GET request to {}".format(
         cas_validate_url))
