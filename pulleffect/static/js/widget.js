@@ -322,6 +322,12 @@
         document.addEventListener("dragleave", function(e) {
         });
         */
+        $('nav .btn-primary').click(function(e) {         
+            PullEffect.Widgets.create({
+                type: e.target.getAttribute('data-type')
+            });
+        });
+
         document.addEventListener("dragstart", function(e) {
             e.dataTransfer.setData('text/plain', null); //necessary for firefox
             e.target.style.opacity = .5;
