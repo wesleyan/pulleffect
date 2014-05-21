@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,9 +39,12 @@ def signin_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get(current_app.config['CAS_USERNAME_SESSION_KEY'],
-                           None):
-            return redirect('/login')
+        # Force users to log in when in production
+        if not env.is_dev:
+            username = session.get(
+                current_app.config['CAS_USERNAME_SESSION_KEY'], None)
+            if not username:
+                return redirect('/login')
         session['signed_in'] = True
         return f(*args, **kwargs)
     return decorated_function
@@ -70,14 +73,15 @@ def build_db_connection(db_config, db_type):
     # Oracle connections
     if db_type is "oracle":
         # Get username and password
-        db_username = db_config['username']
-        db_password = db_config['password']
+        db_username = str(db_config['username'])
+        db_password = str(db_config['password'])
 
         # Build DSN
         dsn_config = db_config['dsn']
-        db_dsn = cx_Oracle.makedsn(host=dsn_config['host'],
-                                   port=dsn_config['port'],
-                                   service_name=dsn_config['service_name'])
+        db_dsn = cx_Oracle.makedsn(
+            host=str(dsn_config['host']),
+            port=str(dsn_config['port']),
+            service_name=str(dsn_config['service_name']))
         # Return Oracle connection
         return cx_Oracle.SessionPool(db_username, db_password, db_dsn, 1, 4, 1)
 
