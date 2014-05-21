@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@ from pulleffect.lib.utilities import signin_required
 from pulleffect.lib.utilities import wes_timeclock_pool
 from datetime import datetime
 import cx_Oracle
-import pulleffect.lib.timeclock.timeclock_objects as tco
-import pulleffect.lib.timeclock.timeclock_depts as td
+import pulleffect.lib.timeclock.timeclock_objects as tc_obj
+import pulleffect.lib.timeclock.timeclock_depts as tc_depts
 
 timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 
@@ -71,7 +71,7 @@ def get_parsed_request(request):
     # Parse departments
     job_ids = []
     if departments is None:
-        job_ids = td.get_all_job_ids()
+        job_ids = tc_depts.get_all_job_ids()
     else:
         departments = departments.replace(" ", "")
         departments = departments.encode('ascii', 'replace')
@@ -84,7 +84,7 @@ def get_parsed_request(request):
             # Map department names to their respective job_id
             dept_errors = []
             for i in range(len(departments)):
-                job_id = td.get_job_id(departments[i], None)
+                job_id = tc_depts.get_job_id(departments[i], None)
                 if job_id is None:
                     dept_errors.append(departments[i])
                 job_ids.append(job_id)
@@ -95,7 +95,7 @@ def get_parsed_request(request):
                 err.format(str(dept_errors))
                 error_message.append({'error': err})
 
-    return tco.TimeclockRequest(username, time_in, time_out, error_message)
+    return tc_obj.TimeclockRequest(username, time_in, time_out, error_message)
 
 
 def build_timeclock_entries(cursor):
@@ -115,10 +115,10 @@ def build_timeclock_entries(cursor):
         username = row[0]
         time_in = row[1]
         time_out = row[2]
-        dept = td.get_dept(str(row[3]), "???")
+        dept = tc_depts.get_dept(str(row[3]), "???")
         note = row[4]
-        tc_entries.append(tco.TimeclockEntry(username, time_in, time_out,
-                                             dept, note))
+        tc_entries.append(
+            tc_obj.TimeclockEntry(username, time_in, time_out, dept, note))
     return tc_entries
 
 
@@ -213,10 +213,9 @@ def index():
         return make_response(jsonify(timeClockRequest.error_message), 400)
 
     # Build an oracle query from the request
-    timeclockOracleQuery = tco.TimeclockOracleQuery(timeClockRequest.username,
-                                                    timeClockRequest.time_in,
-                                                    timeClockRequest.time_out,
-                                                    timeClockRequest.job_ids)
+    timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
+        timeClockRequest.username, timeClockRequest.time_in,
+        timeClockRequest.time_out, timeClockRequest.job_ids)
 
     # Fetches timeclock entries from Oracle db
     try_get_timeclock_entries(timeclockOracleQuery)
