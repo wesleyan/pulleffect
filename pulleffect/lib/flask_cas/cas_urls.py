@@ -1,3 +1,6 @@
+# Copyright (c) 2014, Cameron Brandon White
+# All rights reserved.
+
 """
 flask_cas.cas_urls
 

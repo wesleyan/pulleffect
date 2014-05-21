@@ -1,3 +1,6 @@
+# Copyright (c) 2014, Cameron Brandon White
+# All rights reserved.
+
 import flask
 from flask import current_app
 from .cas_urls import create_cas_login_url

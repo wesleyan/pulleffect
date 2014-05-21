@@ -1,3 +1,18 @@
+# Copyright (C) 2014 Wesleyan University
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 from flask import Blueprint
 from flask import jsonify
 from flask import json
@@ -26,17 +41,13 @@ def get_notes(integer_limit):
     # Check all notes have valid id and append to return array
     sort_params = [("time", pymongo.DESCENDING)]
     for note in notes_collection.find(sort=sort_params).limit(integer_limit):
-        if (note is not None) and (note.get('_id') is not None):
+        if note is not None and note.get('_id') is not None:
             note['_id'] = str(note.get('_id'))
             ret.append(note)
-
-		return json.dumps(ret)
 
     # Return jsonified array of notes
     return json.dumps(ret)
 
-	if (note == None):
-		return make_response(jsonify({ 'error': 'No note submitted.' }), 404)
 
 def add_note(note=None):
     """Adds notes to database
@@ -80,7 +91,7 @@ def add_note(note=None):
     # Insert new notes into collection
     newId = notes_collection.insert(newNote)
 
-     # Give current timestamp
+    # Give current timestamp
     # Return note ids?
     return jsonify({'id': str(newId)})
 
