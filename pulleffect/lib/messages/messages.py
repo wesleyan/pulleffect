@@ -42,7 +42,7 @@ def index():
     # If GET request, get messages
     if request.method == 'GET':
         # Get absolute value of `limit` from query string
-        limit = abs(int(request.args.get('limit', 0)))
+        limit = abs(int(request.args.get('limit', 10)))
         return get_messages(limit)
 
     # If POST request, add message
@@ -55,7 +55,7 @@ def index():
         return make_response(jsonify({'error': 'NOT FOUND'}), 404)
 
 
-def get_messages(limit=0):
+def get_messages(limit):
     """Gets the all recent messages from database.
 
     Args:
