@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,11 +39,16 @@ def signin_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get(current_app.config['CAS_USERNAME_SESSION_KEY'],
-                           None):
-            return redirect('/login')
-        session['signed_in'] = True
-        return f(*args, **kwargs)
+        # Automatically sign in if in dev-mode
+        if env.is_dev:
+            session['signed_in'] = True
+            return f(*args, **kwargs)
+        # Otherwise force them through the CAS
+        else:
+            username = session.get(
+                current_app.config['CAS_USERNAME_SESSION_KEY'], None)
+            if not username:
+                return redirect('/login')
     return decorated_function
 
 
