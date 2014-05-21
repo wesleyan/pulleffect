@@ -27,7 +27,47 @@ import pulleffect.lib.timeclock.timeclock_depts as tc_depts
 timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 
 
-def get_parsed_request(request):
+@timeclock.route('')
+@signin_required
+def index():
+    """Tries to get timeclock entries from Oracle db
+
+    Returns:
+        Response: A list of timeclock entries of the form:
+
+            [{
+                'username': 'aburkart',
+                'dept': 'om',
+                'time_in': <timestamp>,
+                'time_out': <timestamp>
+            }]
+
+        or
+
+            {
+                'error' <some indicative error message>
+            }
+
+
+    Example route: 'http://localhost:3000/timeclock?username=aburkart'
+    """
+    # Get parsed Oracle timeclock request
+    timeClockRequest = parse_request(request)
+
+    # If timeclock request has errors, return them to the user
+    if len(timeClockRequest.error_message) > 0:
+        return make_response(jsonify(timeClockRequest.error_message), 400)
+
+    # Build an oracle query from the request
+    timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
+        timeClockRequest.username, timeClockRequest.time_in,
+        timeClockRequest.time_out, timeClockRequest.job_ids)
+
+    # Fetches timeclock entries from Oracle db
+    return jsonify(try_get_timeclock_entries(timeclockOracleQuery))
+
+
+def parse_request(request):
     """Parses request parameters from URL
 
     Args:
@@ -75,6 +115,7 @@ def get_parsed_request(request):
     else:
         departments = departments.replace(" ", "")
         departments = departments.encode('ascii', 'replace')
+
         if '?' in departments:
             error_message.append({'error': "no unicode allowed: 'depts'"})
         else:
@@ -160,7 +201,7 @@ def try_get_timeclock_entries(timeclockOracleQuery):
 
         # Serialize array of timeclock entries
         tc_entries = [entry.serialize() for entry in tc_entries]
-        return jsonify({'timeclock_entries': tc_entries})
+        return {'timeclock_entries': tc_entries}
 
     # Catch exceptions that may be thrown during connection to database
     except cx_Oracle.DatabaseError, exception:
@@ -172,50 +213,10 @@ def try_get_timeclock_entries(timeclockOracleQuery):
             wes_timeclock_pool.drop(connection)
 
         # Return error
-        return jsonify(error=str(error))
+        return {'error': str(error)}
 
     # Do this when something crazy unknown happens
     else:
         cursor.close()
         wes_timeclock_pool.release(connection)
-        return jsonify(error="not sure what dafuz happened")
-
-
-@timeclock.route('')
-@signin_required
-def index():
-    """Tries to get timeclock entries from Oracle db
-
-    Returns:
-        Response: A list of timeclock entries of the form:
-
-            [{
-                'username': 'aburkart',
-                'dept': 'om',
-                'time_in': <timestamp>,
-                'time_out': <timestamp>
-            }]
-
-        or
-
-            {
-                'error' <some indicative error message>
-            }
-
-
-    Example route: 'http://localhost:3000/timeclock?username=aburkart'
-    """
-    # Get parsed Oracle timeclock request
-    timeClockRequest = get_parsed_request(request)
-
-    # If timeclock request has errors, return them to the user
-    if len(timeClockRequest.error_message) > 0:
-        return make_response(jsonify(timeClockRequest.error_message), 400)
-
-    # Build an oracle query from the request
-    timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
-        timeClockRequest.username, timeClockRequest.time_in,
-        timeClockRequest.time_out, timeClockRequest.job_ids)
-
-    # Fetches timeclock entries from Oracle db
-    try_get_timeclock_entries(timeclockOracleQuery)
+        return {'error': 'not sure what dafuz happened'}
