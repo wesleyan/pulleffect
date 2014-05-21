@@ -33,17 +33,13 @@ notes_collection = mongo_connection.notes
 def index():
     """Route controller for notes.
 
-    Args:
-    route_url -- location of route on server
-    methods -- accepted request types
-
     Example route: 'http://localhost:3000/notes'
     """
 
     # If GET request, get notes
     if request.method == 'GET':
         # Get absolute value of the limit query value from query string
-        limit = abs(int(request.args.get('limit', 0)))
+        limit = abs(int(request.args.get('limit', 10)))
         return get_notes(limit)
 
     # If POST request, add note
@@ -55,7 +51,7 @@ def index():
     return make_response(jsonify({'error': 'NOT FOUND'}), 404)
 
 
-def get_notes(limit=0):
+def get_notes(limit):
     """Gets the most recent notes from database.
 
     Args:
