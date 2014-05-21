@@ -24,7 +24,7 @@
 from flask import Flask
 from flask import render_template
 from pulleffect.lib.flask_cas import CAS
-from printulleffect.lib.notes.notes import notes
+from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.messages.messages import messages
