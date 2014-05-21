@@ -39,16 +39,14 @@ def signin_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Automatically sign in if in dev-mode
-        if env.is_dev:
-            session['signed_in'] = True
-            return f(*args, **kwargs)
-        # Otherwise force them through the CAS
-        else:
+        # Force users to log in when in production
+        if not env.is_dev:
             username = session.get(
                 current_app.config['CAS_USERNAME_SESSION_KEY'], None)
             if not username:
                 return redirect('/login')
+        session['signed_in'] = True
+        return f(*args, **kwargs)
     return decorated_function
 
 
