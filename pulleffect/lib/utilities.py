@@ -75,8 +75,9 @@ def build_db_connection(db_config, db_type):
     # Oracle connections
     if db_type is "oracle":
         # Get username and password
-        db_username = db_config['username']
-        db_password = db_config['password']
+        # Can't be in unicode, so cast to string
+        db_username = str(db_config['username'])
+        db_password = str(db_config['password'])
 
         # Build DSN
         dsn_config = db_config['dsn']
