@@ -90,11 +90,7 @@ def create_cas_logout_url(cas_url, cas_route, url=None):
     ... )
     'http://sso.pdx.edu/cas/logout?url=http%3A%2F%2Flocalhost%3A5000'
     """
-    return create_url(
-        cas_url,
-        cas_route,
-        ('url', url),
-    )
+    return create_url(cas_url, cas_route, ('url', url),)
 
 
 def create_cas_validate_url(cas_url, cas_route, service, ticket,
@@ -122,5 +118,4 @@ def create_cas_validate_url(cas_url, cas_route, service, ticket,
         cas_route,
         ('service', service),
         ('ticket', ticket),
-        ('renew', renew),
-    )
+        ('renew', renew),)
