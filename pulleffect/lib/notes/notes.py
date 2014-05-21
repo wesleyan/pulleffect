@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,92 +29,90 @@ notes = Blueprint('notes', __name__, template_folder='templates')
 notes_collection = mongo_connection.notes
 
 
-def get_notes(integer_limit):
-    """Gets the most recent notes from database
-
-    Keyword arguments:
-    integer_limit -- the limit on notes returned
-
-    Example route: 'http://localhost:3000/notes?limit=5'
-    """
-    ret = []
-    # Check all notes have valid id and append to return array
-    sort_params = [("time", pymongo.DESCENDING)]
-    for note in notes_collection.find(sort=sort_params).limit(integer_limit):
-        if note is not None and note.get('_id') is not None:
-            note['_id'] = str(note.get('_id'))
-            ret.append(note)
-
-    # Return jsonified array of notes
-    return json.dumps(ret)
-
-
-def add_note(note=None):
-    """Adds notes to database
-
-    Keyword arguments:
-    notes -- the notes to add to the database
-
-    Example route: 'http://localhost:3000/notes'
-    """
-
-    # Check notes exist
-    if note is None:
-        return make_response(jsonify({'error': 'No notes submitted.'}), 404)
-
-    # Note fields that must be submitted in POST request
-    required_fields = ['text', 'author']
-
-    # Init some parameters
-    error_response = {}
-    newNote = {}
-    # Check all notes have all required fields
-    clean_error_message = ""
-    error_message = ""
-    for field in required_fields:
-        # If field is missing, add it to error message
-        if (note.get(field, None) is None):
-            error_message += "{0}, ".format(field)
-        else:
-            newNote[field] = note.get(field)
-        # If error message, then append to error response
-        if error_message:
-            err = "Note is missing these fields: {0}"
-            clean_error_message += err.format(error_message)[:-2]
-
-    newNote["time"] = note.get("time", datetime.now())
-    # If notes have any errors, return 404 NOT FOUND with
-    # errors keyed by note index
-    if len(error_response) > 0:
-        return make_response(jsonify({'error': error_message}), 404)
-
-    # Insert new notes into collection
-    newId = notes_collection.insert(newNote)
-
-    # Give current timestamp
-    # Return note ids?
-    return jsonify({'id': str(newId)})
-
-
 @notes.route('', methods=['GET', 'POST'])
 def index():
-    """Route controller for notes
+    """Route controller for notes.
 
-    Keyword arguments:
-    route_url -- the url where this route can be found on the server
+    Args:
+    route_url -- location of route on server
     methods -- accepted request types
+
+    Example route: 'http://localhost:3000/notes'
     """
 
     # If GET request, get notes
     if request.method == 'GET':
         # Get absolute value of the limit query value from query string
         limit = abs(int(request.args.get('limit', 0)))
-        # Get notes with limit
         return get_notes(limit)
-    # If POST request, add notes
+
+    # If POST request, add note
     elif request.method == 'POST':
-        # Get notes from request body and add them
-        note = request.get_json()
-        return add_note(note)
+        # Get note from request body and add to database
+        return post_note(request.get_json())
+
     # Otherwise throw 404 NOT FOUND
     return make_response(jsonify({'error': 'NOT FOUND'}), 404)
+
+
+def get_notes(limit=0):
+    """Gets the most recent notes from database.
+
+    Args:
+    limit -- max number of notes to retrieve (0 is infinite)
+
+    Example route: 'http://localhost:3000/notes?limit=5'
+    """
+    ret = []
+    sort_params = [("time", pymongo.DESCENDING)]
+
+    # Get all notes
+    for note in notes_collection.find(sort=sort_params, limit=limit):
+        note['_id'] = str(note.get('_id'))
+        ret.append(note)
+
+    # Return jsonified array of notes
+    return json.dumps(ret)
+
+
+def post_note(note=None):
+    """Inserts new note into database
+
+    Args:
+    note -- new note
+
+    Example route: 'http://localhost:3000/notes'
+    """
+    # Check note exists
+    if note is None:
+        return make_response(jsonify({'error': 'No note submitted.'}), 404)
+
+    # Init default note
+    new_note = {}
+
+    # Required note fields
+    required_fields = ['text', 'author']
+
+    # Check note has required fields
+    error = ""
+    for field in required_fields:
+        # If required field is missing, add to error
+        if (note.get(field, None) is None):
+            error += "{0}, ".format(field)
+        else:
+            new_note[field] = note.get(field)
+
+    # If error exists, then return error response
+    if error:
+        info = "Submitted note is missing required fields: {0}"
+        error += info.format(error)[:-2]
+        return make_response(jsonify({'error': error}), 404)
+
+    # Add current timestamp to note
+    new_note["time"] = note.get("time", datetime.now())
+
+    # Insert new note into collection
+    newId = notes_collection.insert(new_note)
+
+    # Return id of newly submitted note
+    return jsonify({'id': str(newId)})

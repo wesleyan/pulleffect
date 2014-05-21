@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,6 +51,11 @@ users = mongo_connection.users
 @gcal.route('/authenticate')
 @signin_required
 def authenticate():
+    """Route for authenticating user with Google Calendar.
+
+       Args:
+       N/A
+    """
     # Get Google auth uri
     auth_uri = get_google_auth_uri_for_user()
     return redirect(auth_uri)
@@ -59,6 +64,11 @@ def authenticate():
 @gcal.route('/oauth2callback')
 @signin_required
 def oauth2callback():
+    """Callback route for completing Google Calendar authentication.
+
+       Args:
+       N/A
+    """
     # Get code from query string
     code = request.args.get('code')
 
@@ -96,6 +106,10 @@ def oauth2callback():
 @gcal.route('/calendar_list')
 @signin_required
 def calendar_list():
+    """Route fetches list of calendars from Google Calendar.
+
+       Args:
+    """
     # Check the oauth creds and refresh if necessary
     credentials = try_get_oauth_creds()
     if credentials.get("redirect", None) is not None:
@@ -215,27 +229,38 @@ def get_gcal_service(credentials):
 
 
 def get_google_auth_uri_for_user():
+    """Gets the google authentication URI for the user.
+       Use this function in order to authenticate PullEffect's
+       access to Google.
+    """
     google_id = session.get("google_id", None)
     # Check if user already has a refresh token
     refresh_token = get_connected_user_refresh_token(google_id)
 
     if refresh_token is None:
-        flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
-                                   client_secret=CLIENT_SECRET,
-                                   scope=GOOGLE_CALENDAR_API,
-                                   redirect_uri=REDIRECT_URI,
-                                   approval_prompt=APPROVAL_PROMPT)
+        flow = OAuth2WebServerFlow(
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            scope=GOOGLE_CALENDAR_API,
+            redirect_uri=REDIRECT_URI,
+            approval_prompt=APPROVAL_PROMPT)
     else:
-        flow = OAuth2WebServerFlow(client_id=CLIENT_ID,
-                                   client_secret=CLIENT_SECRET,
-                                   scope=GOOGLE_CALENDAR_API,
-                                   redirect_uri=REDIRECT_URI)
+        flow = OAuth2WebServerFlow(
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            scope=GOOGLE_CALENDAR_API,
+            redirect_uri=REDIRECT_URI)
 
     return flow.step1_get_authorize_url()
 
 
 @cache.memoize(timeout=10)
 def get_connected_user_refresh_token(google_id):
+    """Gets the refresh token for the currently logged in user.
+
+    Args:
+    google_id -- the google id of the user
+    """
     return users.find_one({"google_id": google_id},
                           {"gcal_refresh_token": 1,
                            "_id": 0}).get("gcal_refresh_token")
