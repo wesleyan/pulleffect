@@ -40,7 +40,7 @@ app.register_blueprint(messages, url_prefix='/messages')
 app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
-# This code prevents Pulleffect from breaking down when you run it
+# Prevents Pulleffect from breaking down when you run it
 # without google client secrets
 try:
     json.load(open(env.config["google_client_secrets"]))
