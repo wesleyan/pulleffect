@@ -75,15 +75,15 @@ def build_db_connection(db_config, db_type):
     # Oracle connections
     if db_type is "oracle":
         # Get username and password
-        # Can't be in unicode, so cast to string
         db_username = str(db_config['username'])
         db_password = str(db_config['password'])
 
         # Build DSN
         dsn_config = db_config['dsn']
-        db_dsn = cx_Oracle.makedsn(host=dsn_config['host'],
-                                   port=dsn_config['port'],
-                                   service_name=dsn_config['service_name'])
+        db_dsn = cx_Oracle.makedsn(
+            host=str(dsn_config['host']),
+            port=str(dsn_config['port']),
+            service_name=str(dsn_config['service_name']))
         # Return Oracle connection
         return cx_Oracle.SessionPool(db_username, db_password, db_dsn, 1, 4, 1)
 
