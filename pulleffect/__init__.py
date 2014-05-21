@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@
 from flask import Flask
 from flask import render_template
 from pulleffect.lib.flask_cas import CAS
-# from printulleffect.lib.notes.notes import notes
+from printulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
 # from pulleffect.lib.timeclock.timeclock import timeclock
 from pulleffect.lib.messages.messages import messages
@@ -51,7 +51,7 @@ cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 
 # Init blueprints
 app.register_blueprint(messages, url_prefix='/messages')
-# app.register_blueprint(notes, url_prefix='/notes')
+app.register_blueprint(notes, url_prefix='/notes')
 app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 

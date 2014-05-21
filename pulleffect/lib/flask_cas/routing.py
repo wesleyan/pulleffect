@@ -48,7 +48,7 @@ def login():
         else:
             del flask.session[cas_token_session_key]
 
-    current_app.logger.debug('Redirecting to: {}'.format(redirect_url))
+    current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
 
     return flask.redirect(redirect_url)
 
@@ -68,7 +68,7 @@ def logout():
         current_app.config['CAS_SERVER'],
         current_app.config['CAS_LOGOUT_ROUTE'])
 
-    current_app.logger.debug('Redirecting to: {}'.format(redirect_url))
+    current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
     return flask.redirect(redirect_url)
 
 
@@ -82,7 +82,7 @@ def validate(ticket):
 
     cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
 
-    current_app.logger.debug("validating token {}".format(ticket))
+    current_app.logger.debug("validating token {0}".format(ticket))
 
     cas_validate_url = create_cas_validate_url(
         current_app.config['CAS_SERVER'],
@@ -90,7 +90,7 @@ def validate(ticket):
         flask.url_for('.login', _external=True),
         ticket)
 
-    current_app.logger.debug("Making GET request to {}".format(
+    current_app.logger.debug("Making GET request to {0}".format(
         cas_validate_url))
 
     try:

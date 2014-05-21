@@ -46,7 +46,7 @@ def create_url(base, path=None, *query):
     # Remove key/value pairs with None values.
     query = filter(lambda pair: pair[1] is not None, query)
     # Add the query string to the url
-    url = urljoin(url, '?{}'.format(urlencode(list(query))))
+    url = urljoin(url, '?{0}'.format(urlencode(list(query))))
     return url
 
 

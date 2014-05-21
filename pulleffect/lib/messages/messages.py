@@ -33,10 +33,6 @@ messages_collection = mongo_connection.messages
 def index():
     """Route controller for messages.
 
-    Args:
-    route_url -- location of route on server
-    methods -- accepted request types
-
     Example route: 'http://localhost:3000/messages'
     """
     # If GET request, get messages

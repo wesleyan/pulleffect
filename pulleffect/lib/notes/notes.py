@@ -33,10 +33,6 @@ notes_collection = mongo_connection.notes
 def index():
     """Route controller for notes.
 
-    Args:
-    route_url -- location of route on server
-    methods -- accepted request types
-
     Example route: 'http://localhost:3000/notes'
     """
 

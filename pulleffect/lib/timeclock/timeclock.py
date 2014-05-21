@@ -77,7 +77,7 @@ def parse_request(request):
         TimeclockRequest -- an object representing Oracle SQL query with
                             named parameters
     """
-    # Default query parameters
+    # Default 'now' and 'begin_of_month_seconds' query parameters
     now = datetime.now()
     now_seconds = now.strftime('%s')
     begin_of_month_seconds = datetime(now.year, now.month, 1).strftime('%s')
