@@ -35,16 +35,38 @@ job_id_to_dept_dict = dict((v, k) for k, v in dept_to_job_id_dict.iteritems())
 
 
 def get_job_id(dept, default):
+    """Gets job id corresponding to given dept.
+
+        Keyword arguments:
+            dept -- dept map with job id
+            default -- default job id to return when job id not found
+
+        Returns:
+            job id that maps to dept iff job id is in dept_to_job_id_dict
+    """
     return dept_to_job_id_dict.get(dept, default)
 
 
 def get_dept(job_id, default):
+    """Gets dept corresponding to given job id.
+
+        Keyword arguments:
+            job_id -- job id to map with dept
+            default -- default job id to return when dept not found
+
+        Returns:
+            dept that maps to job id iff dept is in job_id_to_dept_dict
+    """
     return job_id_to_dept_dict.get(job_id, default)
 
 
 def get_all_depts():
+    """Gets all departments from dept_to_job_id_dict keys.
+    """
     return dept_to_job_id_dict.keys()
 
 
 def get_all_job_ids():
+    """Gets all job ids from dept_to_job_id_dict values.
+    """
     return dept_to_job_id_dict.values()
