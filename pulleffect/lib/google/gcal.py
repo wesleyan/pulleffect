@@ -329,6 +329,6 @@ def get_connected_user_refresh_token(username):
 
     Returns: refresh token for connected user
     """
-    return users.find_one(
-        {"username": username},
-        {"google_refresh_token": 1, "_id": 0}).get("google_refresh_token")
+    user = users.find_one(
+        {"username": username}, {"google_refresh_token": 1, "_id": 0})
+    return user if not user else user.get("google_refresh_token")

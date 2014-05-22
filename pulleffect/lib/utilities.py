@@ -17,7 +17,6 @@ from functools import wraps
 from flask import session
 from flask import redirect
 from flask import current_app
-from flask import flash
 from pymongo import MongoClient
 from flask.ext.cache import Cache
 import pulleffect.config.env as env
@@ -111,7 +110,6 @@ def require_signin(f):
         session["username"] = username
         session["email"] = email
         session["signed_in"] = True
-        flash("Welcome {0}".format(username), "success")
         return f(*args, **kwargs)
     return decorated_function
 
