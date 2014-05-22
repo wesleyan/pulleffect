@@ -186,7 +186,7 @@
 <script type="text/template" id="calendar-config">
   <h4 align="center">Google Calendars</h4>
   <div class="form-horizontal" role="form">
-    {% if session.gcal_credentials and session.gcal_credentials.access_token %}
+    {% if session.google_creds and session.google_creds.access_token %}
     <select class="form-control" name="selectedGcal">
       <% gcals.forEach(function(gcal) { %>
         <option value="<%=gcal.id %>"<% if(gcal.calendar_id === _.first(gcals).calendar_id) { %> selected="selected"<% } %>>
@@ -387,7 +387,7 @@
 </style>
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <script>
-        {% if session.gcal_credentials %}
+        {% if session.google_creds %}
         $.getJSON("{{ url_for('gcal.calendar_list') }}", function(data) {
             if (data.redirect)
                 return window.location(data.redirect);
