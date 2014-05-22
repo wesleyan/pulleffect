@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,12 +34,12 @@ dept_to_job_id_dict = {
 job_id_to_dept_dict = dict((v, k) for k, v in dept_to_job_id_dict.iteritems())
 
 
-def get_job_id(dept):
-    return dept_to_job_id_dict.get(dept, None)
+def get_job_id(dept, default):
+    return dept_to_job_id_dict.get(dept, default)
 
 
-def get_dept(job_id):
-    return job_id_to_dept_dict.get(job_id, None)
+def get_dept(job_id, default):
+    return job_id_to_dept_dict.get(job_id, default)
 
 
 def get_all_depts():
