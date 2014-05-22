@@ -72,46 +72,34 @@ def require_signin(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Build email for connected user
-        email = "@{0}".format(env.config["organization_email"])
-
-        # Force users to log in when in production
-        if not env.is_dev:
-            username = session.get(
+        # Check if user is signed in
+        signed_in = session.get('signed_in', False)
+        if not signed_in:
+            username = "dummy" if env.is_dev else session.get(
                 current_app.config['CAS_USERNAME_SESSION_KEY'], None)
 
             if not username:
                 return redirect('/login')
 
-            # Build email for username
-            email = "{0}{1}".format(username, email)
+           # Build email for connected user
+            email = "{0}@{1}".format(
+                    username,
+                    env.config["organization_email"])
 
-            # Get user with username
+            # If user has never logged in before, add them to database
             user = mongo_connection.users.find_one({"username": username})
-
-            # If user doesn't exist in database, insert new user
             if not user:
-                mongo_connection.users.insert({
-                    "username": username,
-                    "email": email
-                })
-        # Log in dummy user when in development
-        else:
-            username = "dummy"
-            email = "{0}{1}".format(username, email)
-
-            # # If user doesn't exist in database, insert new user
-            user = mongo_connection.users.find({"username": username})
-            if not user:
+                # Add user to database
                 mongo_connection.users.insert({
                     "username": username,
                     "email": email
                 })
 
-        session["username"] = username
-        session["email"] = email
-        session["signed_in"] = True
-        flash("Welcome {0}".format(username), "success")
+            # Sign in the connected user
+            session['username'] = username
+            session['email'] = email
+            session['signed_in'] = True
+            flash("Welcome {0}".format(username), "success")
         return f(*args, **kwargs)
     return decorated_function
 
