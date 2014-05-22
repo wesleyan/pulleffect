@@ -51,11 +51,13 @@ class TimeclockRequest:
             job_ids -- job ids that represent departments
             error_message -- explains why the timeclock request is invalid
     """
-    def __init__(self, username, time_in, time_out, job_ids, error_message):
+    def __init__(self, username, time_in, time_out,
+                 job_ids, limit, error_message):
         self.username = username
         self.time_in = time_in
         self.time_out = time_out
         self.job_ids = job_ids
+        self.limit = limit
         self.error_message = error_message
 
 
