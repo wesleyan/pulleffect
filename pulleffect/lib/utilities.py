@@ -17,6 +17,7 @@ from functools import wraps
 from flask import session
 from flask import redirect
 from flask import current_app
+from flask import flash
 from pymongo import MongoClient
 from flask.ext.cache import Cache
 import pulleffect.config.env as env
@@ -63,14 +64,46 @@ def require_signin(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        # Build email for connected user
+        email = "@{0}".format(env.config["organization_email"])
+
         # Force users to log in when in production
         if not env.is_dev:
             username = session.get(
                 current_app.config['CAS_USERNAME_SESSION_KEY'], None)
-            logging.info("This is the {0}".format(username))
+
             if not username:
                 return redirect('/login')
-        session['signed_in'] = True
+
+            # Build email for username
+            email = "{0}{1}".format(username, email)
+
+            # Get user with username
+            user = mongo_connection.users.find_one({"username": username})
+
+            # If user doesn't exist in database, insert new user
+            if not user:
+                mongo_connection.users.insert({
+                    "username": username,
+                    "email": email
+                })
+        # Log in dummy user when in development
+        else:
+            username = "dummy"
+            email = "{0}{1}".format(username, email)
+
+            # # If user doesn't exist in database, insert new user
+            user = mongo_connection.users.find({"username": username})
+            if not user:
+                mongo_connection.users.insert({
+                    "username": username,
+                    "email": email
+                })
+
+        session["username"] = username
+        session["email"] = email
+        session["signed_in"] = True
+        flash("Welcome {0}".format(username), "success")
         return f(*args, **kwargs)
     return decorated_function
 

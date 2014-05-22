@@ -55,30 +55,13 @@ users = mongo_connection.users
 def authenticate():
     """Route authenticates user with Google Calendar.
     """
-    # Get google id for connected user
-    google_id = session.get("google_id", None)
+    # Get username of connected user
+    username = session.get("username", None)
+    assert username is not None
 
-    # Get Google auth uri
-    auth_uri = get_google_auth_uri_for_user(google_id)
+    # Get auth URI from username
+    auth_uri = get_google_auth_uri_for_user(username)
     return redirect(auth_uri)
-
-
-def exchange_code_for_credentials(code):
-    # Build OAuth2 web server flow from authorization code
-    flow = OAuth2WebServerFlow(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        GOOGLE_CALENDAR_API)
-    flow.redirect_uri = request.base_url
-
-    # Get credentials from authorization code
-    try:
-        credentials = flow.step2_exchange(code)
-        return credentials
-    except Exception as e:
-        error_message = "Unable to get a Google access token because {0}"
-        logging.warning(error_message.format(e.message))
-        return None
 
 
 @gcal.route('/oauth2callback')
@@ -95,11 +78,11 @@ def oauth2callback():
         assert credentials is not None
 
         # Get Google id for connected user
-        google_id = session.get("google_id", None)
-        assert google_id is not None
+        username = session.get("username", None)
+        assert username is not None
 
         # Get Google refresh token for connected user
-        refresh_token = get_connected_user_refresh_token(google_id)
+        refresh_token = get_connected_user_refresh_token(username)
 
         # If refresh token is invalid, refresh it
         if refresh_token is None:
@@ -107,15 +90,15 @@ def oauth2callback():
 
         # Update connected user's refresh token
         users.update(
-            {"google_id": google_id},
+            {"username": username},
             {"$set": {
-                "gcal_refresh_token": refresh_token,
-                "gcal_user_agent": credentials.user_agent
+                "google_refresh_token": refresh_token,
+                "google_user_agent": credentials.user_agent
             }},
             upsert=False)
 
         # Update Google credentials in session for connected user
-        session["gcal_credentials"] = {
+        session["google_creds"] = {
             "access_token": credentials.access_token,
             "user_agent": credentials.user_agent
         }
@@ -162,16 +145,34 @@ def calendar_events():
     return jsonify(get_calendar_events(cal_id, now))
 
 
-def get_google_auth_uri_for_user(google_id):
+def exchange_code_for_credentials(code):
+    # Build OAuth2 web server flow from authorization code
+    flow = OAuth2WebServerFlow(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        GOOGLE_CALENDAR_API)
+    flow.redirect_uri = request.base_url
+
+    # Get credentials from authorization code
+    try:
+        credentials = flow.step2_exchange(code)
+        return credentials
+    except Exception as e:
+        error_message = "Unable to get a Google access token because {0}"
+        logging.warning(error_message.format(e.message))
+        return None
+
+
+def get_google_auth_uri_for_user(username):
     """Gets Google authentication uri for connected user.
 
         Keyword arguments:
-            google_id -- Google id for connected user
+            username -- Google id for connected user
 
         Returns: Google authentication URI
     """
     # Check if user already has a refresh token
-    refresh_token = get_connected_user_refresh_token(google_id)
+    refresh_token = get_connected_user_refresh_token(username)
 
     if refresh_token is None:
         flow = OAuth2WebServerFlow(
@@ -217,7 +218,7 @@ def try_get_oauth_creds():
     """Tries to get the google OAuth creds for connected user.
     """
     # Get google credentials from session
-    credentials = session.get('gcal_credentials', None)
+    credentials = session.get('google_creds', None)
 
     # If google credentials don't exist, get them
     if credentials is None:
@@ -287,17 +288,17 @@ def get_gcal_access_token(credentials):
     if token:
         valid_token = is_valid_gcal_access_token(token)
 
-    # If access token is invalid or doesn't exist, refresh it and return it
+    # If access token is invalid or donesn't exist, refresh it and return it
     if not token or not valid_token:
-        google_id = session.get("google_id", None)
-        refresh_token = get_connected_user_refresh_token(google_id)
+        username = session.get("username", None)
+        refresh_token = get_connected_user_refresh_token(username)
         token = refresh_gcal_access_token(refresh_token)
 
     return token
 
 
 def get_gcal_service(credentials):
-    """Gets Google Calenndar service with credentials.
+    """Gets Google Calendar service with credentials.
 
         Keyword arguments:
         credentials -- Google credentials
@@ -305,8 +306,8 @@ def get_gcal_service(credentials):
         Returns: Google Calendar service
     """
 
-    # Update gcal_credentials in session
-    session["gcal_credentials"] = credentials
+    # Update google_creds in session
+    session["google_creds"] = credentials
 
     # Build access token credentials
     credentials = AccessTokenCredentials(credentials.get("access_token", None),
@@ -320,14 +321,14 @@ def get_gcal_service(credentials):
 
 
 @cache.memoize(timeout=10)
-def get_connected_user_refresh_token(google_id):
+def get_connected_user_refresh_token(username):
     """Gets the refresh token for the connectedly logged in user.
 
     Keyword arguments:
-    google_id -- the google id of the user
+    username -- the google id of the user
 
     Returns: refresh token for connected user
     """
     return users.find_one(
-        {"google_id": google_id},
-        {"gcal_refresh_token": 1, "_id": 0}).get("gcal_refresh_token")
+        {"username": username},
+        {"google_refresh_token": 1, "_id": 0}).get("google_refresh_token")
