@@ -1,5 +1,7 @@
 {
     "is_dev":"False",
+    "organization":"Wesleyan University",
+    "organization_email":"wesleyan.edu",
     "cas_server":"",
     "cas_route_after_login":"",
     "cas_server_login_route":"",
