@@ -19,6 +19,7 @@ from flask import request
 from flask import make_response
 from pulleffect.lib.utilities import require_signin
 from pulleffect.lib.utilities import wes_timeclock_pool
+from pulleffect.lib.utilities import represents_int
 from datetime import datetime
 import cx_Oracle
 import pulleffect.lib.timeclock.timeclock_objects as tc_obj
@@ -87,8 +88,15 @@ def parse_request(request):
     time_in = request.args.get('time_in', None)
     time_out = request.args.get('time_out', None)
     departments = request.args.get('depts', None)
+    limit = request.args.get('limit', 50)
 
     error_message = []
+
+    # Parse limit
+    if not represents_int(limit):
+        error_message.append({'error': "invalid parameter: 'limit'"})
+    else:
+        limit = abs(int(limit))
 
     # Parse username
     if username is not None and not isinstance(username, str):
@@ -137,7 +145,7 @@ def parse_request(request):
                 error_message.append({'error': err})
 
     return tc_obj.TimeclockRequest(
-        username, time_in, time_out, job_ids, error_message)
+        username, time_in, time_out, job_ids, limit, error_message)
 
 
 def build_timeclock_entries(cursor):
@@ -216,7 +224,8 @@ def try_get_timeclock_entries(timeclockOracleQuery):
         # Return error
         return {'error': str(error)}
 
-    # Do this when something crazy unknown happens
+    # TODO(arthurb): My return statement is wrong here. Please read about
+    # try-except-else statements.
     else:
         cursor.close()
         wes_timeclock_pool.release(connection)

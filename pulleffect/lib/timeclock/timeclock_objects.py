@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-# Timeclock entry model
 class TimeclockEntry:
     """Represents a timeclock entry from Oracle database.
 
@@ -42,7 +41,6 @@ class TimeclockEntry:
         }
 
 
-# Timeclock request object
 class TimeclockRequest:
     """Represents the timeclock request for the database to process.
 
@@ -61,7 +59,6 @@ class TimeclockRequest:
         self.error_message = error_message
 
 
-# Timeclock oracle query
 class TimeclockOracleQuery:
     """Represents an Oracle SQL query constructed for timeclock entries.
 
@@ -71,7 +68,7 @@ class TimeclockOracleQuery:
             time_out -- query finds timeclock entries occurring before time_out
             job_ids -- query finds timeclock_entries with given job_ids
     """
-    def __init__(self, username, time_in, time_out, job_ids):
+    def __init__(self, username, time_in, time_out, job_ids, limit):
         # The stuff that probably won't ever change
         select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
                          "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
@@ -106,6 +103,10 @@ class TimeclockOracleQuery:
         if username is not None:
             where_clause += " AND USERNAME=:username"
             named_params['username'] = username
+
+        # Append the limit
+        where_clause += " AND ROWNUM <=:limit"
+        named_params['limit'] = limit
 
         # Completed query
         query = "{0}{1}".format(select_clause, where_clause)
