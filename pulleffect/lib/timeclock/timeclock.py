@@ -53,16 +53,17 @@ def index():
     Example route: 'http://localhost:3000/timeclock?username=aburkart'
     """
     # Get parsed Oracle timeclock request
-    timeClockRequest = parse_request(request)
+    timeclockRequest = parse_request(request)
 
     # If timeclock request has errors, return them to the user
-    if len(timeClockRequest.error_message) > 0:
-        return make_response(jsonify(timeClockRequest.error_message), 400)
+    if len(timeclockRequest.error_message) > 0:
+        return make_response(jsonify(timeclockRequest.error_message), 400)
 
     # Build an oracle query from the request
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
-        timeClockRequest.username, timeClockRequest.time_in,
-        timeClockRequest.time_out, timeClockRequest.job_ids)
+        timeclockRequest.username, timeclockRequest.time_in,
+        timeclockRequest.time_out, timeclockRequest.job_ids,
+        timeclockRequest.limit)
 
     # Fetches timeclock entries from Oracle db
     return jsonify(try_get_timeclock_entries(timeclockOracleQuery))
