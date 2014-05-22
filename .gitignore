@@ -3,6 +3,7 @@
 activate
 pulleffect/config/google_client_secrets.json
 config.json
+pulleffect.log
 
 # Keepers
 !.gitkeep

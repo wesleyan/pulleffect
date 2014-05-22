@@ -54,7 +54,7 @@ def index():
 def get_notes(limit):
     """Gets the most recent notes from database.
 
-    Args:
+    Keyword arguments:
     limit -- max number of notes to retrieve (0 is infinite)
 
     Example route: 'http://localhost:3000/notes?limit=5'
@@ -74,7 +74,7 @@ def get_notes(limit):
 def post_note(note=None):
     """Inserts new note into database
 
-    Args:
+    Keyword arguments:
     note -- new note
 
     Example route: 'http://localhost:3000/notes'

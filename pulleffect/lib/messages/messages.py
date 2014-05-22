@@ -54,7 +54,7 @@ def index():
 def get_messages(limit):
     """Gets the all recent messages from database.
 
-    Args:
+    Keyword arguments:
     limit -- max number of messages to retrieve (0 is infinite)
 
     Example route: 'http://localhost:3000/messages
@@ -74,7 +74,7 @@ def get_messages(limit):
 def post_message(message):
     """Inserts new message in database.
 
-    Args:
+    Keyword arguments:
     message -- new message
 
     Example route: 'http://localhost:3000/messages

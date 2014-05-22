@@ -70,7 +70,7 @@ def index():
 def parse_request(request):
     """Parses request parameters from URL
 
-    Args:
+    Keyword arguments:
         request -- HTTP request containing parameters
 
     Returns:
@@ -142,7 +142,7 @@ def parse_request(request):
 def build_timeclock_entries(cursor):
     """Build TimeclockEntry from cursor
 
-    Args:
+    Keyword arguments:
         cursor -- tuple representation of Oracle SQL query results
 
     Returns:
@@ -166,7 +166,7 @@ def build_timeclock_entries(cursor):
 def try_get_timeclock_entries(timeclockOracleQuery):
     """Tries to get timeclock entries from Oracle db
 
-    Args:
+    Keyword arguments:
     timeclockOracleQuery -- object representing Oracle SQL and
                             its named parameters
 

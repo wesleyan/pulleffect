@@ -18,7 +18,8 @@
 """
 import json
 
-is_dev = False
-
 # Read configurations
 config = json.load((open('pulleffect/config/config.json')))
+
+# Set environment
+is_dev = config["is_dev"] == "True"

@@ -21,20 +21,23 @@
     An information consolidation machine or something.
 """
 
+import json
+import logging
 from flask import Flask
 from flask import render_template
+import pulleffect.config.env as env
 from pulleffect.lib.flask_cas import CAS
+from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
-# from pulleffect.lib.timeclock.timeclock import timeclock
-from pulleffect.lib.messages.messages import messages
-from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from pulleffect.lib.utilities import cache
 from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import configure_logging
+from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from werkzeug.contrib.fixers import ProxyFix
-import pulleffect.config.env as env
-import json
 
+
+# from pulleffect.lib.timeclock.timeclock import timeclock
 
 app = Flask(__name__)
 
@@ -49,32 +52,32 @@ CAS(app)
 # Init function caching
 cache.init_app(app, config={'CACHE_TYPE': 'simple'})
 
+# Configure logging
+configure_logging()
+
 # Init blueprints
 app.register_blueprint(messages, url_prefix='/messages')
 app.register_blueprint(notes, url_prefix='/notes')
 app.register_blueprint(service, url_prefix='/service')
 # app.register_blueprint(timeclock, url_prefix='/timeclock')
 
-# Prevents Pulleffect from breaking down when you run it
-# without google client secrets
+# Stops Pulleffect from breaking when run without google client secrets
 try:
     json.load(open(env.config["google_client_secrets"]))
     from pulleffect.lib.google.gcal import gcal
     app.register_blueprint(gcal, url_prefix='/gcal')
-# TODO(arthurb): This is dumb, logging should be better than this
 except IOError as e:
-    print ("ERROR:\nYou need to include a google_client_secrets.json "
-           "file in your pulleffect/config/ directory.")
+    logging.warning("You need to include a google_client_secrets.json file in"
+                    "the  pulleffect/config/ directory")
 
 # This is necessary until we get a vagrant box up and running
 if not env.is_dev:
     from pulleffect.lib.timeclock.timeclock import timeclock
     app.register_blueprint(timeclock, url_prefix='/timeclock')
 
-
-# Load default config and override config from an environment variable
+# TODO(arthurb): The secret key needs to be changed
 app.config.update(dict(
-    DEBUG=True,
+    DEBUG=env.is_dev,
     SECRET_KEY='development key'
 ))
 
