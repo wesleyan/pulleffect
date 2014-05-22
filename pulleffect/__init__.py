@@ -31,7 +31,7 @@ from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
 from pulleffect.lib.utilities import cache
-from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import require_signin
 from pulleffect.lib.utilities import configure_logging
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from werkzeug.contrib.fixers import ProxyFix
@@ -83,7 +83,7 @@ app.config.update(dict(
 
 
 @app.route('/')
-@signin_required
+@require_signin
 def index():
     return render_template('index.html')
 

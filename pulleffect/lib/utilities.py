@@ -28,27 +28,37 @@ db_configs = env.config['databases']
 
 
 def configure_logging():
-    # Configure logging
+    """Configures logging for application.
+
+        Usage:
+            For every file where you want to use logging, just
+            `import logging` and use it like `logging.info('hello')`
+    """
+    # Set up logging to a file
     logging.basicConfig(
         filename='pulleffect.log', level=logging.DEBUG,
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         filemode='w')
+
+    # Set up logging to the console
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
     formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     console.setFormatter(formatter)
+
+    # Attach the console logger to the default logger
     logging.getLogger('').addHandler(console)
 
 
-def signin_required(f):
-    """Middleware to ensure user is authenticated before accessing a route.
-    Just stick @signin_required above any route method calls
+def require_signin(f):
+    """Middleware forces users to sign in whenever they make a request
+        to a private route controller.
 
     Args:
-        f -- this is the function that is being wrapped by signin_required
+        f -- this is the function that is being wrapped by require_signin
 
     Example usage:
-        @signin_required
+        @require_signin
         def function_name():
     """
     @wraps(f)
@@ -57,6 +67,7 @@ def signin_required(f):
         if not env.is_dev:
             username = session.get(
                 current_app.config['CAS_USERNAME_SESSION_KEY'], None)
+            logging.info("This is the {0}".format(username))
             if not username:
                 return redirect('/login')
         session['signed_in'] = True

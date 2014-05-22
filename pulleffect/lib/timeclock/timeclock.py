@@ -17,7 +17,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from flask import make_response
-from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import require_signin
 from pulleffect.lib.utilities import wes_timeclock_pool
 from datetime import datetime
 import cx_Oracle
@@ -28,7 +28,7 @@ timeclock = Blueprint('timeclock', __name__, template_folder='templates')
 
 
 @timeclock.route('')
-@signin_required
+@require_signin
 def index():
     """Tries to get timeclock entries from Oracle db
 

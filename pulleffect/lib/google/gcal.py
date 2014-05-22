@@ -28,7 +28,7 @@ from oauth2client.client import OAuth2WebServerFlow
 from pulleffect.config.env import config
 from pulleffect.lib.utilities import cache
 from pulleffect.lib.utilities import mongo_connection
-from pulleffect.lib.utilities import signin_required
+from pulleffect.lib.utilities import require_signin
 import requests
 import logging
 
@@ -51,7 +51,7 @@ users = mongo_connection.users
 
 
 @gcal.route('/authenticate')
-@signin_required
+@require_signin
 def authenticate():
     """Route authenticates user with Google Calendar.
     """
@@ -63,8 +63,26 @@ def authenticate():
     return redirect(auth_uri)
 
 
+def exchange_code_for_credentials(code):
+    # Build OAuth2 web server flow from authorization code
+    flow = OAuth2WebServerFlow(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        GOOGLE_CALENDAR_API)
+    flow.redirect_uri = request.base_url
+
+    # Get credentials from authorization code
+    try:
+        credentials = flow.step2_exchange(code)
+        return credentials
+    except Exception as e:
+        error_message = "Unable to get a Google access token because {0}"
+        logging.warning(error_message.format(e.message))
+        return None
+
+
 @gcal.route('/oauth2callback')
-@signin_required
+@require_signin
 def oauth2callback():
     """Route controller completes Google Calendar authentication.
     """
@@ -72,22 +90,13 @@ def oauth2callback():
     code = request.args.get('code', None)
 
     if code:
-        # Build OAuth2 web server flow from authorization code
-        flow = OAuth2WebServerFlow(
-            CLIENT_ID,
-            CLIENT_SECRET,
-            GOOGLE_CALENDAR_API)
-        flow.redirect_uri = request.base_url
-
-        # Get credentials from authorization code
-        try:
-            credentials = flow.step2_exchange(code)
-        except Exception as e:
-            error_message = "Unable to get a Google access token because {0}"
-            logging.warning(error_message.format(e.message))
+        # Exchange authorization code for credentials from Google
+        credentials = exchange_code_for_credentials(code)
+        assert credentials is not None
 
         # Get Google id for connected user
         google_id = session.get("google_id", None)
+        assert google_id is not None
 
         # Get Google refresh token for connected user
         refresh_token = get_connected_user_refresh_token(google_id)
@@ -116,7 +125,7 @@ def oauth2callback():
 
 
 @gcal.route('/calendar_list')
-@signin_required
+@require_signin
 def calendar_list():
     """Route controller fetches array of calendars from Google Calendar.
     """
@@ -131,6 +140,7 @@ def calendar_list():
     # Get google calendar list
     calendar_list = service.calendarList().list().execute()["items"]
 
+    # TODO(arthurb): Change into a cool one-liner; maybe use lambda calc
     # Extract relevant info from google calendar list
     calendars = []
     for item in calendar_list:
@@ -140,7 +150,7 @@ def calendar_list():
 
 
 @gcal.route('/calendar_events')
-@signin_required
+@require_signin
 def calendar_events():
     """Route controller fetches events for a calendar in Google Calendar.
     """
@@ -156,7 +166,7 @@ def get_google_auth_uri_for_user(google_id):
     """Gets Google authentication uri for connected user.
 
         Keyword arguments:
-        N/A
+            google_id -- Google id for connected user
 
         Returns: Google authentication URI
     """
@@ -183,6 +193,10 @@ def get_google_auth_uri_for_user(google_id):
 def get_calendar_events(cal_id, now):
     """Fetches events for a google calendar
 
+        Keyword arguments:
+            cal_id -- id of calendar to fetches
+            now -- TODO(arthurb): What does this do?
+
         Returns: array of event objects from a google calendar with cal id
     """
     # Check the oauth creds and refresh if necessary
@@ -200,9 +214,7 @@ def get_calendar_events(cal_id, now):
 
 
 def try_get_oauth_creds():
-    """Tries to get the google OAuth creds for a user.
-
-        Returns: OAuth credentials for connected user
+    """Tries to get the google OAuth creds for connected user.
     """
     # Get google credentials from session
     credentials = session.get('gcal_credentials', None)
@@ -227,7 +239,7 @@ def is_valid_gcal_access_token(token):
         Keyword arguments:
         token -- Google access token
 
-        Returns: True iff token is valid
+        Returns: True iff token is valid, otherwise False
     """
     # Build URL for token info API
     token_info = requests.get(
@@ -275,7 +287,7 @@ def get_gcal_access_token(credentials):
     if token:
         valid_token = is_valid_gcal_access_token(token)
 
-    # If acess token is invalid or doesn't exist, refresh it and return it
+    # If access token is invalid or doesn't exist, refresh it and return it
     if not token or not valid_token:
         google_id = session.get("google_id", None)
         refresh_token = get_connected_user_refresh_token(google_id)
@@ -300,8 +312,7 @@ def get_gcal_service(credentials):
     credentials = AccessTokenCredentials(credentials.get("access_token", None),
                                          credentials.get('user_agent', None))
 
-    # I think this builds a URL that can be used for
-    # retrieving the google calendar shit
+    # Probably builds a URL used to retrieve Google Calendar shit
     http = httplib2.Http()
     http = credentials.authorize(http)
 
