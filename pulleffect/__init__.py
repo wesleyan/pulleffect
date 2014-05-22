@@ -42,11 +42,11 @@ from werkzeug.contrib.fixers import ProxyFix
 app = Flask(__name__)
 
 # Init CAS integration
-app.config['CAS_SERVER'] = 'https://sso.wesleyan.edu'
-app.config['CAS_AFTER_LOGIN'] = 'index'
-app.config['CAS_LOGIN_ROUTE'] = '/login'
-app.config['CAS_LOGOUT_ROUTE'] = '/logout'
-app.config['CAS_VALIDATE_ROUTE'] = '/validate'
+app.config['CAS_SERVER'] = env.config["cas_server"]
+app.config['CAS_AFTER_LOGIN'] = env.config["cas_route_after_login"]
+app.config['CAS_LOGIN_ROUTE'] = env.config["cas_server_login_route"]
+app.config['CAS_LOGOUT_ROUTE'] = env.config["cas_server_logout_route"]
+app.config['CAS_VALIDATE_ROUTE'] = env.config["cas_server_validate_route"]
 CAS(app)
 
 # Init function caching

@@ -1,5 +1,10 @@
 {
     "is_dev":"False",
+    "cas_server":"",
+    "cas_route_after_login":"",
+    "cas_server_login_route":"",
+    "cas_server_logout_route":"",
+    "cas_server_validate_route":"",
 	"home_url":"http://localhost:3000",
 	"google_client_secrets":"./pulleffect/config/google_client_secrets.json",
     "databases": {
