@@ -136,7 +136,8 @@ def parse_request(request):
                 err.format(str(dept_errors))
                 error_message.append({'error': err})
 
-    return tc_obj.TimeclockRequest(username, time_in, time_out, error_message)
+    return tc_obj.TimeclockRequest(
+        username, time_in, time_out, job_ids, error_message)
 
 
 def build_timeclock_entries(cursor):
