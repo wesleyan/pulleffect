@@ -21,9 +21,23 @@ from pymongo import MongoClient
 from flask.ext.cache import Cache
 import pulleffect.config.env as env
 import cx_Oracle
+import logging
 
 # Get db configs to initiate db connections
 db_configs = env.config['databases']
+
+
+def configure_logging():
+    # Configure logging
+    logging.basicConfig(
+        filename='pulleffect.log', level=logging.DEBUG,
+        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        filemode='w')
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
 
 
 def signin_required(f):
@@ -82,6 +96,7 @@ def build_db_connection(db_config, db_type):
             host=str(dsn_config['host']),
             port=str(dsn_config['port']),
             service_name=str(dsn_config['service_name']))
+
         # Return Oracle connection
         return cx_Oracle.SessionPool(db_username, db_password, db_dsn, 1, 4, 1)
 

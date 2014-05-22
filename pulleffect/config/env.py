@@ -18,7 +18,7 @@
 """
 import json
 
-is_dev = False
+is_dev = True
 
 # Read configurations
 config = json.load((open('pulleffect/config/config.json')))
