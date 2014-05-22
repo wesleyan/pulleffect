@@ -36,9 +36,6 @@ from pulleffect.lib.utilities import configure_logging
 from pulleffect.middleware.reverse_proxy_fix import ReverseProxied
 from werkzeug.contrib.fixers import ProxyFix
 
-
-# from pulleffect.lib.timeclock.timeclock import timeclock
-
 app = Flask(__name__)
 
 # Init CAS integration
@@ -70,7 +67,7 @@ except IOError as e:
     logging.warning("You need to include a google_client_secrets.json file in"
                     "the  pulleffect/config/ directory")
 
-# This is necessary until we get a vagrant box up and running
+# This is necessary when you're not working on a vagrant box
 if not env.is_dev:
     from pulleffect.lib.timeclock.timeclock import timeclock
     app.register_blueprint(timeclock, url_prefix='/timeclock')

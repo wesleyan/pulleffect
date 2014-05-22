@@ -1,11 +1,11 @@
 # Copyright (C) 2014 Wesleyan University
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,8 +13,16 @@
 # limitations under the License.
 
 
-# Timeclock entry model
 class TimeclockEntry:
+    """Represents a timeclock entry from Oracle database.
+
+        Attributes:
+            username -- username of person who clocked in
+            time_in -- time the person who clocked in
+            time_out -- time the person who clocked out (can be None)
+            dept -- department for which the person clocked in
+            note -- note the person left for the given timeclock entry
+    """
     def __init__(self, username, time_in, time_out, dept, note):
         self.username = username
         self.time_in = time_in
@@ -33,18 +41,38 @@ class TimeclockEntry:
         }
 
 
-# Timeclock request object
 class TimeclockRequest:
-    def __init__(self, username, time_in, time_out, error_message):
+    """Represents the timeclock request for the database to process.
+
+        Attributes:
+            username -- username of person who clocked in
+            time_in -- time the person who clocked in
+            time_out -- time the person who clocked out (can be None)
+            job_ids -- job ids that represent departments
+            limit -- max number of timeclock entries to return
+            error_message -- explains why the timeclock request is invalid
+    """
+    def __init__(self, username, time_in, time_out,
+                 job_ids, limit, error_message):
         self.username = username
         self.time_in = time_in
         self.time_out = time_out
+        self.job_ids = job_ids
+        self.limit = limit
         self.error_message = error_message
 
 
-# Timeclock oracle query
 class TimeclockOracleQuery:
-    def __init__(self, username, time_in, time_out, job_ids):
+    """Represents an Oracle SQL query constructed for timeclock entries.
+
+        Attributes:
+            username -- query finds timeclock entries belonging to username
+            time_in -- query finds timeclock entries occurring after time_in
+            time_out -- query finds timeclock entries occurring before time_out
+            job_ids -- query finds timeclock_entries with given job_ids
+            limit -- query finds a maximum of 'limit' timeclock entries
+    """
+    def __init__(self, username, time_in, time_out, job_ids, limit):
         # The stuff that probably won't ever change
         select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
                          "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
@@ -79,6 +107,10 @@ class TimeclockOracleQuery:
         if username is not None:
             where_clause += " AND USERNAME=:username"
             named_params['username'] = username
+
+        # Append the limit
+        where_clause += " AND ROWNUM <=:limit"
+        named_params['limit'] = limit
 
         # Completed query
         query = "{0}{1}".format(select_clause, where_clause)

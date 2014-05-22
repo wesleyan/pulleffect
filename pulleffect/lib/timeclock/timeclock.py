@@ -19,6 +19,7 @@ from flask import request
 from flask import make_response
 from pulleffect.lib.utilities import require_signin
 from pulleffect.lib.utilities import wes_timeclock_pool
+from pulleffect.lib.utilities import represents_int
 from datetime import datetime
 import cx_Oracle
 import pulleffect.lib.timeclock.timeclock_objects as tc_obj
@@ -52,16 +53,17 @@ def index():
     Example route: 'http://localhost:3000/timeclock?username=aburkart'
     """
     # Get parsed Oracle timeclock request
-    timeClockRequest = parse_request(request)
+    timeclockRequest = parse_request(request)
 
     # If timeclock request has errors, return them to the user
-    if len(timeClockRequest.error_message) > 0:
-        return make_response(jsonify(timeClockRequest.error_message), 400)
+    if len(timeclockRequest.error_message) > 0:
+        return make_response(jsonify(timeclockRequest.error_message), 400)
 
     # Build an oracle query from the request
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
-        timeClockRequest.username, timeClockRequest.time_in,
-        timeClockRequest.time_out, timeClockRequest.job_ids)
+        timeclockRequest.username, timeclockRequest.time_in,
+        timeclockRequest.time_out, timeclockRequest.job_ids,
+        timeclockRequest.limit)
 
     # Fetches timeclock entries from Oracle db
     return jsonify(try_get_timeclock_entries(timeclockOracleQuery))
@@ -87,8 +89,15 @@ def parse_request(request):
     time_in = request.args.get('time_in', None)
     time_out = request.args.get('time_out', None)
     departments = request.args.get('depts', None)
+    limit = request.args.get('limit', 50)
 
     error_message = []
+
+    # Parse limit
+    if not represents_int(limit):
+        error_message.append({'error': "invalid parameter: 'limit'"})
+    else:
+        limit = abs(int(limit))
 
     # Parse username
     if username is not None and not isinstance(username, str):
@@ -136,7 +145,8 @@ def parse_request(request):
                 err.format(str(dept_errors))
                 error_message.append({'error': err})
 
-    return tc_obj.TimeclockRequest(username, time_in, time_out, error_message)
+    return tc_obj.TimeclockRequest(
+        username, time_in, time_out, job_ids, limit, error_message)
 
 
 def build_timeclock_entries(cursor):
@@ -215,7 +225,8 @@ def try_get_timeclock_entries(timeclockOracleQuery):
         # Return error
         return {'error': str(error)}
 
-    # Do this when something crazy unknown happens
+    # TODO(arthurb): My return statement is wrong here. Please read about
+    # try-except-else statements.
     else:
         cursor.close()
         wes_timeclock_pool.release(connection)
