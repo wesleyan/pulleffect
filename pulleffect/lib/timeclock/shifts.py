@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import logging
 import pulleffect.config.env as env
 import pulleffect.lib.google.gcal_helper as gc_helper
 import moment
@@ -38,7 +39,8 @@ def authenticate():
     assert username
 
     # Get auth URI for system user
-    auth_uri = gc_helper.get_google_auth_uri_from_username(username)
+    auth_uri = gc_helper.get_google_auth_uri_from_username(
+        username, Widgets.SHIFTS)
     return redirect(auth_uri)
 
 
@@ -90,6 +92,9 @@ def index():
     # Get calendar event items
     events = gc_helper.get_calendar_events(
         cal_id, timeMin, timeMax, username, Widgets.SHIFTS)
+
+    logging.info(events)
+    logging.info(events['items'])
 
     # Returns array of calendar events
     return jsonify(events)

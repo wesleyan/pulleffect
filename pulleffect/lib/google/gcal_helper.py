@@ -28,7 +28,9 @@ GOOGLE_TOKEN_API = "https://accounts.google.com/o/oauth2/token"
 GOOGLE_CALENDAR_API = "https://www.googleapis.com/auth/calendar"
 GOOGLE_TOKEN_INFO_API = "https://www.googleapis.com/oauth2/v1/tokeninfo"
 GCAL_DISCOVERY = json.load(open(env.config["gcal_discovery"]))
-REDIRECT_URI = '{0}/gcal/oauth2callback'.format(env.config['home_url'])
+GCAL_REDIRECT_URI = '{0}/gcal/oauth2callback'.format(env.config['home_url'])
+SHIFTS_REDIRECT_URI = '{0}/shifts/oauth2callback'.format(
+    env.config['home_url'])
 APPROVAL_PROMPT = 'force'
 
 
@@ -260,7 +262,7 @@ def exchange_code_for_credentials(code):
         return None
 
 
-def get_google_auth_uri_from_username(username):
+def get_google_auth_uri_from_username(username, widget):
     """Gets Google authentication uri for connected user.
 
         Keyword arguments:
@@ -271,13 +273,18 @@ def get_google_auth_uri_from_username(username):
     # Check if user already has a refresh token
     refresh_token = get_refresh_token_from_username(username)
 
+    if widget == Widgets.SHIFTS:
+        redirect_uri = SHIFTS_REDIRECT_URI
+    else:
+        redirect_uri = GCAL_REDIRECT_URI
+
     if not refresh_token:
         gcal_logger.info("Forced approval because refresh token was missin.")
         flow = OAuth2WebServerFlow(
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
             scope=GOOGLE_CALENDAR_API,
-            redirect_uri=REDIRECT_URI,
+            redirect_uri=redirect_uri,
             approval_prompt=APPROVAL_PROMPT)
     else:
         gcal_logger.info("Using refresh token to get new access token.")
@@ -285,7 +292,7 @@ def get_google_auth_uri_from_username(username):
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
             scope=GOOGLE_CALENDAR_API,
-            redirect_uri=REDIRECT_URI)
+            redirect_uri=redirect_uri)
 
     return flow.step1_get_authorize_url()
 

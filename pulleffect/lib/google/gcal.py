@@ -37,7 +37,8 @@ def authenticate():
     assert username
 
     # Get auth URI from username
-    auth_uri = gc_helper.get_google_auth_uri_from_username(username)
+    auth_uri = gc_helper.get_google_auth_uri_from_username(
+        username, Widgets.GCAL)
     return redirect(auth_uri)
 
 
