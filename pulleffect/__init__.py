@@ -15,8 +15,8 @@
 
 # -*- coding: utf-8 -*-
 """
-    Pull Effect
-    ~~~~~~
+    PullEffect
+    ~~~~~~~~~~
 
     An information consolidation machine or something.
 """
@@ -56,13 +56,14 @@ configure_logging()
 app.register_blueprint(messages, url_prefix='/messages')
 app.register_blueprint(notes, url_prefix='/notes')
 app.register_blueprint(service, url_prefix='/service')
-# app.register_blueprint(timeclock, url_prefix='/timeclock')
 
 # Stops Pulleffect from breaking when run without google client secrets
 try:
     json.load(open(env.config["google_client_secrets"]))
     from pulleffect.lib.google.gcal import gcal
+    from pulleffect.lib.timeclock.shifts import shifts
     app.register_blueprint(gcal, url_prefix='/gcal')
+    app.register_blueprint(shifts, url_prefix='/shifts')
 except IOError as e:
     logging.warning("You need to include a google_client_secrets.json file in"
                     "the  pulleffect/config/ directory")

@@ -150,6 +150,28 @@ def build_db_connection(db_config, db_type):
     else:
         return
 
+
+def enum(*sequential, **named):
+    """Support for enums in Python 2.7.
+
+        Keyword arguments:
+            sequential -- TODO(arthurb): I don't really get it
+            named -- TODO(arthurb): I don't really get it
+
+        Code found on SO: bit.ly/1r13fHs
+
+        Example:
+            >>> Colors = enum('RED', 'BLUE', 'GREEN')
+            >>> Colors.RED
+            0
+            >>> Colors.reverse_mapping.get(0)
+            RED
+    """
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    reverse = dict((value, key) for key, value in enums.iteritems())
+    enums['reverse_mapping'] = reverse
+    return type('Enum', (), enums)
+
 # Oracle stuff that will 'break' dev machines if loaded
 if not env.is_dev:
     # Build pooled Oracle database connection for Wesleyan timeclock
@@ -161,3 +183,5 @@ mongo_connection = build_db_connection(db_configs['local_mongo'], 'mongo')
 
 # Used for caching function calls
 cache = Cache()
+
+Widgets = enum('GCAL', 'MESSAGES', 'NOTES', 'SERVICE', 'TIMECLOCK', 'SHIFTS')

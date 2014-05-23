@@ -16,3 +16,4 @@ requests==2.2.1
 selenium==2.41.0
 strict-rfc3339==0.4
 wsgiref==0.1.2
+moment==0.1.4

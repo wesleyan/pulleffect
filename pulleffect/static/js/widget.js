@@ -161,7 +161,6 @@
                 var selectedId = model.get('selectedGcal');
                 this.activeCalendar = _.where(global.gcals, {id: selectedId})[0];
                 if (!this.activeCalendar){
-                    console.log("HERE");
                     model.view.renderContent({events: [], calendarSet: false}, this.templateSelector);
                     
                 }
@@ -177,30 +176,39 @@
                     });
                     model.view.renderTitle(gcal.name);
                  }
-            
-               
-
-
-
-                // _.where(global.gcals, {id: parseInt(gcal)})[0].name);
-                //fetch calendar from somewhere and then:
-                
-                // $.getJSON(apiURL).success(function(data){
-                //     data.records = data.records.map(function(event) {
-                //         var now = moment();
-                //         if(now.isAfter(event.event_start) && now.isBefore(event.event_end)) {
-                //             event.current = true;
-                //         } else {
-                //             event.current = false;
-                //         }
-                //         return event;
-                //     });
-                //     model.view.renderContent(data, self.templateSelector);
-                // }).fail(function(jqxhr) {
-                //     model.view.renderError(jqxhr);
-                // });
-                // var data = []; //TEMPORARY
-                // model.view.renderContent({events: data}, self.templateSelector);
+            },
+            configHandler: function(model, formInfo) {
+                //if there's any different stuff you need to do with config values, you can do it here.
+                formInfo.forEach(function (input) {
+                    model.set(input.name, input.value);
+                });
+                model.typeObject.handler(model);
+            }
+        },
+        'shifts': {
+            title: 'Shifts',
+            configurable: true,
+            templateSelector: '#shifts-widget',
+            configurationTemplate: '#shifts-config',
+            activeCalendar: undefined,
+            handler: function (model) {
+                var self = this;
+                var selectedId = model.get('selectedGcal');
+                this.activeCalendar = _.where(global.gcals, {id: selectedId})[0];
+                if (!this.activeCalendar){
+                    model.view.renderContent({events: [], calendarSet: false}, this.templateSelector);
+                }
+                else{
+                    var gcal = this.activeCalendar
+                    var apiURL = shiftsRoute + "?id=" + escape(gcal.id);
+                    
+                    $.getJSON(apiURL).success(function(data){
+                        
+                        // TODO(cumhurk): Cumhur can you provide the proper rendering shit
+                        //model.view.renderContent({events: data.items, calendarSet: true}, self.templateSelector);
+                    });
+                    model.view.renderTitle(gcal.name);
+                 }
             },
             configHandler: function(model, formInfo) {
                 //if there's any different stuff you need to do with config values, you can do it here.

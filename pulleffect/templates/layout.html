@@ -30,9 +30,10 @@
 
 <script>
   var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
-  var messagesRoute = "{{ url_for('messages.index') }}" + "/10";
+  var messagesRoute = "{{ url_for('messages.index') }}";
   var calEventsRoute = "{{ url_for('gcal.calendar_events') }}";
-  var recordsRoute = "{{ url_for('service.records') }}"
+  var shiftsRoute = "{{ url_for('shifts.index') }}";
+  var recordsRoute = "{{ url_for('service.records') }}";
 </script>
 
 <body>
