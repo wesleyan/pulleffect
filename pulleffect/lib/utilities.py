@@ -75,7 +75,7 @@ def require_signin(f):
         # Check if user is signed in
         signed_in = session.get('signed_in', False)
         if not signed_in:
-            username = "dummy" if env.is_dev else session.get(
+            username = env.config['sys_user'] if env.is_dev else session.get(
                 current_app.config['CAS_USERNAME_SESSION_KEY'], None)
 
             if not username:
