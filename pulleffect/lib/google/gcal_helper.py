@@ -245,6 +245,11 @@ def get_refresh_token_from_username(username):
 
 
 def exchange_code_for_credentials(code):
+    """Exchange Google authorization code for credentials.
+
+        Keyword arguments:
+        code -- code retrieved from Google OAuth
+    """
     # Build OAuth2 web server flow from authorization code
     flow = OAuth2WebServerFlow(
         CLIENT_ID,
