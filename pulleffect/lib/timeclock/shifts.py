@@ -96,11 +96,12 @@ def index():
         cal_id, timeMin, timeMax, username, Widgets.SHIFTS)
 
     events = events.get('items', None)
-    events = {
-        event.get('description'): dict(
+    events = dict(
+        (event.get('description'), dict(
             start=event.get('start').get('dateTime'),
-            end=event.get('end').get('dateTime'))
-        for event in events}
+            end=event.get('end').get('dateTime')))
+        for event in events
+    )
 
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
         username=None, time_in=timeMin, time_out=timeMin,
