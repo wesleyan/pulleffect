@@ -57,7 +57,7 @@ class TimeclockOracleQuery:
             self.query = (
                 "SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
                 "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
-                "TIME_IN DESC) WHERE TIME_OUT IS NULL")
+                "TIME_IN DESC) WHERE TIME_OUT IS NULL AND JOB_ID IN (4050)")
             self.named_params = {}
             return
 
