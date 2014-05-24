@@ -67,7 +67,7 @@ def index():
     error_message = []
 
     # Parse clock_in
-    clocked_in = False if False else clocked_in.lower() == 'true'
+    clocked_in = False if clocked_in is False else clocked_in.lower() == 'true'
 
     # Parse username
     if username and isinstance(username, unicode):
