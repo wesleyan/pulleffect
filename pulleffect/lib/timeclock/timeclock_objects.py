@@ -41,27 +41,6 @@ class TimeclockEntry:
         }
 
 
-class TimeclockRequest:
-    """Represents the timeclock request for the database to process.
-
-        Attributes:
-            username -- username of person who clocked in
-            time_in -- time the person who clocked in
-            time_out -- time the person who clocked out (can be None)
-            job_ids -- job ids that represent departments
-            limit -- max number of timeclock entries to return
-            error_message -- explains why the timeclock request is invalid
-    """
-    def __init__(self, username, time_in, time_out,
-                 job_ids, limit, error_message):
-        self.username = username
-        self.time_in = time_in
-        self.time_out = time_out
-        self.job_ids = job_ids
-        self.limit = limit
-        self.error_message = error_message
-
-
 class TimeclockOracleQuery:
     """Represents an Oracle SQL query constructed for timeclock entries.
 
@@ -72,7 +51,8 @@ class TimeclockOracleQuery:
             job_ids -- query finds timeclock_entries with given job_ids
             limit -- query finds a maximum of 'limit' timeclock entries
     """
-    def __init__(self, username, time_in, time_out, job_ids, limit):
+    def __init__(self, username, time_in, time_out,
+                 job_ids, limit, clocked_in):
         # The stuff that probably won't ever change
         select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
                          "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
@@ -104,7 +84,7 @@ class TimeclockOracleQuery:
         where_clause += job_id_clause[:-1] + ")"
 
         # Append the username if it was given
-        if username is not None:
+        if username:
             where_clause += " AND USERNAME=:username"
             named_params['username'] = username
 
