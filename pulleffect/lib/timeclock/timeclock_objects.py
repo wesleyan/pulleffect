@@ -63,20 +63,26 @@ class TimeclockOracleQuery:
         sql_timestamp = ("(TO_DATE('19700101','yyyymmdd') +"
                          " (TO_NUMBER({0})/24/60/60))")
 
+        # Format timestamps
+        time_in_clause = sql_timestamp.format(':time_in')
+        time_out_clause = sql_timestamp.format(':time_out')
+
         self.named_params = {}
 
         # Build time_in, time_out, and where clauses
-        if clocked_in:
-            where_clause = "WHERE TIME_OUT IS NULL AND JOB_ID IN "
-        else:
-            time_in_clause = sql_timestamp.format(':time_in')
-            time_out_clause = sql_timestamp.format(':time_out')
+        if not clocked_in:
             where_clause = (
                 "WHERE TIME_IN >={0} AND TIME_OUT <={1} AND JOB_ID IN "
                 .format(time_in_clause, time_out_clause)
             )
             self.named_params['time_in'] = time_in
             self.named_params['time_out'] = time_out
+        else:
+            where_clause = (
+                "WHERE TIME_OUT IS NULL AND TIME_IN >= {0} AND JOB_ID IN "
+                .format(time_in_clause)
+            )
+            self.named_params['time_in'] = time_in
 
         # Build SQL array with job ids
         job_id_clause = "("
@@ -94,9 +100,8 @@ class TimeclockOracleQuery:
             self.named_params['username'] = username
 
         # Append the limit
-        if not clocked_in:
-            where_clause += " AND ROWNUM <=:limit"
-            self.named_params['limit'] = limit
+        where_clause += " AND ROWNUM <=:limit"
+        self.named_params['limit'] = limit
 
         # Completed query
         self.query = "{0}{1}".format(select_clause, where_clause)

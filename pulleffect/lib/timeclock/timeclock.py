@@ -82,6 +82,10 @@ def index():
     # Parse time_out
     if clocked_in:
         time_out = None
+        time_in = (moment
+                   .now()
+                   .replace(hours=0, minutes=0, seconds=0)
+                   .strftime('%s'))
     elif not time_out.isdigit():
         error_message.append({'error': "Invalid parameter: 'time_out'"})
 
