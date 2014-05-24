@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import logging
 import moment
 import pulleffect.config.env as env
 import pulleffect.lib.google.gcal_helper as gc_helper
@@ -95,7 +96,9 @@ def index():
     events = gc_helper.get_calendar_events(
         cal_id, timeMin, timeMax, username, Widgets.SHIFTS)
 
-    events = events.get('items', None)
+    logging.info("Events: {0}".format(events))
+
+    events = events.get('items', {})
     events = dict(
         (event.get('description'), dict(
             start=event.get('start').get('dateTime'),
