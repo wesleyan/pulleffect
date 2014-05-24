@@ -61,7 +61,7 @@ def index():
     time_in = request.args.get('time_in', begin_of_month_secs)
     time_out = request.args.get('time_out', now_secs)
     departments = request.args.get('depts', tc_depts.get_all_job_ids())
-    limit = request.args.get('limit', 50)
+    limit = request.args.get('limit', '50')
     clocked_in = request.args.get('clocked_in', False)
 
     error_message = []
