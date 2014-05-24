@@ -26,7 +26,7 @@ import logging
 from flask import Flask
 from flask import render_template
 import pulleffect.config.env as env
-from pulleffect.lib.flask_cas import CAS
+from flask.ext.cas import CAS
 from pulleffect.lib.messages.messages import messages
 from pulleffect.lib.notes.notes import notes
 from pulleffect.lib.service.service import service
