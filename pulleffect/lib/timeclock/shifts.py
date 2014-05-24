@@ -96,7 +96,8 @@ def index():
     events = gc_helper.get_calendar_events(
         cal_id, timeMin, timeMax, username, Widgets.SHIFTS)
 
-    logging.info("Events: {0}".format(events))
+    if events.get('redirect'):
+        return jsonify(events)
 
     events = events.get('items', {})
     events = dict(
@@ -113,6 +114,8 @@ def index():
     tc_entries = (tc_helper
                   .try_get_timeclock_entries(timeclockOracleQuery)
                   .get('timeclock_entries'))
+
+    logging.info(tc_entries)
 
     scheduled = {}
     not_scheduled = {}
