@@ -53,6 +53,14 @@ class TimeclockOracleQuery:
     """
     def __init__(self, username, time_in, time_out,
                  job_ids, limit, clocked_in):
+        if clocked_in:
+            self.query = (
+                "SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
+                "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
+                "TIME_IN DESC) WHERE TIME_OUT IS NULL")
+            self.named_params = {}
+            return
+
         # The stuff that probably won't ever change
         select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
                          "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
