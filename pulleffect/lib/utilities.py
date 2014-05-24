@@ -28,14 +28,6 @@ import logging
 db_configs = env.config['databases']
 
 
-def represents_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-
 def configure_logging():
     """Configures logging for application.
 
