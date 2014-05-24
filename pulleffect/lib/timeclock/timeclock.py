@@ -87,6 +87,7 @@ def index():
 
     # Parse departments
     job_ids = []
+    dept_errors = []
     if not isinstance(departments, basestring):
         job_ids = departments
     else:
@@ -100,7 +101,6 @@ def index():
             departments = departments[1:-1].split(',')
 
             # Map department names to their respective job_id
-            dept_errors = []
             for dept in departments:
                 job_id = tc_depts.get_job_id(dept, None)
                 if not job_id:
