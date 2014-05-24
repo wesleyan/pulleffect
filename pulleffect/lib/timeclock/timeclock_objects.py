@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 
 
 class TimeclockEntry:
@@ -97,6 +98,8 @@ class TimeclockOracleQuery:
 
         # Completed query
         query = "{0}{1}".format(select_clause, where_clause)
+
+        logging.info('QUERY: {0}'.format(query))
 
         self.query = query
         self.named_params = named_params
