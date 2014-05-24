@@ -4,22 +4,6 @@ import pulleffect.lib.timeclock.timeclock_depts as tc_depts
 from pulleffect.lib.utilities import wes_timeclock_pool
 
 
-# def get_valid_timeclock_request(username, time_in, time_out,
-#                                 departments, limit):
-#     """Validate request arguments.
-
-#         Keyword arguments:
-#             username --
-#             time_in --
-#             time_out --
-#             departments --
-#             limit --
-#     """
-
-#     return tc_obj.TimeclockRequest(
-#         username, time_in, time_out, job_ids, limit, error_message)
-
-
 def build_timeclock_entries(cursor):
     """Build TimeclockEntry from cursor
 
@@ -37,14 +21,6 @@ def build_timeclock_entries(cursor):
             row[4])
         for row in cursor
     ]
-    # for row in cursor:
-    #     username = row[0]
-    #     time_in = row[1]
-    #     time_out = row[2]
-    #     dept = tc_depts.get_dept(str(row[3]), "???")
-    #     note = row[4]
-    #     tc_entries.append(
-    #         tc_obj.TimeclockEntry(username, time_in, time_out, dept, note))
     return tc_entries
 
 
@@ -101,7 +77,7 @@ def try_get_timeclock_entries(timeclockOracleQuery):
         return {'error': str(error)}
 
     # TODO(arthurb): My return statement is wrong here. Please read about
-    # try-except-else statements.
+    # try-except-else statements and fix.
     else:
         cursor.close()
         wes_timeclock_pool.release(connection)

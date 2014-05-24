@@ -61,17 +61,17 @@ app.register_blueprint(service, url_prefix='/service')
 try:
     json.load(open(env.config["google_client_secrets"]))
     from pulleffect.lib.google.gcal import gcal
-    from pulleffect.lib.timeclock.shifts import shifts
     app.register_blueprint(gcal, url_prefix='/gcal')
-    app.register_blueprint(shifts, url_prefix='/shifts')
 except IOError as e:
     logging.warning("You need to include a google_client_secrets.json file in"
                     "the  pulleffect/config/ directory")
 
 # This is necessary when you're not working on a vagrant box
 if not env.is_dev:
+    from pulleffect.lib.timeclock.shifts import shifts
     from pulleffect.lib.timeclock.timeclock import timeclock
     app.register_blueprint(timeclock, url_prefix='/timeclock')
+    app.register_blueprint(shifts, url_prefix='/shifts')
 
 # TODO(arthurb): The secret key needs to be changed
 app.config.update(dict(

@@ -13,9 +13,12 @@
 # limitations under the License.
 
 
+import moment
 import pulleffect.config.env as env
 import pulleffect.lib.google.gcal_helper as gc_helper
-import moment
+import pulleffect.lib.timeclock.timeclock_depts as tc_depts
+import pulleffect.lib.timeclock.timeclock_helper as tc_helper
+import pulleffect.lib.timeclock.timeclock_objects as tc_obj
 from flask import Blueprint
 from flask import jsonify
 from flask import redirect
@@ -93,10 +96,51 @@ def index():
         cal_id, timeMin, timeMax, username, Widgets.SHIFTS)
 
     events = events.get('items', None)
-    events = [
-        dict(end=event.get('end').get('dateTime'),
-             start=event.get('start').get('dateTime'),
-             username=event.get('description')) for event in events]
+    events = {
+        event.get('description'): dict(
+            start=event.get('start').get('dateTime'),
+            end=event.get('end').get('dateTime'))
+        for event in events}
 
-    # Returns array of calendar events
-    return jsonify({"events": events})
+    timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
+        username=None, time_in=timeMin, time_out=timeMin,
+        job_ids=tc_depts.get_all_job_ids(), limit=0, clocked_in=True)
+
+    tc_entries = (tc_helper
+                  .try_get_timeclock_entries(timeclockOracleQuery)
+                  .get('timeclock_entries'))
+
+    scheduled = {}
+    not_scheduled = {}
+    if tc_entries:
+        for entry in tc_entries:
+            username = entry.get('username')
+            note = entry.get('note')
+            time_in = entry.get('time_in')
+            dept = entry.get('dept')
+
+            # Try to get event corresponding to timeclock entry
+            event = events.get(username, None)
+
+            # Flesh out event
+            if event:
+                event['note'] = note
+                event['clocked_in'] = time_in
+                event['dept'] = dept
+
+                # Add event to `scheduled` dict
+                scheduled[username] = event
+
+                # Remove event
+                events.pop(username)
+            else:
+                not_scheduled[username] = dict(
+                    note=note, clocked_in=time_in, dept=dept)
+
+    # Any event remaining in events dict is not clocked in
+    not_clocked_in = events
+
+    # Returns array of shifts
+    return jsonify({
+        "shifts": dict(scheduled=scheduled, not_clocked_in=not_clocked_in,
+                       not_scheduled=not_scheduled)})

@@ -62,16 +62,19 @@ class TimeclockOracleQuery:
         sql_timestamp = ("(TO_DATE('19700101','yyyymmdd') +"
                          " (TO_NUMBER({0})/24/60/60))")
 
-        # Build time in and time out clauses
-        time_in_clause = sql_timestamp.format(':time_in')
-        time_out_clause = sql_timestamp.format(':time_out')
+        named_params = {}
 
-        # Edit later if you ever need to tweak the WHERE clause
-        where_clause = "WHERE TIME_IN >={0} AND TIME_OUT <={1} AND JOB_ID IN "
-        where_clause = where_clause.format(time_in_clause, time_out_clause)
-
-        # Named params that fill in the 'where_clause'
-        named_params = {'time_in': time_in, 'time_out': time_out}
+        # Build time_in, time_out, and where clauses
+        if not clocked_in:
+            time_in_clause = sql_timestamp.format(':time_in')
+            time_out_clause = sql_timestamp.format(':time_out')
+            where_clause = (
+                "WHERE TIME_IN >={0} AND TIME_OUT <={1} AND JOB_ID IN "
+                .format(time_in_clause, time_out_clause)
+            )
+            named_params = {'time_in': time_in, 'time_out': time_out}
+        else:
+            where_clause = "WHERE TIME_OUT IS NULL AND JOB_ID IN "
 
         # Build SQL array with job ids
         job_id_clause = "("
@@ -80,10 +83,10 @@ class TimeclockOracleQuery:
             named_params[job_id] = job_ids[i]
             job_id_clause += ":{0},".format(job_id)
 
-        # Add job ids to WHERE clause
+        # Append job ids to WHERE clause
         where_clause += job_id_clause[:-1] + ")"
 
-        # Append the username if it was given
+        # Append username to WHERE clause, if given
         if username:
             where_clause += " AND USERNAME=:username"
             named_params['username'] = username
