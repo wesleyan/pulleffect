@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-import logging
 import moment
 import pulleffect.config.env as env
 import pulleffect.lib.google.gcal_helper as gc_helper
@@ -114,8 +113,6 @@ def index():
     tc_entries = (tc_helper
                   .try_get_timeclock_entries(timeclockOracleQuery)
                   .get('timeclock_entries'))
-
-    logging.info(tc_entries)
 
     scheduled = {}
     not_scheduled = {}
