@@ -3,8 +3,9 @@ import pulleffect
 import unittest
 import tempfile
 import json
- 
- 
+from pulleffect.lib.google.gcal_helper import get_google_auth_uri_from_username
+from mock import patch
+
 class TestCCase(unittest.TestCase):
  
     def setUp(self):
@@ -20,11 +21,25 @@ class TestCCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(pulleffect.app.config['DATABASE'])
  
-    def signin(self, username, password):
-        return self.app.get('/gplus/signin?', follow_redirects=True)
- 
-    def signout(self):
-        return self.app.get('/gplus/signout', follow_redirects=True)
+    @patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
+    def test_authenticate_gcal(self,mock_get_google_auth_uri_from_username):
+
+        mock_get_google_auth_uri_from_username.return_value = 'correct.uri'
+        rv = self.app.get('/gcal/authenticate')
+        assert b'correct.uri' in rv.data
+    
+    @patch('pulleffect.lib.google.gcal_helper.try_validate_google_authorization_code')
+    def test_oauth2_callback_gcal(self, mock_try_validate_google_authorization_code):
+    	mock_try_validate_google_authorization_code.return_value = 'validation works!'
+    	rv = self.app.get('/gcal/oauth2callback')
+    	assert b'redirect' in rv.data
+
+    @patch('pulleffect.lib.google.gcal_helper.get_calendar_list')
+    def test_calendar_list_gcal(self,mock_get_calendar_list):
+    	mock_get_calendar_list.return_value = rtn = {'calendar': 'list of items'}
+    	rv = self.app.get('/gcal/calendar_list')
+    	assert b'list of items'in rv.data
+
     def test_post_single_message(self):
         """POST a single message should succeed"""
         message = json.dumps(
@@ -160,6 +175,42 @@ class TestCCase(unittest.TestCase):
                            follow_redirects=True,
                            content_type='application/json')
         assert b'author, Submitted note is missing required fields: author' in rv.data
+
+
+
+
         
 if __name__ == '__main__':
     unittest.main()
+
+        
+
+''''commented out the shifts tests, as vagrant does not currently install cx_oracle'''
+
+    #@patch('pulleffect.lib.google.gcal_helper.get_calendar_events')
+    #def test_calendar_events_gcal(self,mock_get_calendar_events):
+    #   mock_get_calendar_events.return_value = rtn = {'event': 'description'}
+    #   rv = self.app.get('/gcal/calendar_events')
+    #   assert b'description' in rv.data    
+
+    #@patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
+    #def test_authenticate_shifts(self,mock_get_google_auth_uri_from_username):
+    #    mock_get_google_auth_uri_from_username.return_value = 'correct.uri'
+    #   rv = self.app.get('/shifts/authenticate')
+    #    assert b'correct.uri' in rv.data
+    
+    #@patch('pulleffect.lib.google.gcal_helper.try_validate_google_authorization_code')
+    #def test_oauth2_callback_shifts(self, mock_try_validate_google_authorization_code):
+    #    mock_try_validate_google_authorization_code.return_value = 'validation works!'
+    #    rv = self.app.get('/shifts/oauth2callback')
+    #    assert b'redirect' in rv.data
+
+    #@patch('pulleffect.lib.google.gcal_helper.get_calendar_list')
+    #def test_calendar_list_shifts(self,mock_get_calendar_list):
+    #    mock_get_calendar_list.return_value = rtn = {'calendar': 'list of items'}
+    #    rv = self.app.get('/shifts/calendar_list')
+    #    assert b'list of items'in rv.data
+
+
+
+
