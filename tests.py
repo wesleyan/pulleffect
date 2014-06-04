@@ -31,6 +31,7 @@ class TestCCase(unittest.TestCase):
         assert b'redirect' in credentials
 
     def test_get_calendar_list_for_gcalhelper(self):
+        """should be failing currently"""
         rtn = { "correct": "credentials"}       
         rtn_cal = ('items', 'summary', 'events', 'id' 'items', 'summary', 'events', 'id');
         pulleffect.lib.google.gcal_helper.validate_and_refresh_creds = MagicMock(name = "validate_creds", return_value  = rtn)
@@ -38,8 +39,7 @@ class TestCCase(unittest.TestCase):
         pulleffect.lib.google.gcal_helper.get_gcal_service_from_credentials = MagicMock(name = rtn_cal)
         pulleffect.lib.google.gcal_helper.set_google_creds = MagicMock(name = 'set_creds', return_value = 'done')
         calendar_list = pulleffect.lib.google.gcal_helper.get_calendar_list("name","widget")
-        print(calendar_list)
-        assert b'items' in calendar_list
+        assert b'calendar_list' in calendar_list
 
     def test_get_calendar_events_no_creds(self):
         rtn = { "redirect": "/gcal/authenticate"}        
@@ -51,21 +51,39 @@ class TestCCase(unittest.TestCase):
     #def test_get_calendar_events(self):
      #   rtn = { "correct": "credentials"}
 
-      #  pulleffect.lib.google.gcal_helper.validate_and_refresh_creds = MagicMock(name = "validate_creds", return_value  = rtn)
+       # pulleffect.lib.google.gcal_helper.validate_and_refresh_creds = MagicMock(name = "validate_creds", return_value  = rtn)
        # pulleffect.lib.google.gcal_helper.get_google_creds = MagicMock(name = "get_creds", return_value  = "creds")
-        #pulleffect.lib.google.gcal_helper.get_gcal_service_from_credentials = MagicMock(name = "get_service")
-        #pulleffect.lib.google.gcal_helper.set_google_creds = MagicMock(name = 'set_creds', return_value = 'done')
-        #events = pulleffect.lib.google.gcal_helper.get_calendar_events(123512,1200,1500,"name","widget")
-        #assert b'' in events
+       # pulleffect.lib.google.gcal_helper.get_gcal_service_from_credentials = MagicMock(name = "get_service")
+       # pulleffect.lib.google.gcal_helper.set_google_creds = MagicMock(name = 'set_creds', return_value = 'done')
+       # events = pulleffect.lib.google.gcal_helper.get_calendar_events(123512,1200,1500,"name","widget")
+       # print("dog")
+       # print(events)
+       # assert b'' in events
 
 
+    def test_validate_and_refresh_without_creds(self):
+        rv = pulleffect.lib.google.gcal_helper.validate_and_refresh_creds()
+        assert b'redirect' in rv
+    def test_validate_and_refresh_creds(self):
+        creds = {""}
+        pulleffect.lib.google.gcal_helper.get_acess_token = MagicMock(name = "get_token", return_value = creds)
+        rv = pulleffect.lib.google.gcal_helper.validate_and_refresh_creds(creds)
+        assert b'redirect' in rv
+    #@patch("pulleffect.lib.google.gcal_helper.get_gcal_access_token")
+    d#ef test_validate_and_refresh_creds(self,mock_get_gcal_access_token ):
+      #  creds = {"hello" : "creds"}
+       # return_val = 'credsits'
+       # mock_get_gcal_access_token.return_value = return_val
+       # rv = pulleffect.lib.google.gcal_helper.validate_and_refresh_creds(creds)
+       # print(rv)
+        #assert b'access_token' in rv
 
 
 
     @patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
     def test_authenticate_gcal(self,mock_get_google_auth_uri_from_username):
         mock_get_google_auth_uri_from_username.return_value = 'correct.uri'
-        rv = self.app.get('/gcal/authenticate')     
+        rv = self.app.get('/gcal/authenticate')
         assert b'correct.uri' in rv.data
     
     @patch('pulleffect.lib.google.gcal_helper.try_validate_google_authorization_code')
