@@ -14,7 +14,7 @@
 */
 
 (function() {
-    var PullEffect = {};
+    PullEffect = {};
     global = {
         rooms: [],
         gcals: []
@@ -115,7 +115,6 @@
                 });
             }
         },
-
         'specialEvents': {
             title: 'Special Events',
             templateSelector: '#special-events-widget',
@@ -159,20 +158,20 @@
             handler: function (model) {
                 var self = this;
                 var selectedId = model.get('selectedGcal');
+                //not using findWhere because the current underscore version doesn't support it
                 this.activeCalendar = _.where(global.gcals, {id: selectedId})[0];
-                if (!this.activeCalendar){
+                if (_.isUndefined(this.activeCalendar)) {
+                    if(global.gcals !== false) {
+                        model.set('selectedGcal', '');
+                    }
                     model.view.renderContent({events: [], calendarSet: false}, this.templateSelector);
-                    
-                }
-                else{
-                    var gcal = this.activeCalendar
-                    var now = moment().format("YYYY-MM-DDTHH:mm:ssZ")
+                } else {
+                    var gcal = this.activeCalendar;
+                    var now = moment().format("YYYY-MM-DDTHH:mm:ssZ");
                     var apiURL = calEventsRoute + "?id=" + escape(gcal.id) + "&now=" + now;
                     
                     $.getJSON(apiURL).success(function(data){
-                        
                         model.view.renderContent({events: data.items, calendarSet: true}, self.templateSelector);
-
                     });
                     model.view.renderTitle(gcal.name);
                  }
@@ -187,28 +186,16 @@
         },
         'shifts': {
             title: 'Shifts',
-            configurable: true,
+            configurable: false,
             templateSelector: '#shifts-widget',
-            configurationTemplate: '#shifts-config',
             activeCalendar: undefined,
             handler: function (model) {
                 var self = this;
-                var selectedId = model.get('selectedGcal');
-                this.activeCalendar = _.where(global.gcals, {id: selectedId})[0];
-                if (!this.activeCalendar){
-                    model.view.renderContent({events: [], calendarSet: false}, this.templateSelector);
-                }
-                else{
-                    var gcal = this.activeCalendar
-                    var apiURL = shiftsRoute + "?id=" + escape(gcal.id);
-                    
-                    $.getJSON(apiURL).success(function(data){
-                        
-                        // TODO(cumhurk): Cumhur can you provide the proper rendering shit
-                        //model.view.renderContent({events: data.items, calendarSet: true}, self.templateSelector);
-                    });
-                    model.view.renderTitle(gcal.name);
-                 }
+                var apiURL = shiftsRoute;
+                
+                $.getJSON(apiURL).success(function(data) {
+                    model.view.renderContent(data, self.templateSelector);
+                });
             },
             configHandler: function(model, formInfo) {
                 //if there's any different stuff you need to do with config values, you can do it here.
@@ -449,8 +436,8 @@
         },
         store: function() {
             var content = encodeURIComponent(JSON.stringify(PullEffect.Widgets));
-           $.removeCookie('widgets');
-           $.cookie('widgets', content, {expires: 9000, path: '/'});
+            $.removeCookie('widgets');
+            $.cookie('widgets', content, {expires: 9000, path: '/'});
         },
         fetchContent: function() {
             var self = this;

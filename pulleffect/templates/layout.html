@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pull&bull;Effect</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.6/select2-bootstrap.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -18,7 +18,7 @@
     <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/jquery.gridster.css') }}" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
@@ -32,8 +32,8 @@
   var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
   var messagesRoute = "{{ url_for('messages.index') }}";
   var calEventsRoute = "{{ url_for('gcal.calendar_events') }}";
+	var shiftsRoute = "{{ url_for('shifts.index') }}";
   {% if config.is_dev %}
-	 var shiftsRoute = "{{ url_for('shifts.index') }}";
   {% endif %}
   var recordsRoute = "{{ url_for('service.records') }}";
 </script>
@@ -58,6 +58,9 @@
         </li>
         <li>
             <div draggable="true" data-type="calendar" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-calendar widget-button" data-toggle="tooltip" data-placement="right" title="Calendar"></div>
+        </li>
+        <li>
+            <div draggable="true" data-type="shifts" data-toggle="modal" data-target="#configure" type="button" class="btn btn-primary btn-lg fa fa-tasks widget-button" data-toggle="tooltip" data-placement="right" title="Shifts"></div>
         </li>
         <li>
             <div draggable="true" data-type="leaderboard" type="button" class="btn btn-primary btn-lg fa fa-check-circle-o widget-button" data-toggle="tooltip" data-placement="right" title="Leaderboard"></div>
@@ -192,7 +195,7 @@
     {% if session.google_creds and session.google_creds.access_token %}
     <select class="form-control" name="selectedGcal">
       <% gcals.forEach(function(gcal) { %>
-        <option value="<%=gcal.id %>"<% if(gcal.calendar_id === _.first(gcals).calendar_id) { %> selected="selected"<% } %>>
+        <option value="<%=gcal.id %>"<% if(gcal.id === selectedGcal) { %> selected="selected"<% } %>>
         <%=gcal.name %> 
         </option>
       <% }); %>
@@ -279,7 +282,7 @@
 
 <script type="text/template" id="calendar-widget">
   <% if (!calendarSet)%>
-    <h4>No calendars are selected. You can chose one on the config page.</h4>
+    <h4>No calendars are selected. You can choose one on the config page.</h4>
   <% if(calendarSet && events.length < 1) { console.log(events); %>
     There are no events in the given period.
   <% } if (calendarSet && events.length >= 1) { %>
@@ -382,6 +385,77 @@
   </table>
 </script>
 
+<script type="text/template" id="shifts-widget">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Staff</th>
+        <th>Time</th>
+        <th>Info</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="danger">
+        <td colspan="2">Scheduled but Not Clocked In</td>
+        <td>
+          <%=_.keys(shifts.not_clocked_in).length %> staff
+        </td>
+      </tr>
+      <% _(shifts.not_clocked_in).each(function(obj, username) { %>
+        <tr>
+          <td>
+            <%=username %>
+          </td>
+          <td colspan="2">
+            <%=moment(obj.start).format('h:mm A') %> - <%=moment(obj.end).format('h:mm A') %>
+          </td>
+        </tr>
+      <% }) %>
+      <tr class="success">
+        <td colspan="2">Scheduled and Clocked In</td> 
+        <td>
+          <%=_.keys(shifts.scheduled).length %> staff
+        </td>
+      </tr>
+      <% _(shifts.scheduled).each(function(obj, username) { %>
+        <tr>
+          <td>
+            <%=username %>
+          </td>
+          <td>
+            <%=moment(obj.start).format('h:mm A') %> - <%=moment(obj.end).format('h:mm A') %>, 
+          </td>
+          <td>
+            <%
+              var diff = moment(obj.start).diff(new Date(obj.clocked_in.replace(' GMT','')), 'm');
+            %>
+            <%=Math.abs(diff) %> min <%=(diff >= 0) ? 'late' : 'early' %>
+          </td>
+        </tr>
+      <% }) %>
+      <tr class="info">
+        <td colspan="2">Not Scheduled but Clocked In</td>
+        <td>
+          <%=_.keys(shifts.not_scheduled).length %> staff
+        </td>
+      </tr>
+      <% _(shifts.not_scheduled).each(function(obj, username) { %>
+        <tr>
+          <td>
+            <%=username %>
+          </td>
+          <td>
+            <%=moment(new Date(obj.clocked_in.replace(' GMT',''))).format('h:mm A') %>
+          </td>
+          <td>
+            <%=obj.dept %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</script>
+
 <script type="text/template" id="notes-config">
   Notes widget configuration
 </script>
@@ -390,17 +464,15 @@
 </style>
     <script src="{{ url_for('static', filename='js/widget.js') }}"></script>
     <script>
-        {% if session.google_creds %}
+        global.gcals = false;
         $.getJSON("{{ url_for('gcal.calendar_list') }}", function(data) {
+        {% if session.google_creds %}
             if (data.redirect)
                 return window.location(data.redirect);
-            global.gcals = !data.error ? data.calendar_list : [];
-        });
-        {% else %}
-        $.getJSON("{{ url_for('gcal.calendar_list') }}", function(data) {
-            global.gcals = !data.error ? data.calendar_list : [];
-        });
         {% endif %}
+            global.gcals = !data.error ? data.calendar_list : [];
+            PullEffect.refreshAllWidgets();
+        });
     </script>
 {% endif %}
     <script src="{{ url_for('static', filename='js/utils/alerts.js') }}"></script> 
