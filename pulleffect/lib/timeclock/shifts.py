@@ -85,7 +85,8 @@ def index():
     cal_id = request.args.get('id')
 
     # Set default values
-    timeMin = moment.now().format("YYYY-MM-DDTHH:mm:ssZ")
+    timeMin = moment.now().replace(
+        hours=0, minutes=0, seconds=0).format("YYYY-MM-DDTHH:mm:ssZ")
     timeMax = moment.now().add('days', 1).replace(
         hours=0, minutes=0, seconds=0).format("YYYY-MM-DDTHH:mm:ssZ")
     username = env.config['sys_user']
@@ -106,6 +107,8 @@ def index():
         for event in events
     )
 
+    #changing from ISO8601 to timestamp, for Oracle
+    timeMin = moment.date(timeMin, "YYYY-MM-DDTHH:mm:ssZ").strftime('%s')
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
         username=None, time_in=timeMin, time_out=timeMin,
         job_ids=tc_depts.get_all_job_ids(), limit=0, clocked_in=True)
