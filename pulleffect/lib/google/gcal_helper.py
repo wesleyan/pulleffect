@@ -41,10 +41,11 @@ def get_calendar_list(username, widget):
     """
     # Get google credentials
     credentials = get_google_creds(username, widget)
-
+    
     # Check the oauth creds and refresh if necessary
     credentials = validate_and_refresh_creds(credentials)
-    gcal_logger.info("Validated credentials: {0}".format(credentials))
+
+    #gcal_logger.info("Validated credentials: {0}".format(credentials))
     if credentials.get("redirect", None):
         return credentials
 
@@ -54,8 +55,8 @@ def get_calendar_list(username, widget):
     # Get gcal service
     service = get_gcal_service_from_credentials(credentials)
 
+    calendar_list = get_gcal_from_service(service)
     # Get google calendar list
-    calendar_list = service.calendarList().list().execute()["items"]
 
     # TODO(arthurb): Change into a cool one-liner; maybe use lambda calc
     # Extract relevant info from google calendar list
@@ -64,6 +65,9 @@ def get_calendar_list(username, widget):
         calendars.append({"name": item["summary"], "id": item["id"]})
 
     return {"calendar_list": calendars}
+
+def get_gcal_from_service(service):
+    service.calendarList().list().execute()["items"]
 
 
 def get_calendar_events(cal_id, timeMin, timeMax, username, widget):
@@ -82,17 +86,16 @@ def get_calendar_events(cal_id, timeMin, timeMax, username, widget):
     gcal_logger.info("Validated credentials: {0}".format(credentials))
     if credentials.get("redirect", None):
         return credentials
-
     set_google_creds(username, credentials, widget)
-
     # Get gcal service
     service = get_gcal_service_from_credentials(credentials)
-
-    events = service.events().list(
-        calendarId=cal_id, timeMin=timeMin, timeMax=timeMax, singleEvents=True,
-        orderBy="startTime").execute()
+    events = google_events_from_service(service)
     return events
 
+def google_events_from_service(service):
+    return service.events().list(
+        calendarId=cal_id, timeMin=timeMin, timeMax=timeMax, singleEvents=True,
+        orderBy="startTime").execute()
 
 def try_validate_google_authorization_code(code, widget):
     """Validated authorization code retrieved from Google.
@@ -106,7 +109,7 @@ def try_validate_google_authorization_code(code, widget):
         assert credentials
 
         # Get username for connected user
-        username = session.get("username", None)
+        username = google_get_session_username()
         assert username
         gcal_logger.info("Fetched username: {0}".format(username))
 
@@ -120,22 +123,27 @@ def try_validate_google_authorization_code(code, widget):
         gcal_logger.info("Updated refresh token: {0}".format(refresh_token))
 
         # Update connected user's refresh token
-        users.update(
+        google_creds = google_info_update(username,refresh_token,credentials)
+
+        # Update Google credentials in session for connected user
+        set_google_creds(username, google_creds, widget)
+        return True
+    return False
+def google_info_update(username,refresh_token,credentials):
+    users.update(
             {"username": username},
             {"$set": {
                 "google_refresh_token": refresh_token,
                 "google_user_agent": credentials.user_agent
             }},
             upsert=False)
-
-        google_creds = {
+    google_creds = {
             "access_token": credentials.access_token,
             "user_agent": credentials.user_agent
         }
-
-        # Update Google credentials in session for connected user
-        set_google_creds(username, google_creds, widget)
-
+    return google_creds
+def google_get_session_username():
+    return session.get("username", None)
 
 def get_google_creds(username, widget):
     """Gets Google credentials based on username.
@@ -216,11 +224,11 @@ def get_gcal_access_token(credentials):
 def validate_and_refresh_creds(credentials):
     """Tries to get the google OAuth creds for connected user.
     """
-    # If google credentials don't exist, get them
+    #If google credentials don't exist, get them
     if not credentials:
         return {"redirect": url_for('gcal.authenticate')}
 
-    # Get fresh access token if connected access token is expired
+     #Get fresh access token if connected access token is expired
     credentials["access_token"] = get_gcal_access_token(credentials)
 
     # If access token doesn't exist or can't be refreshed, re-authenticate
