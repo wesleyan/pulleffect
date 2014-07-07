@@ -9,6 +9,10 @@ from mock import MagicMock
 from pulleffect.lib.utilities import Widgets
 import logging
 
+#make unit tests for gcal, timeclock, shifts, gcal_helper, timeclock_helper, service
+
+
+
 """test file does not test methods that solely rely on the GOOGLE API, 
     as these methods can be assumed to work. These methods include 
     get_gcal_service_from_credentials, google_events_from_service, google_get_session_username
@@ -191,7 +195,9 @@ class TestCaseOne(unittest.TestCase):
         rv = gcal_helper.get_connected_user_refresh_token("doug")
         self.assertEqual(None,rv)
 
+    """this is the end of all gcal_helper test cases"""
 
+    """start of gcal test cases"""
 
     @patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
     def test_authenticate_gcal(self, mock_get_google_auth_uri_from_username):
@@ -210,10 +216,16 @@ class TestCaseOne(unittest.TestCase):
         mock_get_calendar_list.return_value = {'calendar': 'list of items'}
         rv = self.app.get('/gcal/calendar_list')
         assert b'list of items'in rv.data
-
-    """this is the end of all gcal_helper test cases"""
-
-
+    @patch('pulleffect.lib.google.gcal_helper.get_calendar_events')    
+    def test_calendar_events_gcal(self,mocked_get_calendar_events):
+        message = json.dumps({
+            "id": "3dfsljkertwu",
+            "now": "12:30:12"
+            })
+        flask.session["username"] = "dog"
+        mocked_get_calendar_events.return_value = {"item":"event_data", "desc": "terrible client","item2":"event2", "desc": "tony the tiger"}
+        rv = self.app.get('/gcal/calendar_events')
+        assert b'event_data' in rv.data
 
 
 
@@ -343,13 +355,11 @@ class TestCaseOne(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-''''commented out shifts tests; vagrant doesn't currently install cx_oracle'''
-
 #@patch('pulleffect.lib.google.gcal_helper.get_calendar_events')
 #def test_calendar_events_gcal(self,mock_get_calendar_events):
 #   mock_get_calendar_events.return_value = rtn = {'event': 'description'}
 #   rv = self.app.get('/gcal/calendar_events')
-#   assert b'description' in rv.data
+#   assert b'description' in rv.data    
 
 #@patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
 #def test_authenticate_shifts(self,mock_get_google_auth_uri_from_username):
@@ -368,3 +378,4 @@ if __name__ == '__main__':
 #    mock_get_calendar_list.return_value = rtn = {'calendar': 'list of items'}
 #    rv = self.app.get('/shifts/calendar_list')
 #    assert b'list of items'in rv.data
+
