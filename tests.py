@@ -12,7 +12,8 @@ import logging
 """test file does not test methods that solely rely on the GOOGLE API, 
     as these methods can be assumed to work. These methods include 
     get_gcal_service_from_credentials, google_events_from_service, google_get_session_username
-    get_refresh_token_from_username,exchange_code_for_credentials,google_info_update
+    exchange_code_for_credentials,google_info_update, google_get_user
+    is_valid_gcal_access_token,get_gcal_service
 """
 gcal_helper = pulleffect.lib.google.gcal_helper
 
@@ -154,7 +155,41 @@ class TestCaseOne(unittest.TestCase):
         rv = gcal_helper.validate_and_refresh_creds(creds)
         rtn = {'access_token': 'credits', 'hello': 'creds'}
         self.assertEqual(rtn,rv)
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_refresh_token_invalid_username(self,mocked_google_get_user):
+        mocked_get_refresh_token_from_username.return_value = None
+        rv = gcal_helper.get_refresh_token_from_username("doug")
+        self.assertEqual(None,rv)
+   
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_refresh_token_from_username(self,mocked_google_get_user):
+        mocked_google_get_user.return_value = {"username":"tharden","google_refresh_token": "120dfkn12390fdsn"}
+        rv = gcal_helper.get_refresh_token_from_username("tharden")
+        self.assertEqual("120dfkn12390fdsn",rv)
 
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_refresh_token_wihtout_username(self,mocked_google_get_user):
+        mocked_google_get_user.return_value = ""
+        rv = gcal_helper.get_refresh_token_from_username("doug")
+        self.assertEqual(None,rv)
+    
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_connected_user_refresh_token(self,mocked_google_get_user):
+        mocked_google_get_user.return_value = {"username":"tharden","google_refresh_token": "120dfkn12390fdsn"}
+        rv = gcal_helper.get_connected_user_refresh_token("tharden")
+        self.assertEqual("120dfkn12390fdsn",rv)
+
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_refresh_token_invalid_username(self,mocked_google_get_user):
+        mocked_google_get_user.return_value = None
+        rv = gcal_helper.get_connected_user_refresh_token("doug")
+        self.assertEqual(None,rv)
+
+    @patch('pulleffect.lib.google.gcal_helper.google_get_user')
+    def test_get_refresh_token_wihtout_username(self,mocked_google_get_user):
+        mocked_google_get_user.return_value = ""
+        rv = gcal_helper.get_connected_user_refresh_token("doug")
+        self.assertEqual(None,rv)
 
 
 

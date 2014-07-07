@@ -247,11 +247,34 @@ def get_refresh_token_from_username(username):
 
     Returns: refresh token for connected user
     """
-    user = users.find_one(
-        {"username": username}, {"google_refresh_token": 1, "_id": 0})
+    user = google_get_user(username)
     return None if not user else user.get("google_refresh_token")
 
+@cache.memoize(timeout=10)
+def get_connected_user_refresh_token(username):
+    """Gets the refresh token for the connectedly logged in user.
 
+    Keyword arguments:
+    username -- the google id of the user
+
+    Returns: refresh token for connected user
+    """
+    user = google_get_user(username)
+    return None if not user else user.get("google_refresh_token")
+
+@cache.memoize(timeout=10)
+def google_get_user(username):
+    """Gets the refresh token for the connectedly logged in user.
+
+    Keyword arguments:
+    username -- the google id of the user
+
+    Returns: google user object
+    """
+    user_object = users.find_one({"username": username}, {"google_refresh_token": 1, "_id": 0})
+    
+    return user_object
+    
 def exchange_code_for_credentials(code):
     """Exchange Google authorization code for credentials.
 
@@ -370,17 +393,3 @@ def get_gcal_service(credentials):
     http = credentials.authorize(http)
 
     return build_from_document(GCAL_DISCOVERY, http=http)
-
-
-@cache.memoize(timeout=10)
-def get_connected_user_refresh_token(username):
-    """Gets the refresh token for the connectedly logged in user.
-
-    Keyword arguments:
-    username -- the google id of the user
-
-    Returns: refresh token for connected user
-    """
-    user = users.find_one(
-        {"username": username}, {"google_refresh_token": 1, "_id": 0})
-    return user if not user else user.get("google_refresh_token")
