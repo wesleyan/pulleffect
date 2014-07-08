@@ -9,7 +9,7 @@ from mock import MagicMock
 from pulleffect.lib.utilities import Widgets
 import logging
 
-#make unit tests for gcal, timeclock, shifts, gcal_helper, timeclock_helper, service
+#make unit tests for timeclock, shifts, timeclock_helper, service
 
 
 
@@ -195,8 +195,6 @@ class TestCaseOne(unittest.TestCase):
         rv = gcal_helper.get_connected_user_refresh_token("doug")
         self.assertEqual(None,rv)
 
-    """this is the end of all gcal_helper test cases"""
-
     """start of gcal test cases"""
 
     @patch('pulleffect.lib.google.gcal_helper.get_google_auth_uri_from_username')
@@ -218,18 +216,33 @@ class TestCaseOne(unittest.TestCase):
         assert b'list of items'in rv.data
     @patch('pulleffect.lib.google.gcal_helper.get_calendar_events')    
     def test_calendar_events_gcal(self,mocked_get_calendar_events):
-        message = json.dumps({
+        params = json.dumps({
             "id": "3dfsljkertwu",
             "now": "12:30:12"
             })
         flask.session["username"] = "dog"
         mocked_get_calendar_events.return_value = {"item":"event_data", "desc": "terrible client","item2":"event2", "desc": "tony the tiger"}
-        rv = self.app.get('/gcal/calendar_events')
+        rv = self.app.get('/gcal/calendar_events',data = params,content_type = 'application/json')
         assert b'event_data' in rv.data
 
 
-
-
+    """test timeclock"""
+    @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockOracleQuery_construct")
+    @patch("pulleffect.lib.timeclock.timeclock_helper.try_get_timeclock_entries")
+    def test_index_timeclock_clocked_in(self,mocked_try_get_timeclock_entries,mocked_TimeclockOracleQuery_construct):
+        params = json.dumps({
+                "username" : "Tharden",
+                "time_in" : "1200",
+                "time_out": "",
+                "depts": "(events)",
+                "limit": '12',
+                "clocked_in": "true"
+            })
+        mocked_TimeclockOracleQuery_construct.return_value = 'done'
+        mocked_try_get_timeclock_entries.return_value = {
+        "1200": "1402",'1000':"2300","1230":"1430"
+        }
+        rv = self.app.get('/timeclock',data = params,content_type = 'application/json')
 
     def test_post_single_message(self):
         """POST a single message should succeed"""

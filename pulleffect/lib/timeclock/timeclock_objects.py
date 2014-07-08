@@ -40,6 +40,60 @@ class TimeclockEntry:
             'note': self.note
         }
 
+def TimeclockOracleQuery_construct(self, username, time_in, time_out,
+                                    job_ids, limit, clocked_in):
+    select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
+                         "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
+                         "TIME_IN DESC) ")
+
+    # Converts datetime objects to timestamps in SQL
+    sql_timestamp = ("(TO_DATE('19700101','yyyymmdd') +"
+                     " (TO_NUMBER({0})/24/60/60))")
+
+    # Format timestamps
+    time_in_clause = sql_timestamp.format(':time_in')
+    time_out_clause = sql_timestamp.format(':time_out')
+
+    named_params = {}
+
+    # Build time_in, time_out, and where clauses
+    if not clocked_in:
+        where_clause = (
+            "WHERE TIME_IN >={0} AND TIME_OUT <={1} AND JOB_ID IN "
+            .format(time_in_clause, time_out_clause)
+        )
+        named_params['time_in'] = time_in
+        named_params['time_out'] = time_out
+    else:
+        where_clause = (
+            "WHERE TIME_OUT IS NULL AND TIME_IN >= {0} AND JOB_ID IN "
+            .format(time_in_clause)
+        )
+        named_params['time_in'] = time_in
+
+    # Build SQL array with job ids
+    job_id_clause = "("
+    for i in range(len(job_ids)):
+        job_id = 'job_id{0}'.format(str(i))
+        named_params[job_id] = job_ids[i]
+        job_id_clause += ":{0},".format(job_id)
+
+    # Append job ids to WHERE clause
+    where_clause += job_id_clause[:-1] + ")"
+
+    # Append username to WHERE clause, if given
+    if username:
+        where_clause += " AND USERNAME=:username"
+        named_params['username'] = username
+
+    # Append the limit
+    if not clocked_in:
+        where_clause += " AND ROWNUM <=:limit"
+        named_params['limit'] = limit
+
+    # Completed query
+    self.query = "{0}{1}".format(select_clause, where_clause)
+    self.named_params = named_params
 
 class TimeclockOracleQuery:
     """Represents an Oracle SQL query constructed for timeclock entries.
@@ -54,56 +108,7 @@ class TimeclockOracleQuery:
     # TODO(arthurb): This method can probably be refactored
     def __init__(self, username, time_in, time_out,
                  job_ids, limit, clocked_in):
+        TimeclockOracleQuery_construct(self, username, time_in, time_out,
+                                        job_ids, limit, clocked_in)
         # The stuff that probably won't ever change
-        select_clause = ("SELECT * FROM (SELECT USERNAME, TIME_IN, TIME_OUT, "
-                         "JOB_ID, NOTE FROM ACLC_USDAN.NED_SHIFT ORDER BY "
-                         "TIME_IN DESC) ")
-
-        # Converts datetime objects to timestamps in SQL
-        sql_timestamp = ("(TO_DATE('19700101','yyyymmdd') +"
-                         " (TO_NUMBER({0})/24/60/60))")
-
-        # Format timestamps
-        time_in_clause = sql_timestamp.format(':time_in')
-        time_out_clause = sql_timestamp.format(':time_out')
-
-        named_params = {}
-
-        # Build time_in, time_out, and where clauses
-        if not clocked_in:
-            where_clause = (
-                "WHERE TIME_IN >={0} AND TIME_OUT <={1} AND JOB_ID IN "
-                .format(time_in_clause, time_out_clause)
-            )
-            named_params['time_in'] = time_in
-            named_params['time_out'] = time_out
-        else:
-            where_clause = (
-                "WHERE TIME_OUT IS NULL AND TIME_IN >= {0} AND JOB_ID IN "
-                .format(time_in_clause)
-            )
-            named_params['time_in'] = time_in
-
-        # Build SQL array with job ids
-        job_id_clause = "("
-        for i in range(len(job_ids)):
-            job_id = 'job_id{0}'.format(str(i))
-            named_params[job_id] = job_ids[i]
-            job_id_clause += ":{0},".format(job_id)
-
-        # Append job ids to WHERE clause
-        where_clause += job_id_clause[:-1] + ")"
-
-        # Append username to WHERE clause, if given
-        if username:
-            where_clause += " AND USERNAME=:username"
-            named_params['username'] = username
-
-        # Append the limit
-        if not clocked_in:
-            where_clause += " AND ROWNUM <=:limit"
-            named_params['limit'] = limit
-
-        # Completed query
-        self.query = "{0}{1}".format(select_clause, where_clause)
-        self.named_params = named_params
+        

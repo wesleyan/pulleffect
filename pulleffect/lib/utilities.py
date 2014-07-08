@@ -169,7 +169,8 @@ if not env.is_dev:
     # Build pooled Oracle database connection for Wesleyan timeclock
     wes_timeclock_config = db_configs['wes_timeclock']
     wes_timeclock_pool = build_db_connection(wes_timeclock_config, "oracle")
-
+if env.is_dev:
+    wes_timeclock_pool = None
 # Mongo database connection
 mongo_connection = build_db_connection(db_configs['local_mongo'], 'mongo')
 
