@@ -63,7 +63,7 @@ def index():
     departments = request.args.get('depts', tc_depts.get_all_job_ids())
     limit = request.args.get('limit', '50')
     clocked_in = request.args.get('clocked_in', False)
-
+    print('flag 1')
     error_message = []
 
     # Parse clock_in
@@ -78,6 +78,7 @@ def index():
     # Parse time_in
     if not time_in.isdigit():
         error_message.append({'error': "Invalid parameter: 'time_in'"})
+    print('flag 2')
 
     # Parse time_out
     if clocked_in:
@@ -88,7 +89,7 @@ def index():
                    .strftime('%s')))
     elif not time_out.isdigit():
         error_message.append({'error': "Invalid parameter: 'time_out'"})
-
+    print('flag 3')
     # Parse departments
     job_ids = []
     dept_errors = []
@@ -110,7 +111,7 @@ def index():
                 if not job_id:
                     dept_errors.append(dept)
                 job_ids.append(job_id)
-
+    print('flag 4')
     # Parse limit
     if not limit.isdigit():
         error_message.append({'error': "Invalid parameter: 'limit'"})
@@ -126,7 +127,7 @@ def index():
     # If timeclock request has errors, return them to the user
     if len(error_message) > 0:
         return make_response(jsonify(error_message), 400)
-
+    print('flag 5')
     # Build an oracle query from the request
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
         username, time_in, time_out, job_ids, limit, clocked_in)

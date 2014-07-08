@@ -22,7 +22,7 @@ import logging
 gcal_helper = pulleffect.lib.google.gcal_helper
 
 
-class TestCaseOne(unittest.TestCase):
+class TestCases(unittest.TestCase):
 
     def setUp(self):
         """Before each test, set up a blank database
@@ -226,7 +226,8 @@ class TestCaseOne(unittest.TestCase):
         assert b'event_data' in rv.data
 
 
-    """test timeclock"""
+    """timeclock test cases"""
+
     @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockOracleQuery_construct")
     @patch("pulleffect.lib.timeclock.timeclock_helper.try_get_timeclock_entries")
     def test_index_timeclock_clocked_in(self,mocked_try_get_timeclock_entries,mocked_TimeclockOracleQuery_construct):
@@ -242,8 +243,10 @@ class TestCaseOne(unittest.TestCase):
         mocked_try_get_timeclock_entries.return_value = {
         "1200": "1402",'1000':"2300","1230":"1430"
         }
-        rv = self.app.get('/timeclock',data = params,content_type = 'application/json')
+        rv = self.app.get('/timeclock',data = params,content_type = 'application/json')  
+        self.assertEqual('1200',rv.data)
 
+    """message test cases"""
     def test_post_single_message(self):
         """POST a single message should succeed"""
         message = json.dumps({
@@ -337,6 +340,8 @@ class TestCaseOne(unittest.TestCase):
                            content_type='application/json')
         assert b'Submitted message is missing required fields' in rv.data
 
+    """note test cases"""
+    
     def test_post_empty_note(self):
         """POST an empty note should fail"""
 
