@@ -4,6 +4,7 @@ import unittest
 import tempfile
 import json
 import flask
+import requests
 from mock import patch
 from mock import MagicMock
 from pulleffect.lib.utilities import Widgets
@@ -234,19 +235,56 @@ class TestCases(unittest.TestCase):
         params = json.dumps({
                 "username" : "Tharden",
                 "time_in" : "1200",
-                "time_out": "",
+                "time_out": "1220",
                 "depts": "(events)",
                 "limit": '12',
                 "clocked_in": "true"
             })
         mocked_TimeclockOracleQuery_construct.return_value = 'done'
-        mocked_try_get_timeclock_entries.return_value = {
-        "1200": "1402",'1000':"2300","1230":"1430"
-        }
-        rv = self.app.get('/timeclock',data = params,content_type = 'application/json')  
-        self.assertEqual('1200',rv.data)
+        mocked_try_get_timeclock_entries.return_value = {"1200": "1402"}
+        rv = self.app.get('/timeclock?username=Tharden&time_in=1200&time_out=1330&depts=(events)&limit=12&clocked_in=True')
+        self.assertEqual('{\n  "1200": "1402"\n}',rv.data)
 
-    """message test cases"""
+    @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockOracleQuery_construct")
+    @patch("pulleffect.lib.timeclock.timeclock_helper.try_get_timeclock_entries")
+    def test_index_timeclock_clocked_out(self,mocked_try_get_timeclock_entries,mocked_TimeclockOracleQuery_construct):
+        params = {
+                "username" : "Tharden",
+                "time_in" : "1200",
+                "time_out": "1220",
+                "depts": "(events)",
+                "limit": '12',
+                "clocked_in": "False"
+            }
+        mocked_TimeclockOracleQuery_construct.return_value = 'done'
+        mocked_try_get_timeclock_entries.return_value = {"1200": "1402"}
+        rv = self.app.get('/timeclock?username=Tharden&time_in=1200&time_out=1330&depts=(events)&limit=12&clocked_in=False')
+        self.assertEqual('{\n  "1200": "1402"\n}',rv.data)
+
+    def test_index_timeclock_wrong_dept(self):
+        rv = self.app.get('/timeclock?username=tharden&time_in=1200&time_out=1300&depts=(partyparty)&limit=10&clocked_in=True')
+        assert b'Invalid parameter' in rv.data
+
+    def test_index_timeclock_wrong_limit(self):
+        rv = self.app.get('/timeclock?username=tharden&time_in=1200&time_out=1300&depts=(events)&limit=dog&clocked_in=True')
+        assert b'Invalid parameter' in rv.data
+    def test_index_timeclock_wrong_time_out(self):
+        rv = self.app.get('/timeclock?username=tharden&time_in=1200&time_out=dog&depts=(events)&limit=10&clocked_in=False')
+        assert b'Invalid parameter' in rv.data
+    def test_index_timeclock_wrong_time_in(self):
+        rv = self.app.get('/timeclock?username=tharden&time_in=dog&time_out=1000&depts=(events)&limit=10&clocked_in=False')
+        assert b'Invalid parameter' in rv.data
+    @patch("pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_username")
+    def test_index_timeclock_wrong_username(self,mocked_check_for_unicode_username):
+        mocked_check_for_unicode_username.return_value = "No unicode allowed: 'username'"
+        rv = self.app.get('/timeclock?username=thardentime_in=1200&time_out=1000&depts=(events)&limit=10&clocked_in=False')
+        assert b'No unicode allowed' in rv.data
+    @patch("pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_departments")
+    def test_index_timeclock_wrong_username(self,mocked_check_for_unicode_departments):
+        mocked_check_for_unicode_departments.return_value = "No unicode allowed: 'username'"
+        rv = self.app.get('/timeclock?username=?????????&time_in=dog&time_out=1000&depts=(events)&limit=10&clocked_in=False')
+        assert b'No unicode allowed' in rv.data
+
     def test_post_single_message(self):
         """POST a single message should succeed"""
         message = json.dumps({
@@ -257,7 +295,7 @@ class TestCases(unittest.TestCase):
             "description": "this is a description"
         })
 
-        rv = self.app.post('/messages', data=message,
+        rv = self.app.post('/messages', data = message,
                            follow_redirects=True,
                            content_type='application/json')
         assert b'id' in rv.data

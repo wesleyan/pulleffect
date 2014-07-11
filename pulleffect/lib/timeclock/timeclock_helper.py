@@ -23,6 +23,21 @@ def build_timeclock_entries(cursor):
     ]
     return tc_entries
 
+def check_for_unicode_username(username):
+    # Parse username
+    error_message = []
+    if username and isinstance(username, unicode):
+        username = username.encode('ascii', 'replace')
+    if '?' in username:
+        return ("No unicode allowed: 'username'")
+    return None
+def check_for_unicode_departments(departments):
+    error_message = []
+    departments = departments.replace(" ", "")
+    departments = departments.encode('ascii', 'replace')
+    if '?' in departments:
+        return True
+    return False
 
 def try_get_timeclock_entries(timeclockOracleQuery):
     """Tries to get timeclock entries from Oracle db

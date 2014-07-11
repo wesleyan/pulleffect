@@ -67,11 +67,11 @@ except IOError as e:
                     "the  pulleffect/config/ directory")
 
 # This is necessary when you're not working on a vagrant box
-if not env.is_dev:
-    from pulleffect.lib.timeclock.shifts import shifts
-    from pulleffect.lib.timeclock.timeclock import timeclock
-    app.register_blueprint(timeclock, url_prefix='/timeclock')
-    app.register_blueprint(shifts, url_prefix='/shifts')
+
+#from pulleffect.lib.timeclock.shifts import shifts
+from pulleffect.lib.timeclock.timeclock import timeclock
+app.register_blueprint(timeclock, url_prefix='/timeclock')
+#app.register_blueprint(shifts, url_prefix='/shifts')
 
 # TODO(arthurb): The secret key needs to be changed
 app.config.update(dict(
