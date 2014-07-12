@@ -90,7 +90,7 @@ def index():
     if not isinstance(departments, basestring):
         job_ids = departments
     else:
-        if tc_helper.check_for_unicode_departments(departments):
+        if tc_helper.is_departments_unicode(departments):
             error_message.append("No unicode allowed: 'depts'")
         else:
             # Remove parentheses from ends of array
@@ -115,7 +115,6 @@ def index():
 
     # If timeclock request has errors, return them to the user
     if len(error_message) > 0:
-        print error_message
         err  = {'error': error_message}          
         return make_response(jsonify(err), 400)
    

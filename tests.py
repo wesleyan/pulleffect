@@ -7,10 +7,11 @@ import flask
 import requests
 from mock import patch
 from mock import MagicMock
+import pulleffect.lib.timeclock
 from pulleffect.lib.utilities import Widgets
 import logging
 
-#make unit tests for timeclock, shifts, timeclock_helper, service
+#make unit tests for shifts, timeclock_helper, service
 
 
 
@@ -279,12 +280,35 @@ class TestCases(unittest.TestCase):
         mocked_check_for_unicode_username.return_value = "No unicode allowed: 'username'"
         rv = self.app.get('/timeclock?username=thardentime_in=1200&time_out=1000&depts=(events)&limit=10&clocked_in=False')
         assert b'No unicode allowed' in rv.data
-    @patch("pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_departments")
-    def test_index_timeclock_wrong_username(self,mocked_check_for_unicode_departments):
-        mocked_check_for_unicode_departments.return_value = "No unicode allowed: 'username'"
+    @patch("pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode")
+    def test_index_timeclock_wrong_username(self,mocked_is_departments_unicode):
+        mocked_is_departments_unicode.return_value = "No unicode allowed: 'username'"
         rv = self.app.get('/timeclock?username=?????????&time_in=dog&time_out=1000&depts=(events)&limit=10&clocked_in=False')
         assert b'No unicode allowed' in rv.data
 
+    """test timeclock helper test cases"""
+    @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockEntry")
+    def test_build_timeclock_entries(self,mocked_TimeclockEntry):
+        mocked_TimeclockEntry.return_value = ["timeclock_entries"]
+        rv = pulleffect.lib.timeclock.timeclock_helper.build_timeclock_entries({'timeclock_entries': 'description'})
+        self.assertEqual([['timeclock_entries']],rv)
+
+    def test_check_for_unicode_username_ascii(self):
+        rv = pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_username("dog")
+        self.assertEqual(None,rv)
+    def test_check_unicode_username_with_unicode(self):
+        username = unicode('dog')
+        rv = pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_username(username)
+        self.assertEqual(None,rv)
+    def test_is_departments_unicode(self):
+        rv = pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode("events")
+        self.assertEqual(False,rv)
+    def test_is_departments_unicode(self):
+        departments = unicode("events")
+        rv = pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode(departments)
+        self.assertEqual(False,rv)
+
+    """test message cases"""
     def test_post_single_message(self):
         """POST a single message should succeed"""
         message = json.dumps({

@@ -31,7 +31,7 @@ def check_for_unicode_username(username):
     if '?' in username:
         return ("No unicode allowed: 'username'")
     return None
-def check_for_unicode_departments(departments):
+def is_departments_unicode(departments):
     error_message = []
     departments = departments.replace(" ", "")
     departments = departments.encode('ascii', 'replace')
@@ -63,7 +63,8 @@ def try_get_timeclock_entries(timeclockOracleQuery):
             }
     """
     # Grab connection from pool of connections
-    connection = wes_timeclock_pool.acquire()
+    if not env.is_dev:
+        connection = wes_timeclock_pool.acquire()
     try:
         # Get cursor from connection
         cursor = connection.cursor()
@@ -96,4 +97,5 @@ def try_get_timeclock_entries(timeclockOracleQuery):
     else:
         cursor.close()
         wes_timeclock_pool.release(connection)
+        #interesting return statement arthur.....
         return {'error': 'not sure what dafuz happened'}
