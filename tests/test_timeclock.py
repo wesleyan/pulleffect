@@ -12,6 +12,8 @@ from pulleffect.lib.utilities import Widgets
 import logging
 
 
+gcal_helper = pulleffect.lib.google.gcal_helper
+
 class TestCases(unittest.TestCase):
 
     def setUp(self):
@@ -65,7 +67,6 @@ class TestCases(unittest.TestCase):
     def test_index_timeclock_wrong_dept(self):
         rv = self.app.get('/timeclock?username=tharden&time_in=1200&time_out=1300&depts=(partyparty)&limit=10&clocked_in=True')
         assert b'Invalid parameter' in rv.data
-
     def test_index_timeclock_wrong_limit(self):
         rv = self.app.get('/timeclock?username=tharden&time_in=1200&time_out=1300&depts=(events)&limit=dog&clocked_in=True')
         assert b'Invalid parameter' in rv.data
@@ -79,11 +80,6 @@ class TestCases(unittest.TestCase):
     def test_index_timeclock_wrong_username(self,mocked_check_for_unicode_username):
         mocked_check_for_unicode_username.return_value = "No unicode allowed: 'username'"
         rv = self.app.get('/timeclock?username=thardentime_in=1200&time_out=1000&depts=(events)&limit=10&clocked_in=False')
-        assert b'No unicode allowed' in rv.data
-    @patch("pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode")
-    def test_index_timeclock_wrong_username(self,mocked_is_departments_unicode):
-        mocked_is_departments_unicode.return_value = "No unicode allowed: 'username'"
-        rv = self.app.get('/timeclock?username=?????????&time_in=dog&time_out=1000&depts=(events)&limit=10&clocked_in=False')
         assert b'No unicode allowed' in rv.data
 
 if __name__ == '__main__':

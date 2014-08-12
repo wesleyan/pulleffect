@@ -10,8 +10,6 @@ from mock import MagicMock
 import pulleffect.lib.timeclock
 from pulleffect.lib.utilities import Widgets
 import logging
-
-timeclock_helper = pulleffect.lib.timeclock.timeclock_helper
 class TestCases(unittest.TestCase):
 
     def setUp(self):

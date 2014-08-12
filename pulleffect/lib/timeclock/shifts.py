@@ -106,7 +106,6 @@ def index():
             end=event.get('end').get('dateTime')))
         for event in events
     )
-
     #changing from ISO8601 to timestamp, for Oracle
     timeMin = moment.date(timeMin, "YYYY-MM-DDTHH:mm:ssZ").strftime('%s')
     timeclockOracleQuery = tc_obj.TimeclockOracleQuery(
@@ -116,9 +115,7 @@ def index():
     tc_entries = (tc_helper
                   .try_get_timeclock_entries(timeclockOracleQuery)
                   .get('timeclock_entries'))
-
-    logging.info('tc_entries: {0}', tc_entries)
-
+    logging.info('tc_entries : {0}'.format(tc_entries))
     scheduled = {}
     not_scheduled = {}
     if tc_entries:
@@ -148,7 +145,6 @@ def index():
 
     # Any event remaining in events dict is not clocked in
     not_clocked_in = events
-
     # Returns array of shifts
     return jsonify({
         "shifts": dict(scheduled=scheduled, not_clocked_in=not_clocked_in,

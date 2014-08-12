@@ -10,8 +10,7 @@ from mock import MagicMock
 import pulleffect.lib.timeclock
 from pulleffect.lib.utilities import Widgets
 import logging
-
-timeclock_helper = pulleffect.lib.timeclock.timeclock_helper
+#does not test try_get_timeclock_entries as it relies completely on oracle
 class TestCases(unittest.TestCase):
 
     def setUp(self):
@@ -32,22 +31,28 @@ class TestCases(unittest.TestCase):
     @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockEntry")
     def test_build_timeclock_entries(self,mocked_TimeclockEntry):
         mocked_TimeclockEntry.return_value = ["timeclock_entries"]
-        rv = timeclock_helper.build_timeclock_entries({'timeclock_entries': 'description'})
+        rv = pulleffect.lib.timeclock.timeclock_helper.build_timeclock_entries({'timeclock_entries': 'description'})
         self.assertEqual([['timeclock_entries']],rv)
 
+    @patch("pulleffect.lib.timeclock.timeclock_objects.TimeclockEntry")
+    def test_build_timeclock_without_entries(self,mocked_TimeclockEntry):
+        mocked_TimeclockEntry.return_value = []
+        rv = pulleffect.lib.timeclock.timeclock_helper.build_timeclock_entries({'timeclock_entries': 'description'})
+        self.assertEqual([[]],rv)
+
     def test_check_for_unicode_username_ascii(self):
-        rv = timeclock_helper.check_for_unicode_username("dog")
+        rv = pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_username("dog")
         self.assertEqual(None,rv)
     def test_check_unicode_username_with_unicode(self):
         username = unicode('dog')
-        rv = timeclock_helper.check_for_unicode_username(username)
+        rv = pulleffect.lib.timeclock.timeclock_helper.check_for_unicode_username(username)
         self.assertEqual(None,rv)
     def test_is_departments_unicode(self):
-        rv = timeclock_helper.is_departments_unicode("events")
+        rv = pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode("events")
         self.assertEqual(False,rv)
     def test_is_departments_unicode(self):
         departments = unicode("events")
-        rv = timeclock_helper.is_departments_unicode(departments)
+        rv = pulleffect.lib.timeclock.timeclock_helper.is_departments_unicode(departments)
         self.assertEqual(False,rv)
 
 if __name__ == '__main__':
