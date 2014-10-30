@@ -1,4 +1,4 @@
-pulleffect
+pulleffect [![Build Status](https://secure.travis-ci.org/wesleyan/pulleffect.svg)](http://travis-ci.org/wesleyan/pulleffect)
 ==========
 
 pulleffect is an application that polls and displays glanceable information from a variety of sources, built to increase efficiency by giving organizations a big picture view of their relevant data.
