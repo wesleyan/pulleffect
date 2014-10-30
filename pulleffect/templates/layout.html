@@ -32,8 +32,8 @@
   var roomsRoute = "{{ url_for('static', filename='rooms.json') }}";
   var messagesRoute = "{{ url_for('messages.index') }}";
   var calEventsRoute = "{{ url_for('gcal.calendar_events') }}";
-	var shiftsRoute = "{{ url_for('shifts.index') }}";
   {% if config.is_dev %}
+	var shiftsRoute = "{{ url_for('shifts.index') }}";
   {% endif %}
   var recordsRoute = "{{ url_for('service.records') }}";
 </script>
