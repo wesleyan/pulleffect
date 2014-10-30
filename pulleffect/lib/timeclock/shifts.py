@@ -82,7 +82,7 @@ def index():
     """Route controller fetches shifts info.
     """
     # Get params from query string
-    cal_id = request.args.get('id')
+    cal_id = gc_helper.SHIFTS_GCAL 
 
     # Set default values
     timeMin = moment.now().replace(

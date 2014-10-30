@@ -32,7 +32,7 @@ GCAL_REDIRECT_URI = '{0}/gcal/oauth2callback'.format(env.config['home_url'])
 SHIFTS_REDIRECT_URI = '{0}/shifts/oauth2callback'.format(
     env.config['home_url'])
 APPROVAL_PROMPT = 'force'
-
+SHIFTS_GCAL = google_client_secrets.get('google_shifts_calendar')
 
 def get_calendar_list(username, widget):
     """Fetches list of google calendars for connected user.
