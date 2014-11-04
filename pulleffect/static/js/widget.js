@@ -219,7 +219,9 @@
 
 
                 $.getJSON(recordsRoute).done(function(data) {
-                    console.log(data);
+                    records = data['records']
+                    console.log(records);
+                    console.log(records[0]['assigned_to']);
 
                     // if(this.model.get('mode') === 'all') {
                     //     $(this.model.view.selector).find('section').attr('style', 'overflow: scroll !important');
